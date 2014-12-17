@@ -4,5 +4,6 @@ Personal-Web-Page
 
 My personal Web Page Code.
 
-ServerApp: server.js
-WebApp: index.html
+Main files:
+ -ServerApp: server.js
+ -WebApp: index.html
