@@ -1,0 +1,32 @@
+﻿#SentiBox {
+    background-color: black;
+    opacity: 0.7;
+    width: 40%;
+    height: 60%;
+    position: absolute;
+    top: 30%;
+    left: 55%;
+    border: 2px solid;
+    border-color: black;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 10px black;
+    -ms-box-shadow: 0 0 10px black;
+    box-shadow: 0 0 10px black;
+    font-family: Arial, cursive;
+    font-size: 18px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    overflow-y: scroll;
+}
+
+#tattoImg {
+    position: relative;
+    width: auto;
+    height: 85%;
+    top: 6%;
+    left: 37%;
+    margin: 0;
+}

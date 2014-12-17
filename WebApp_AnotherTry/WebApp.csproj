@@ -1,0 +1,186 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{49D38D04-8F73-41A3-A7B5-32ED5E7178D1}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>WebApp_AnotherTry</RootNamespace>
+    <AssemblyName>WebApp_AnotherTry</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="css\Animate\animate.css" />
+    <Content Include="css\Elements_Boxes\Blog.css" />
+    <Content Include="css\Elements_Boxes\Education-Box.css" />
+    <Content Include="css\Elements_Boxes\Events-Box.css" />
+    <Content Include="css\Elements_Boxes\Social-Box.css" />
+    <Content Include="css\Elements_Boxes\TwitterSenti.css" />
+    <Content Include="css\Elements_Boxes\Work-Box.css" />
+    <Content Include="css\fullPage\jquery.fullPage.css" />
+    <Content Include="css\jQuery\jquery-ui.css" />
+    <Content Include="css\MouseHover\hover-min.css" />
+    <Content Include="css\LettersFX\jquery-letterfx.css" />
+    <Content Include="css\Elements_Boxes\Labels-Box.css" />
+    <Content Include="css\Elements_Boxes\Location-Box.css" />
+    <Content Include="css\Elements_Boxes\Menu-Box.css" />
+    <Content Include="css\Elements_Boxes\Presentation-Box.css" />
+    <Content Include="css\Elements_Boxes\Quote-Box.css" />
+    <Content Include="css\Prompt\jquery.terminal.css" />
+    <Content Include="css\Prompt\Prompts-Styles.css" />
+    <Content Include="css\Texts_Global\Texts.css" />
+    <Content Include="css\TinyTools\tinytools.tourtip.css" />
+    <Content Include="css\Tooltipstered\tooltipster.css" />
+    <Content Include="css\WebPage_Global\ResetCSS.css" />
+    <Content Include="css\WebPage_Global\WebPage.css" />
+    <Content Include="images\Background\bike.jpg" />
+    <Content Include="images\Background\blurBike.png" />
+    <Content Include="images\Presentation\Europe.png" />
+    <Content Include="images\favicon\favicon.ico" />
+    <Content Include="images\Presentation\Location_transp.png" />
+    <Content Include="images\Presentation\Me.PNG" />
+    <Content Include="images\Menu\home.png" />
+    <Content Include="images\Menu\social.png" />
+    <Content Include="images\Menu\Work.png" />
+    <Content Include="images\Menu\console.png" />
+    <Content Include="images\SliderArrows\arrow-left.ico" />
+    <Content Include="images\SliderArrows\arrow_right.ico" />
+    <Content Include="images\Social\Blogger.png" />
+    <Content Include="images\Social\Codeacademy.png" />
+    <Content Include="images\Social\coderBits.png" />
+    <Content Include="images\Social\facebook.png" />
+    <Content Include="images\Social\gitHub.png" />
+    <Content Include="images\Social\googlePlus.png" />
+    <Content Include="images\Social\instagram.png" />
+    <Content Include="images\Social\linkedIn.png" />
+    <Content Include="images\Social\mail.png" />
+    <Content Include="images\Social\Twitter.png" />
+    <Content Include="images\Social\youTube.png" />
+    <Content Include="images\Presentation\Wordle.PNG" />
+    <Content Include="images\tatto\tattoo.png" />
+    <Content Include="images\Work\CV.png" />
+    <Content Include="images\Work\Education.png" />
+    <Content Include="images\Work\Events.png" />
+    <Content Include="images\Work\Wordle_Work.PNG" />
+    <Content Include="images\Work\Work.png" />
+    <Content Include="index.html" />
+    <Content Include="javascript\Blur\blurJs.js" />
+    <Content Include="javascript\Credits\endcredits.js" />
+    <Content Include="javascript\fullPage\jquery.fullPage.js" />
+    <Content Include="javascript\jQuery\jquery-2.1.1.js" />
+    <Content Include="javascript\jQuery\jquery-ui.js" />
+    <Content Include="javascript\knockout\knockoutjs.js" />
+    <Content Include="javascript\LettersFX\LetterFX.js" />
+    <Content Include="javascript\Shadows\jquery.animate-shadow.js" />
+    <Content Include="javascript\Mouse\jquery.mousewheel-min.js" />
+    <Content Include="javascript\Prompt\jquery.terminal-0.8.8.min.js" />
+    <Content Include="javascript\ShareMe\share.min.js" />
+    <Content Include="javascript\Sticker\Sticker.js" />
+    <Content Include="javascript\Tinytools\tinytools.tourtip.js" />
+    <Content Include="javascript\Tooltipstered\jquery.tooltipster.js" />
+    <Content Include="ViewModels\Blog.js" />
+    <Content Include="ViewModels\Menu.js" />
+    <Content Include="ViewModels\Presentation.js" />
+    <Content Include="ViewModels\PromptCommands.js" />
+    <Content Include="ViewModels\Prompt.js" />
+    <Content Include="ViewModels\Social.js" />
+    <Content Include="ViewModels\TwitterSentiment.js" />
+    <Content Include="ViewModels\WebPage.js" />
+    <Content Include="ViewModels\Work.js" />
+    <Content Include="Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="CurriculumVitae\cv_JoseMMalaca.pdf" />
+    <Content Include="fonts\Capture_it.ttf" />
+    <Content Include="fonts\J811.ttf" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>5415</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:5415/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
