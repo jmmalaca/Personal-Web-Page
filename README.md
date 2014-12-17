@@ -1,8 +1,6 @@
 #Personal-Web-Page
+####My personal Web Page Code.
 
-###My personal Web Page Code.
-
-######Main files:
-
-1. ServerApp: server.js
-2. WebApp: index.html
+#####Main files:
+######* ServerApp: server.js
+######* WebApp: index.html
