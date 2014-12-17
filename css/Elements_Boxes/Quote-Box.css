@@ -1,0 +1,197 @@
+﻿/* [...mobile styles here <= max-width: 600px...] */
+@media all and (max-width: 700px) {
+    .Quote-Box {
+        display: none;
+    }
+}
+
+/* [...tablets styles here > min-width: 600px...] */
+@media all and (min-width: 700px) {
+    .Quote-Box {
+        visibility: visible;
+        background-color: black;
+        opacity: 0.8;
+        width: 30%;
+        height: auto;
+        position: absolute;
+        top: 30%;
+        left: 59%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    #Quote_Text {
+        position: relative;
+        top: 10%;
+        margin-left: 6%;
+        margin-right: 6%;
+        margin-bottom: 0;
+        font-family: Arial, cursive;
+        font-size: 30px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+        font-style: italic;
+    }
+
+    #Quote_Sign {
+        position: relative;
+        top: 70%;
+        left: 10%;
+        margin-top: 2%;
+        margin-left: 2%;
+        margin-right: 10%;
+        font-family: Arial, cursive;
+        font-size: 20px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: left;
+    }
+}
+
+/* [...tablets styles here = min-width: 972px because of the Menu... it growns down] */
+@media all and (min-width: 972px) {
+    .Quote-Box {
+        visibility: visible;
+        background-color: black;
+        opacity: 0.8;
+        width: 30%;
+        height: auto;
+        position: absolute;
+        top: 25%;
+        left: 59%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    #Quote_Text {
+        position: relative;
+        top: 10%;
+        margin-left: 6%;
+        margin-right: 6%;
+        margin-bottom: 0;
+        font-family: Arial, cursive;
+        font-size: 30px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+        font-style: italic;
+    }
+
+    #Quote_Sign {
+        position: relative;
+        top: 70%;
+        left: 30%;
+        margin-top: 2%;
+        font-family: Arial, cursive;
+        font-size: 20px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+    }
+}
+
+/* [... desktop styles >= min-width: 1064px ... change with Location-Box] */
+@media all and (min-width: 1065px) {
+    .Quote-Box {
+        visibility: visible;
+        background-color: black;
+        opacity: 0.8;
+        width: 30%;
+        height: auto;
+        position: absolute;
+        top: 70%;
+        left: 20%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    #Quote_Text {
+        position: relative;
+        top: 10%;
+        margin-left: 6%;
+        margin-right: 6%;
+        margin-bottom: 0;
+        font-family: Arial, cursive;
+        font-size: 30px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+        font-style: italic;
+    }
+
+    #Quote_Sign {
+        position: relative;
+        top: 70%;
+        left: 40%;
+        margin-top: 2%;
+        font-family: Arial, cursive;
+        font-size: 20px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+    }
+}
+
+/* [... desktop styles >= min-width: 1200px ...] */
+@media all and (min-width: 1199px) {
+    .Quote-Box {
+        visibility: visible;
+        background-color: black;
+        opacity: 0.8;
+        width: 30%;
+        height: auto;
+        position: absolute;
+        top: 70%;
+        left: 20%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    #Quote_Text {
+        position: relative;
+        top: 10%;
+        margin-left: 6%;
+        margin-right: 6%;
+        margin-bottom: 0;
+        font-family: Arial, cursive;
+        font-size: 30px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+        font-style: italic;
+    }
+
+    #Quote_Sign {
+        position: relative;
+        top: 70%;
+        left: 40%;
+        margin-top: 2%;
+        font-family: Arial, cursive;
+        font-size: 20px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+    }
+}

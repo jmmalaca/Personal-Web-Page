@@ -1,0 +1,66 @@
+﻿/* [...mobile styles here <= max-width: 600px...] */
+/* [...tablets styles here > min-width: 600px...] */
+/* [...desktop styles here > min-width: 900px...] */
+.Education-Box {
+    background-color: black;
+    -ms-opacity: 0.8;
+    opacity: 0.8;
+    width: 20%;
+    height: auto;
+    position: absolute;
+    top: 30%;
+    left: 55%;
+    border: 2px solid;
+    border-color: black;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 10px black;
+    -ms-box-shadow: 0 0 10px black;
+    box-shadow: 0 0 10px black;
+    overflow: hidden;
+}
+
+.Education_Logo {
+    position: relative;
+    left: 5%;
+    margin-top: 5%;
+    width: 64px;
+    height: 60px;
+    display: inline-block;
+}
+
+#University {
+    position: relative;
+    margin-top: 3%;
+    left: 2%;
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    font-family: Arial, cursive;
+    font-size: 18px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    display: inline-block;
+}
+
+#School {
+    position: relative;
+    margin-bottom: 3%;
+    left: 2%;
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    font-family: Arial, cursive;
+    font-size: 18px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    display: inline-block;
+}
+
+#DEI, #Brotero {
+    color: whitesmoke;
+}
