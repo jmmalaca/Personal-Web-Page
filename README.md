@@ -1,13 +1,13 @@
-##My Personal Web Page .v1.0
+###My Personal Web Page .v1.0
 
-###All files, code, of my personal web page.
+####All files, code, of my personal web page.
 
-####Programming languages used:
+#####Programming languages used:
 - Html
 - CSS
 - Javascript
 
-####Technologies used:
+#####Technologies used:
 - jquery-2.1.1.js
 - jquery-ui.js
 - jquery.fullPage.js
