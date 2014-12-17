@@ -140,9 +140,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CurriculumVitae\cv_JoseMMalaca.pdf" />
     <Content Include="fonts\Capture_it.ttf" />
     <Content Include="fonts\J811.ttf" />
+    <Content Include="CurriculumVitae\cv_JoseMMalaca.pdf" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
