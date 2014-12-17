@@ -18,29 +18,28 @@ serverApp.get('/', function (req, response) {
 serverApp.get('/tweets/:searchString', function(req, response) {
         console.log("\nTweets Call...");
 
-        //get the request username
+        //get the request string data...
         var searchString = req.params.searchString;
         console.log(" -Search String: " + searchString);
 
-        var oauth = new OAuth.OAuth(
-            'https://api.twitter.com/oauth/request_token',
-            'https://api.twitter.com/oauth/access_token',
-            'pxza4SS4CRtD8uSSzQLgTA',
-            'cLBhzg65BmtoDZAXMAZvFOHK2nIMlzx277fk335YnGQ',
-            '1.0A',
-            null,
-            'HMAC-SHA1'
-        );
+        //var oauth = new OAuth.OAuth(
+        //    'https://api.twitter.com/oauth/request_token',
+        //    'https://api.twitter.com/oauth/access_token',
+        //    'pxza4SS4CRtD8uSSzQLgTA',
+        //    'cLBhzg65BmtoDZAXMAZvFOHK2nIMlzx277fk335YnGQ',
+        //    '1.0A',
+        //    null,
+        //    'HMAC-SHA1'
+        //);
 
-        oauth.get(
-            'https://api.twitter.com/1.1/search/tweets.json?q=' + searchString + '&lang=eng&count=10',
-            '91327431-7IwG2LsOtc62JU3StzdcIImdylq8TYr86YS517P0I', 
-            'fy2TBb0cI3UdmTweQtOPHIXtKW5fGPNF2jGGUPnyPS8', 
-            function (e, data, res) {
-                if (e) console.error('ERROR: ' + e);
-                console.log(require('util').inspect(data));
-        });
-});
+        //oauth.get(
+        //    'https://api.twitter.com/1.1/search/tweets.json?q=' + searchString + '&lang=eng&count=10',
+        //    '91327431-7IwG2LsOtc62JU3StzdcIImdylq8TYr86YS517P0I', 
+        //    'fy2TBb0cI3UdmTweQtOPHIXtKW5fGPNF2jGGUPnyPS8', 
+        //    function (e, data, res) {
+        //        if (e) console.error('ERROR: ' + e);
+        //        console.log(require('util').inspect(data));
+        //});
 
         //options = {
         //    protocol: 'https:',
@@ -88,6 +87,7 @@ serverApp.get('/tweets/:searchString', function(req, response) {
         //            response.send(e + ' | ' + data);
         //        });
         //});
+});
 
 //Start listen on port...
 serverApp.listen(8080);
