@@ -1,0 +1,199 @@
+﻿/* [...mobile styles here <= max-width: 700px...] */
+@media all and (max-width: 700px) {
+    .Presentation-Box {
+        background-color: black;
+        -ms-opacity: 0.8;
+        opacity: 0.8;
+        width: 80%;
+        height: auto;
+        position: absolute;
+        top: 30%;
+        left: 10%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 1px;
+        border-radius: 1px;
+        -webkit-box-shadow: 0 0 10px black;
+        -ms-box-shadow: 0 0 10px black;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    .Me_Picture {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        top: 5%;
+        left: 2%;
+        margin-top: 2%;
+        border: 2px solid;
+        -ms-border-radius: 100px;
+        border-radius: 100px;
+        float: left;
+    }
+
+    .Resume {
+        position: relative;
+        top: 6%;
+        left: 4%;
+        width: 93%;
+        margin-top: 2%;
+        margin-bottom: 2%;
+        font-family: Arial, cursive;
+        font-size: 18px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+    }
+}
+
+/* [...tablets styles here >= min-width: 700px...] */
+@media all and (min-width: 701px) {
+    .Presentation-Box {
+        background-color: black;
+        -ms-opacity: 0.8;
+        opacity: 0.8;
+        width: 45%;
+        height: auto;
+        position: absolute;
+        top: 30%;
+        left: 10%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        -webkit-box-shadow: 0 0 10px black;
+        -ms-box-shadow: 0 0 10px black;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    .Me_Picture {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        top: 5%;
+        left: 2%;
+        margin-top: 2%;
+        border: 2px solid;
+        -ms-border-radius: 100px;
+        border-radius: 100px;
+        float: left;
+    }
+
+    .Resume {
+        position: relative;
+        top: 6%;
+        left: 4%;
+        width: 93%;
+        margin-top: 2%;
+        margin-bottom: 2%;
+        font-family: Arial, cursive;
+        font-size: 18px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+    }
+}
+
+/* [...tablets styles here = min-width: 972px because of the Menu... it growns down] */
+@media all and (min-width: 972px) {
+        .Presentation-Box {
+        background-color: black;
+        -ms-opacity: 0.8;
+        opacity: 0.8;
+        width: 45%;
+        height: auto;
+        position: absolute;
+        top: 25%;
+        left: 10%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        -webkit-box-shadow: 0 0 10px black;
+        -ms-box-shadow: 0 0 10px black;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    .Me_Picture {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        top: 5%;
+        left: 2%;
+        margin-top: 2%;
+        border: 2px solid;
+        -ms-border-radius: 100px;
+        border-radius: 100px;
+        float: left;
+    }
+
+    .Resume {
+        position: relative;
+        top: 6%;
+        left: 4%;
+        width: 93%;
+        margin-top: 2%;
+        margin-bottom: 2%;
+        font-family: Arial, cursive;
+        font-size: 18px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+    }
+}
+
+/* [... desktop styles >= min-width: 1200px ...] */
+@media all and (min-width: 1199px) {
+    .Presentation-Box {
+        background-color: black;
+        -ms-opacity: 0.8;
+        opacity: 0.8;
+        width: 45%;
+        height: auto;
+        position: absolute;
+        top: 25%;
+        left: 10%;
+        border: 2px solid;
+        border-color: black;
+        -ms-border-radius: 5px;
+        border-radius: 5px;
+        -webkit-box-shadow: 0 0 10px black;
+        -ms-box-shadow: 0 0 10px black;
+        box-shadow: 0 0 10px black;
+        overflow: hidden;
+    }
+
+    .Me_Picture {
+        position: relative;
+        width: 150px;
+        height: 150px;
+        top: 5%;
+        left: 2%;
+        margin-top: 2%;
+        border: 2px solid;
+        -ms-border-radius: 100px;
+        border-radius: 100px;
+        float: left;
+    }
+
+    .Resume {
+        position: relative;
+        top: 6%;
+        left: 4%;
+        width: 93%;
+        margin-top: 2%;
+        margin-bottom: 2%;
+        font-family: Arial, cursive;
+        font-size: 18px;
+        word-spacing: 3px;
+        line-height: 130%;
+        color: whitesmoke;
+        text-align: justify;
+    }
+}

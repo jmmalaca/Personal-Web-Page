@@ -1,0 +1,52 @@
+﻿/* [...mobile styles here <= max-width: 600px...] */
+/* [...tablets styles here > min-width: 600px...] */
+/* [...desktop styles here > min-width: 900px...] */
+.Events-Box {
+    background-color: black;
+    -ms-opacity: 0.8;
+    opacity: 0.8;
+    width: 13%;
+    height: auto;
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    border: 2px solid;
+    border-color: black;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 10px black;
+    -ms-box-shadow: 0 0 10px black;
+    box-shadow: 0 0 10px black;
+}
+
+.Events-Logo {
+    position: relative;
+    margin-top: 10%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    top: 13%;
+    left: 7%;
+    display: block;
+}
+
+.Events-List {
+    position: relative;
+    top: 30%;
+    left: 7%;
+}
+
+.Event {
+    width: auto;
+    height: auto;
+    margin: 5%;
+    font-family: Arial, cursive;
+    font-size: 17px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    -moz-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    display: block;
+}
