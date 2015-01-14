@@ -26,7 +26,8 @@ var DataReader = require('../SentimentData/DataReader.js');
 
             //Read Data...
             var reader = new DataReader();
-            reader.Read();
+            var data = reader.Read();
+            reader.PrintData(data);
 
             //Train... or read System trained...
 
