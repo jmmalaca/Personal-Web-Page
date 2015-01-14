@@ -30,13 +30,18 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
+    <Compile Include="SentimentData\DataReader.js" />
     <Compile Include="server.js" />
-    <Content Include="views\layout.ejs" />
+    <Compile Include="TwitterConnector\TwitterConnector.js" />
     <Content Include="package.json" />
-    <Content Include="README.md" />
-    <Content Include="views\tweets.ejs" />
+    <Content Include="SentimentData\happy.txt" />
+    <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="SentimentData\" />
+    <Folder Include="SentimentAnalysis\" />
+    <Folder Include="TwitterConnector\" />
     <Folder Include="views\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
