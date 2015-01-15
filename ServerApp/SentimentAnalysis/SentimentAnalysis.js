@@ -1,4 +1,4 @@
-﻿//Sentiment Analysis System
+﻿//[Sentiment Analysis System]
 var DataReader = require('../SentimentData/DataReader.js');
 var SetupData = require('../SentimentData/SetupData.js');
 var NaiveBayes = require('../SentimentAnalysis/NaiveBayesClassifier.js');
@@ -6,32 +6,32 @@ var NaiveBayes = require('../SentimentAnalysis/NaiveBayesClassifier.js');
 (function() {
     
     "use strict";
-    // Define your library strictly...
+    //[Define your library strictly]
 
     function SentimentAnalysis() {
 
-        //Private Methods
+        //[Private Methods]
 
-        //Public Methods
+        //[Public Methods]
         this.Start = function() {
-            console.log(" -Start SA system...");
+            console.log(" -Start Sentiment Analysis system...");
 
             //Read Data...
             var reader = new DataReader();
             var data = reader.Read();
-            reader.PrintData(data);
+            //reader.PrintData(data);
 
             //Set up data...
             var setup = new SetupData();
             data = setup.Preprocessor(data);
-
-            //Train... or read System trained...
-            var nb = new NaiveBayesClassifier();
-            nb.Start();
+            
+            //Naive Bayes Classifier...
+            var nb = new NaiveBayes();
+            nb.Start(data);
 
         }
     }
 
-    //Export the SA System Object
+    //[Export the Sentiment Analysis System Object]
     module.exports = SentimentAnalysis;
 }());

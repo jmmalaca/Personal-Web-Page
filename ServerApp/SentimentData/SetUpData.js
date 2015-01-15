@@ -1,13 +1,13 @@
-﻿//Setup Data...
+﻿//[Setup Data]
 
 (function () {
     
     "use strict";
-    // Define your library strictly...
+    //[Define your library strictly]
     
     function SetupData() {
         
-        //Private Methods
+        //[Private Methods]
         function Processor(data) {
             //switch a word to their representative key
             //URLs to URL
@@ -17,9 +17,9 @@
             //Emoticons (positive, negative, etc...) to Emoticon (Positive, etc...)
         }
 
-        //Public Methods
+        //[Public Methods]
         this.Preprocessor = function (data) {
-            console.log("Setup Data");
+            console.log("  -Data processing...");
 
             Processor(data);
             
@@ -42,12 +42,10 @@
                     tweetsDictionary['negative'].push(text);
                 }
             });
-            
-            console.log("There is Positive[" + tweetsDictionary['positive'].length + "], Neutral[" + tweetsDictionary['neutral'].length + "], Negative[" + tweetsDictionary['negative'].length + "] tweets.");
             return tweetsDictionary;
         };
     }
     
-    //Export the class
+    //[Export the Setup Data Object]
     module.exports = SetupData;
 }());
