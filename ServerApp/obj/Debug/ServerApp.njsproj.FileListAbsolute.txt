@@ -1,2 +1,1 @@
-C:\Users\jose.miguel.malaca\Desktop\stuff\My_Web_stuff\WebApp\ServerApp\obj\Debug\ServerApp.njsprojResolveAssemblyReference.cache
 C:\Users\jose.miguel.malaca\Desktop\stuff\My_Web_stuff\WebApp\ServerApp\bin\Microsoft.NodejsTools.WebRole.dll

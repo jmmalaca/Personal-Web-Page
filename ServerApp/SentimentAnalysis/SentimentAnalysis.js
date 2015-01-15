@@ -11,11 +11,6 @@ var DataReader = require('../SentimentData/DataReader.js');
         this.filePath = "";
 
         //Private Methods
-        function SetupData() {
-            console.log(" -SA reading initial data...");
-
-        }
-
         function Train() {
             console.log(" -SA training step...");
         }
@@ -31,7 +26,6 @@ var DataReader = require('../SentimentData/DataReader.js');
 
             //Train... or read System trained...
 
-            //Setup system for classification...
         }
     }
 
