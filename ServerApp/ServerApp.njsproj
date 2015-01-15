@@ -460,6 +460,7 @@
     <Compile Include="node_modules\url\url.js" />
     <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
     <Compile Include="SentimentData\DataReader.js" />
+    <Compile Include="SentimentData\SetupData.js" />
     <Compile Include="server.js" />
     <Compile Include="TwitterConnector\TwitterConnector.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />

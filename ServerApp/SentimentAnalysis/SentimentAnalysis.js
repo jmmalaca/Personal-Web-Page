@@ -1,5 +1,6 @@
 ﻿//Sentiment Analysis System
 var DataReader = require('../SentimentData/DataReader.js');
+var SetupData = require('../SentimentData/SetupData.js');
 
 (function() {
     
@@ -11,10 +12,8 @@ var DataReader = require('../SentimentData/DataReader.js');
         this.filePath = "";
 
         //Private Methods
-        function Train() {
-            console.log(" -SA training step...");
-        }
         
+
         //Public Methods
         this.Start = function() {
             console.log(" -Start SA system...");
@@ -23,6 +22,10 @@ var DataReader = require('../SentimentData/DataReader.js');
             var reader = new DataReader();
             var data = reader.Read();
             reader.PrintData(data);
+
+            //Set up data...
+            var setup = new SetupData();
+            
 
             //Train... or read System trained...
 
