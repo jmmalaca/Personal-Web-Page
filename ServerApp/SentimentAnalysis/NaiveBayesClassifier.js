@@ -62,7 +62,7 @@
         }
         
         function countTotalWordsAppear(data) {
-            
+            console.log(">" + data);
         }
 
         function trainSystem() {
@@ -81,7 +81,7 @@
             console.log("   -Negative Prior Probability = " + negativeProbabilty);
 
             //Words Probabilities
-            setupUnigramsData();
+            //setupUnigramsData();
         }
         
         //[Public Methods]

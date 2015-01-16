@@ -29,16 +29,22 @@
             tweetsDictionary['negative'] = [];
 
             data.forEach(function (tweet) {
-                var tweetsData = tweet.split(",\"");
+
+                tweet.trim();
+                var classePattern = new RegExp("^[a-z]+");
+                var textPattern = new RegExp("\".+\"");
                 
-                var classe = tweetsData[0];
-                var text = tweetsData[1];
-                
-                if (classe === "positive") {
+                var classe = classePattern.exec(tweet);
+                var text = textPattern.exec(tweet);
+                text = text[0].slice(1, text[0].length-1);
+                //console.log(">> " + tweet);
+                console.log("> classe[" + classe[0] + "], text[" + text + "]");
+
+                if (classe[0] === "positive") {
                     tweetsDictionary['positive'].push(text);
-                } else if (classe === "neutral") {
+                } else if (classe[0] === "neutral") {
                     tweetsDictionary['neutral'].push(text);
-                } else if (classe === "negative") {
+                } else if (classe[0] === "negative") {
                     tweetsDictionary['negative'].push(text);
                 }
             });
