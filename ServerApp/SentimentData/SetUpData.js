@@ -25,7 +25,7 @@ var Emoticons = require('../SentimentData/Emoticons.js');
             patt = new RegExp("#[a-zA-Z0-9_][a-zA-Z0-9_]+");
             text = text.replace(patt, "HASHTAG");
             //RT to Retweet
-            patt = new RegExp("[Rr][Tt]");
+            patt = new RegExp("^[Rr][Tt]");
             text = text.replace(patt, "RETWEET");
             //Emoticons (positive, negative, etc...) to Emoticon (Positive, etc...)
             var emoticonsPlayer = new Emoticons();
