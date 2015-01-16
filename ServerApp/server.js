@@ -15,13 +15,21 @@ serverApp.get('/', function (req, response) {
     });
 });
 
+//[Route definition: /countsWords]
+serverApp.get('/countsWords', function (req, response) {
+    console.log("\n -Counts Words Call...");
+    
+    //get the request string data...
+    
+
+});
+
 //[Route definition: /tweets/searchString]
 serverApp.get('/sentiment/:searchString', function (req, response) {
-    console.log("\n -Tweets Call...");
     
     //get the request string data...
     var searchString = req.params.searchString;
-    console.log(" -Search String: " + searchString);
+    console.log("\n -Tweets Call... -Search String: " + searchString);
 
     //Call Tweeter...
     var connector = require('./TwitterConnector/TwitterConnector.js');

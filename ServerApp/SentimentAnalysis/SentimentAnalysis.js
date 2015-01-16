@@ -28,7 +28,6 @@ var NaiveBayes = require('../SentimentAnalysis/NaiveBayesClassifier.js');
             //Naive Bayes Classifier...
             var nb = new NaiveBayes();
             nb.Start(data);
-
         }
     }
 

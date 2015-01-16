@@ -461,6 +461,7 @@
     <Compile Include="SentimentAnalysis\NaiveBayesClassifier.js" />
     <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
     <Compile Include="SentimentData\DataReader.js" />
+    <Compile Include="SentimentData\Emoticons.js" />
     <Compile Include="SentimentData\SetupData.js" />
     <Compile Include="server.js" />
     <Compile Include="TwitterConnector\TwitterConnector.js" />
@@ -1012,6 +1013,7 @@
     <Content Include="obj\Debug\ServerApp.njsprojResolveAssemblyReference.cache" />
     <Content Include="package.json" />
     <Content Include="SentimentData\tweets.txt" />
+    <Content Include="SentimentData\words.txt" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>

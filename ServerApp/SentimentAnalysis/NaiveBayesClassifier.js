@@ -1,4 +1,5 @@
 ﻿//[Naive Bayes Classifier System]
+var fs = require('fs');
 
 (function () {
     
@@ -61,8 +62,40 @@
             takeElements(data, NEGATIVE, from);
         }
         
+        function countWords(data, arrayWords) {
+            data.forEach(function (text) {
+                var words = text.split(' ');
+                words.forEach(function (word) {
+                    if (word.length > 0) {
+                        if (arrayWords[word] != null) {
+                            arrayWords[word] = arrayWords[word] + 1;
+                        } else {
+                            arrayWords[word] = 1;
+                        }
+                    }
+                });
+            });
+            return arrayWords;
+        }
+
         function countTotalWordsAppear(data) {
-            console.log(">" + data);
+            var totalWords = {};
+            totalWords = countWords(data.positive, totalWords);
+            totalWords = countWords(data.neutral, totalWords);
+            totalWords = countWords(data.negative, totalWords);
+            return totalWords;
+        }
+        
+        function saveWordsDataToFile(totalWords) {
+            var wordsFilePath = "./SentimentData/words.txt";
+            console.log("   -Save Words Data to TXT file.");
+            for (var key in totalWords) {
+                if (totalWords.hasOwnProperty(key)) {
+                    var str = key + " > " + totalWords[key] + "\n";
+                    fs.appendFileSync(wordsFilePath, str);
+                }
+            }
+            console.log('    -It\'s saved!');
         }
 
         function trainSystem() {
@@ -91,7 +124,9 @@
             //Train...
             console.log("   -System not trained... Train it:");
 
-            countTotalWordsAppear(data);
+            var totalWords = countTotalWordsAppear(data);
+            saveWordsDataToFile(totalWords);
+
             separateTrainingAndValidationData(data, selectDataFrom);
             trainSystem();
             //Or read trained system...
