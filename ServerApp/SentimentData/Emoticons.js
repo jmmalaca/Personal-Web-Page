@@ -79,8 +79,8 @@
         //[Public Methods]
         this.Replace = function (text) {
             
-            text = replaceEmoticons(text, positivePatterns, "POSITIVE_EMOTICON");
-            text = replaceEmoticons(text, negativePatterns, "NEGATIVE_EMOTICON");
+            text = replaceEmoticons(text, positivePatterns, "POSITIVE");
+            text = replaceEmoticons(text, negativePatterns, "NEGATIVE");
 
             return text;
         }

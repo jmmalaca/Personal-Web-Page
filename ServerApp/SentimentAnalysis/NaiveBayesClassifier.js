@@ -86,16 +86,24 @@ var fs = require('fs');
             return totalWords;
         }
         
-        function saveWordsDataToFile(totalWords) {
-            var wordsFilePath = "./SentimentData/words.txt";
-            console.log("   -Save Words Data to TXT file.");
-            for (var key in totalWords) {
-                if (totalWords.hasOwnProperty(key)) {
-                    var str = key + " > " + totalWords[key] + "\n";
-                    fs.appendFileSync(wordsFilePath, str);
-                }
-            }
-            console.log('    -It\'s saved!');
+        //Use JSON... leave the TXT files...
+        //function saveWordsDataToFile(totalWords) {
+        //    var wordsFilePath = "./SentimentData/wordsTXT.txt";
+        //    console.log("   -Save Words Data to TXT file.");
+        //    for (var key in totalWords) {
+        //        if (totalWords.hasOwnProperty(key)) {
+        //            var str = key + " > " + totalWords[key] + "\n";
+        //            fs.appendFileSync(wordsFilePath, str);
+        //        }
+        //    }
+        //    console.log('    -It\'s saved!');
+        //}
+        
+        function saveJsonDataToFile(totalWords) {
+            var wordsFilePath = "./SentimentData/wordsJSON.txt";
+            console.log("   -Save Words Data to JSON file.");
+            var jsonString = JSON.stringify(totalWords);
+            fs.writeFile(wordsFilePath, jsonString);
         }
 
         function trainSystem() {
@@ -125,7 +133,8 @@ var fs = require('fs');
             console.log("   -System not trained... Train it:");
 
             var totalWords = countTotalWordsAppear(data);
-            saveWordsDataToFile(totalWords);
+            //saveWordsDataToFile(totalWords);
+            saveJsonDataToFile(totalWords);
 
             separateTrainingAndValidationData(data, selectDataFrom);
             trainSystem();

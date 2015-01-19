@@ -10,26 +10,35 @@ var Emoticons = require('../SentimentData/Emoticons.js');
         
         //[Private Methods]
         function processor(text) {
-            //remove some blank extra spaces
-            var patt = new RegExp(" +");
-            text = text.replace(patt, " ");
-
-            //replaces to Twitter Keywords
+            
             //URLs to URL
-            patt = new RegExp("((http|HTTP)://([a-zA-Z]|[0-9]|\\~|/|\\.)+|www\\.([a-zA-Z]|[0-9]|\\~|/|\\.)+)");
+            patt = new RegExp(/[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi);
             text = text.replace(patt, "URL");
-            //@blabla to Usernames
-            patt = new RegExp("@[a-zA-Z0-9_][a-zA-Z0-9_]+");
-            text = text.replace(patt, "USERNAME");
-            //#blabla to Hashtags
-            patt = new RegExp("#[a-zA-Z0-9_][a-zA-Z0-9_]+");
-            text = text.replace(patt, "HASHTAG");
-            //RT to Retweet
-            patt = new RegExp("^[Rr][Tt]");
-            text = text.replace(patt, "RETWEET");
-            //Emoticons (positive, negative, etc...) to Emoticon (Positive, etc...)
+
+            //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
             var emoticonsPlayer = new Emoticons();
             text = emoticonsPlayer.Replace(text);
+            
+            //Remove pontuation...
+            //Mark pontuation that may express a feeling... like ! or ?...
+            var patt = new RegExp(/[\!\?]+/g);
+            text = text.replace(patt, " PONTUATION ");
+            //remove all others pontuation marks... …
+            //text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_~()]/g, " ");
+            
+            //@blabla to Usernames
+            patt = new RegExp(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g);
+            text = text.replace(patt, "USERNAME");
+            //#blabla to Hashtags
+            patt = new RegExp(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g);
+            text = text.replace(patt, "HASHTAG");
+            //RT to Retweet
+            patt = new RegExp(/^[Rr][Tt]/g);
+            text = text.replace(patt, "RETWEET");
+            
+            //remove some blank extra spaces...
+            text = text.replace(/ +/g, " ");
+            text = text.trim();
             
             return text;
         }

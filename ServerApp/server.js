@@ -17,19 +17,17 @@ serverApp.get('/', function (req, response) {
 
 //[Route definition: /countsWords]
 serverApp.get('/countsWords', function (req, response) {
-    console.log("\n -Counts Words Call...");
-    
-    //get the request string data...
+    console.log("\n -Data Counts Call...");
     
 
 });
 
-//[Route definition: /tweets/searchString]
+//[Route definition: /sentiment/searchString]
 serverApp.get('/sentiment/:searchString', function (req, response) {
     
     //get the request string data...
     var searchString = req.params.searchString;
-    console.log("\n -Tweets Call... -Search String: " + searchString);
+    console.log("\n -Sentiment Call... About: " + searchString);
 
     //Call Tweeter...
     var connector = require('./TwitterConnector/TwitterConnector.js');

@@ -1013,7 +1013,7 @@
     <Content Include="obj\Debug\ServerApp.njsprojResolveAssemblyReference.cache" />
     <Content Include="package.json" />
     <Content Include="SentimentData\tweets.txt" />
-    <Content Include="SentimentData\words.txt" />
+    <Content Include="SentimentData\wordsJSON.txt" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>
