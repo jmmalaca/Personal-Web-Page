@@ -1,6 +1,7 @@
 ﻿//[Setup Data]
 var Emoticons = require('../SentimentData/Emoticons.js');
 var async = require('async');
+var processData = require('../ProcessingData/ProcessData.js');
 
 (function () {
     
@@ -22,7 +23,10 @@ var async = require('async');
             //validate your regex: www.regex101.com ;)
 
             //URLs to URL
-            text = text.replace(/(((http|https)\:\/\/)|www\.|)(\w|\d|\_|\-)+(\~|\/|\.)\w{2,}(\/(\w|\d|\_|\-)+){0,}/gi, " url ");
+            text = text.replace(/(((http|https)\:\/\/)|www\.|)(\w|\d|\_|\-)+(\~|\/|\.)\w{2,}(\/(\w|\d|\_|\-)+){0,}/gi, " URL ");
+            
+            //Uppercases
+            text = text.replace(/(?![a-z]+)([A-Z][A-Z]+)(?![a-z]+)/g, " UPPERCASE ");
 
             //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
             var emoticonsSetup = new Emoticons();
@@ -30,21 +34,19 @@ var async = require('async');
             
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
-            text = text.replace(/[\!\?]+/g, " pontuation ");
+            text = text.replace(/[\!\?]+/g, " PONTUATION ");
             //remove all others pontuation marks... …
             //text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_~()]/g, " ");
             
             //numbers...
-            text = text.replace(/[0-9]+/g, "number");
+            text = text.replace(/[0-9]+/g, "NUMBER");
 
             //@blabla to Usernames
-            text = text.replace(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g, "username");
+            text = text.replace(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g, "USERNAME");
             //#blabla to Hashtags
-            text = text.replace(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, "hashtag");
+            text = text.replace(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, "HASHTAG");
             //RT to Retweet
-            text = text.replace(/^[Rr][Tt]/g, "retweet");
-            //Uppercases
-            text = text.replace(/(?![a-z]+)([A-Z][A-Z]+)(?![a-z]+)/g, " uppercase ");
+            text = text.replace(/^[Rr][Tt]/g, "RETWEET");
             
             //remove some blank extra spaces...
             text = text.replace(/ +/g, " ");
@@ -52,6 +54,7 @@ var async = require('async');
             
             return text;
         }
+
         function processTweet(tweet) {
             tweet.trim();
             var classePattern = new RegExp("^[a-z]+");
@@ -59,7 +62,7 @@ var async = require('async');
             var classe = classePattern.exec(tweet);
             var text = textPattern.exec(tweet);
             text = text[0].slice(1, text[0].length - 1);
-            text = processor(text);
+            //text = processor(text);
             //console.log(">> " + tweet);
             //console.log("> classe[" + classe[0] + "], text[" + text + "]");
             
@@ -76,57 +79,41 @@ var async = require('async');
         this.Preprocessor = function (data) {
             console.log("  -Data processing...");
 
-            var start = new Date().getTime();
+            processData.StartTime();
             
             //usual forEach... TOOooo looooong...
-            data.forEach(function(tweet) {
-                processTweet(tweet);
-            });
+            //data.forEach(function(tweet) {
+            //    processTweet(tweet);
+            //});
             
-            //async forEach... +-6MIN
+            //async forEach... +/- 6 minutes
             //async.forEach(data, function(tweet) {
-            //    processTweet(tweeet);
+            //    processTweet(tweet);
             //});
 
             //parallel forEach... http://justinklemm.com/node-js-async-tutorial/
-            // Array to hold async tasks
-            //var asyncTasks = [];
-            // Loop through some items
-            //data.forEach(function (tweet) {
-                // We don't actually execute the async action here
-                // We add a function containing it to an array of "tasks"
-                //asyncTasks.push(function (callback) {
-                    // Call an async function, often a save() to DB
-                    //item.someAsyncCall(function () {
-                        // Async call is done, alert via callback
-                        //callback();
-                    //});
-                //});
-            //});
+            //Array to hold async tasks
+            var asyncTasks = [];
+            //Loop through some items
+            data.forEach(function (tweet) {
+                //We don't actually execute the async action here
+                //We add a function containing it to an array of "tasks"
+                asyncTasks.push(function (callback) {
+                    //Call an async function, often a save() to DB
+                    processTweet(tweet);
+                    //Async call is done, alert via callback
+                    callback();
+                });
+            });
+            processData.ShowTimeCount(start, "Added all AsyncTasks");// +/- 0.005 seconds
+
+            processData.StartTime();
             // Now we have an array of functions doing async tasks
             // Execute all async tasks in the asyncTasks array
-            //async.parallel(asyncTasks, function () {
-                // All tasks are done now
-                //var end = new Date().getTime();
-                //var time = end - start; //in miliseconds
-                //var seconds = 0.001 * time;
-                //if (seconds > 60) {
-                //    var minutes = seconds / 60;
-                //    console.log("   -Processing Execution time: " + minutes + " minutes");
-                //} else {
-                //    console.log("   -Processing Execution time: " + seconds + " seconds");
-                //}   
-            //});
-
-            var end = new Date().getTime();
-            var time = end - start; //in miliseconds
-            var seconds = 0.001 * time;
-            if (seconds > 60) {
-                var minutes = seconds / 60;
-                console.log("   -Processing Execution time: " + minutes + " minutes");
-            } else {
-                console.log("   -Processing Execution time: " + seconds + " seconds");
-            }
+            async.parallel(asyncTasks, function () {
+                //All tasks are done now
+                processData.ShowTimeCount(start, "All Taks Done."); // +/- 6 minutes
+            });
 
             return tweetsDictionary;
         };

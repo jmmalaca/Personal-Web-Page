@@ -458,6 +458,7 @@
     <Compile Include="node_modules\url\node_modules\punycode\punycode.js" />
     <Compile Include="node_modules\url\test.js" />
     <Compile Include="node_modules\url\url.js" />
+    <Compile Include="ProcessingData\ProcessData.js" />
     <Compile Include="SentimentAnalysis\NaiveBayesClassifier.js" />
     <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
     <Compile Include="SentimentData\DataReader.js" />
@@ -1018,6 +1019,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="ProcessingData\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\.bin\" />
     <Folder Include="node_modules\0\" />
