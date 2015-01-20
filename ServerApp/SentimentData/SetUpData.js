@@ -1,7 +1,7 @@
 ﻿//[Setup Data]
 var Emoticons = require('../SentimentData/Emoticons.js');
 var async = require('async');
-var processData = require('../ProcessingData/ProcessData.js');
+var ProcessData = require('../ProcessingData/ProcessData.js');
 
 (function () {
     
@@ -17,7 +17,7 @@ var processData = require('../ProcessingData/ProcessData.js');
         tweetsDictionary['negative'] = [];
         
         //[Private Methods]
-        function processor(text) {
+        function dataReader(text) {
             
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
             //validate your regex: www.regex101.com ;)
@@ -35,16 +35,19 @@ var processData = require('../ProcessingData/ProcessData.js');
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
             text = text.replace(/[\!\?]+/g, " PONTUATION ");
+
+            //@blabla to Usernames
+            text = text.replace(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g, "USERNAME");
+            
+            //#blabla to Hashtags
+            text = text.replace(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, "HASHTAG");
+
             //remove all others pontuation marks... …
-            //text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_~()]/g, " ");
+            text = text.replace(/[\.,-\/#!$%\^&\*;:{}=\-_~()]/g, " ");
             
             //numbers...
             text = text.replace(/[0-9]+/g, "NUMBER");
 
-            //@blabla to Usernames
-            text = text.replace(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g, "USERNAME");
-            //#blabla to Hashtags
-            text = text.replace(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, "HASHTAG");
             //RT to Retweet
             text = text.replace(/^[Rr][Tt]/g, "RETWEET");
             
@@ -62,7 +65,7 @@ var processData = require('../ProcessingData/ProcessData.js');
             var classe = classePattern.exec(tweet);
             var text = textPattern.exec(tweet);
             text = text[0].slice(1, text[0].length - 1);
-            //text = processor(text);
+            text = dataReader(text);
             //console.log(">> " + tweet);
             //console.log("> classe[" + classe[0] + "], text[" + text + "]");
             
@@ -79,41 +82,45 @@ var processData = require('../ProcessingData/ProcessData.js');
         this.Preprocessor = function (data) {
             console.log("  -Data processing...");
 
-            processData.StartTime();
-            
-            //usual forEach... TOOooo looooong...
-            //data.forEach(function(tweet) {
-            //    processTweet(tweet);
-            //});
-            
-            //async forEach... +/- 6 minutes
+            var measures = new ProcessData();
+            measures.StartTime();
+
+            //usual forEach...
+            var dat = data.slice(0, 10000);
+            dat.forEach(function (tweet) {
+                processTweet(tweet);
+            });
+            measures.ShowTimeCount(dat.length,"All Taks Done.");// +/- 6 minutes
+
+            //async forEach...
             //async.forEach(data, function(tweet) {
             //    processTweet(tweet);
             //});
+            //measures.ShowTimeCount("All Taks Done."); // +/- 6 minutes
 
-            //parallel forEach... http://justinklemm.com/node-js-async-tutorial/
-            //Array to hold async tasks
-            var asyncTasks = [];
-            //Loop through some items
-            data.forEach(function (tweet) {
-                //We don't actually execute the async action here
-                //We add a function containing it to an array of "tasks"
-                asyncTasks.push(function (callback) {
-                    //Call an async function, often a save() to DB
-                    processTweet(tweet);
-                    //Async call is done, alert via callback
-                    callback();
-                });
-            });
-            processData.ShowTimeCount(start, "Added all AsyncTasks");// +/- 0.005 seconds
+            ////parallel forEach... http://justinklemm.com/node-js-async-tutorial/
+            ////Array to hold async tasks
+            //var asyncTasks = [];
+            ////Loop through some items
+            //data.forEach(function (tweet) {
+            //    //We don't actually execute the async action here
+            //    //We add a function containing it to an array of "tasks"
+            //    asyncTasks.push(function (callback) {
+            //        //Call an async function, often a save() to DB
+            //        processTweet(tweet);
+            //        //Async call is done, alert via callback
+            //        callback();
+            //    });
+            //});
+            //measures.ShowTimeCount("Added all AsyncTasks");// +/- 0.005 seconds
 
-            processData.StartTime();
-            // Now we have an array of functions doing async tasks
-            // Execute all async tasks in the asyncTasks array
-            async.parallel(asyncTasks, function () {
-                //All tasks are done now
-                processData.ShowTimeCount(start, "All Taks Done."); // +/- 6 minutes
-            });
+            //measures.StartTime();
+            //// Now we have an array of functions doing async tasks
+            //// Execute all async tasks in the asyncTasks array
+            //async.parallel(asyncTasks, function () {
+            //    //All tasks are done now
+            //    measures.ShowTimeCount("All Taks Done."); // +/- 6 minutes
+            //});
 
             return tweetsDictionary;
         };
