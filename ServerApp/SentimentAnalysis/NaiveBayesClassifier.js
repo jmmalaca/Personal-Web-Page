@@ -100,7 +100,7 @@ var fs = require('fs');
         //}
         
         function saveJsonDataToFile(totalWords) {
-            var wordsFilePath = "./SentimentData/wordsJSON.txt";
+            var wordsFilePath = "./DataAnalytics/wordsJSON.txt";
             console.log("   -Save Words Data to JSON file.");
             var jsonString = JSON.stringify(totalWords);
             fs.writeFile(wordsFilePath, jsonString);

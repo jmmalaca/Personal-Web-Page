@@ -461,12 +461,23 @@
     <Compile Include="ProcessingData\ProcessData.js" />
     <Compile Include="SentimentAnalysis\NaiveBayesClassifier.js" />
     <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
-    <Compile Include="SentimentData\DataReader.js" />
-    <Compile Include="SentimentData\Emoticons.js" />
-    <Compile Include="SentimentData\SetupData.js" />
+    <Compile Include="DataAnalytics\DataReader.js" />
+    <Compile Include="DataAnalytics\Emoticons.js" />
+    <Compile Include="DataAnalytics\TextsProcessor.js" />
     <Compile Include="server.js" />
     <Compile Include="TwitterConnector\TwitterConnector.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
+    <Content Include="DataAnalytics\Acronyms\acronyms.txt" />
+    <Content Include="DataAnalytics\Stanford\stopwords.txt" />
+    <Content Include="DataAnalytics\Stanford\README" />
+    <Content Include="DataAnalytics\TexasU\badwords.txt" />
+    <Content Include="DataAnalytics\TexasU\negative-words.txt" />
+    <Content Include="DataAnalytics\TexasU\positive-words.txt" />
+    <Content Include="DataAnalytics\TexasU\README" />
+    <Content Include="DataAnalytics\TexasU\stopwords.txt" />
+    <Content Include="DataAnalytics\WebConfs\Stopwords.txt" />
+    <Content Include="DataAnalytics\WilsonWords\subjclueslen1-HLTEMNLP05.README" />
+    <Content Include="DataAnalytics\WilsonWords\subjclueslen1-HLTEMNLP05.tff" />
     <Content Include="node_modules\.bin\prettyjson" />
     <Content Include="node_modules\.bin\prettyjson.cmd" />
     <Content Include="node_modules\0\package.json" />
@@ -1014,12 +1025,17 @@
     <Content Include="obj\Debug\ServerApp.njsprojResolveAssemblyReference.cache" />
     <Content Include="package.json" />
     <Content Include="ProcessingData\cpuLoadsJSON.txt" />
-    <Content Include="SentimentData\tweets.txt" />
-    <Content Include="SentimentData\wordsJSON.txt" />
+    <Content Include="DataAnalytics\tweets.txt" />
+    <Content Include="DataAnalytics\wordsJSON.txt" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
+    <Folder Include="DataAnalytics\Acronyms\" />
+    <Folder Include="DataAnalytics\TexasU\" />
+    <Folder Include="DataAnalytics\WebConfs\" />
+    <Folder Include="DataAnalytics\Stanford\" />
+    <Folder Include="DataAnalytics\WilsonWords\" />
     <Folder Include="ProcessingData\" />
     <Folder Include="node_modules\" />
     <Folder Include="node_modules\.bin\" />
@@ -1263,7 +1279,7 @@
     <Folder Include="node_modules\url\node_modules\punycode\" />
     <Folder Include="obj\" />
     <Folder Include="obj\Debug\" />
-    <Folder Include="SentimentData\" />
+    <Folder Include="DataAnalytics\" />
     <Folder Include="SentimentAnalysis\" />
     <Folder Include="TwitterConnector\" />
     <Folder Include="views\" />

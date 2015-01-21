@@ -13,7 +13,7 @@ var fs = require('fs');
         var start = 0; //javascript Date Object
         var startHR = 0; //nodejs high-resolution real time [seconds, nanoseconds] array
         var loadsFilePath = "./ProcessingData/cpuLoadsJSON.txt";
-        var cpuLoadsData = {};
+        //var cpuLoadsData = {};
 
         //[Private Methods]
         function readJsonDataFromFile() {
@@ -54,24 +54,24 @@ var fs = require('fs');
                 return results["found"].length + "," + results["load"];
             });
             
-            var dataToAdd = [cpuPercentage, seconds];
-            if (cpuLoadsData[numberTextsProcessed] == null) {
-                cpuLoadsData[numberTextsProcessed] = [];
-            }
-            cpuLoadsData[numberTextsProcessed].push(dataToAdd);
+            //var dataToAdd = [cpuPercentage, seconds];
+            //if (cpuLoadsData[numberTextsProcessed] == null) {
+            //    cpuLoadsData[numberTextsProcessed] = [];
+            //}
+            //cpuLoadsData[numberTextsProcessed].push(dataToAdd);
         }
 
         //[Public Methods]
         this.StartTime = function () {
             start = new Date().getTime();
             startHR = process.hrtime();
-            readJsonDataFromFile();
+            //readJsonDataFromFile();
         }
 
         this.ShowTimeCount = function (numberTextsProcessed, text) {
             showData(numberTextsProcessed, text);
-            saveJsonDataToFile();
-            console.log("   -CPU Data Saved.");
+            //saveJsonDataToFile();
+            //console.log("   -CPU Data Saved.");
         }
     }
     
