@@ -459,8 +459,8 @@
     <Compile Include="node_modules\url\test.js" />
     <Compile Include="node_modules\url\url.js" />
     <Compile Include="ProcessingData\ProcessData.js" />
+    <Compile Include="SentimentAnalysis\DataSeparation.js" />
     <Compile Include="SentimentAnalysis\NaiveBayesClassifier.js" />
-    <Compile Include="SentimentAnalysis\SentimentAnalysis.js" />
     <Compile Include="DataAnalytics\DataReader.js" />
     <Compile Include="DataAnalytics\Emoticons.js" />
     <Compile Include="DataAnalytics\TextsProcessor.js" />
@@ -1026,7 +1026,6 @@
     <Content Include="package.json" />
     <Content Include="ProcessingData\cpuLoadsJSON.txt" />
     <Content Include="DataAnalytics\tweets.txt" />
-    <Content Include="DataAnalytics\wordsJSON.txt" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>

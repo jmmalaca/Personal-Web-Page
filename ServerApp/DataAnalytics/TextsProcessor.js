@@ -21,39 +21,45 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
             //validate your regex: www.regex101.com ;)
 
-            //URLs to URL
-            text = text.replace(/(((http|https)\:\/\/)|www\.|)(\w|\d|\_|\-)+(\~|\/|\.)\w{2,}(\/(\w|\d|\_|\-)+){0,}/gi, " URL ");
-            
             //Uppercases
-            text = text.replace(/(?![a-z]+)([A-Z][A-Z]+)(?![a-z]+)/g, " UPPERCASE ");
+            text = text.replace(/(!?^RT)[A-Z][A-Z]+/g, " uppercase ");
             
+            //URLs to URL
+            text = text.replace(/((http|https)\:\/\/){0,1}(www\.){0,1}([a-z]|[0-9]|\_|\-)+(\~|\/|\.)[a-z]{2,}(\/([a-zA-Z]|[0-9]|_|-)+){0,}/g, " url ");
+            
+            //RT to Retweet
+            text = text.replace(/^RT /g, "retweet ");
+
             //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
             var emoticonsSetup = new Emoticons();
             text = emoticonsSetup.Replace(text);
             
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
-            text = text.replace(/[\!\?]+/g, " PONTUATION ");
+            text = text.replace(/[\!\?]+/g, " pontuation ");
             
             //@blabla to Usernames
-            text = text.replace(/@[a-zA-Z0-9\\_][a-zA-Z0-9\\_]+/g, " USERNAME ");
+            text = text.replace(/\@[a-zA-Z0-9_]+/g, " username ");
             
             //#blabla to Hashtags
-            text = text.replace(/#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, " HASHTAG ");
+            text = text.replace(/\#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, " hashtag ");
             
             //numbers...
-            text = text.replace(/\s+[0-9]+\s+/g, " NUMBER ");
-            
-            //RT to Retweet
-            text = text.replace(/^[Rr][Tt]/g, " RETWEET ");
+            text = text.replace(/(?![a-z])[0-9]+(?![a-z])/g, " number ");
             
             //acentos e caracteres especiais em HTML
-            text = text.replace(/&.+;/g, " HTMLCHAR ");
+            text = text.replace(/\&.+;/g, " htmlchar ");
+            
+            //repetitions...
+            text = text.replace(/([a-z])\1{2,}/g, " repetition ");
+            
+            //negations
+            text = text.replace(/([a-z]+\'t|not|no|never|neither|seldom|hardly|nobody|none|nor|nothing|nowhere)/g," negation ");
 
             //remove all others pontuation marks... …
-            text = text.replace(/(\\|\.|,|\"|\/|#|!|$|%|\^|&|\*|;|:|\{|\}|=|-|~|\(|\))/g, " ");
+            text = text.replace(/(\\|\.|,|\"|\/|\#|\!|\$|\%|\^|\&|\*|\;|\:|\{|\}|\=|\-|\~|\(|\)|(?![a-z0-9])\_(?![a-z0-9]))/g, " ");
             
-            //remove some blank extra spaces...
+            //remove any [ "\r", "\n", "\t", "\f" ]...
             text = text.replace(/\s+/g, " ");
             text = text.trim();
             
@@ -63,30 +69,35 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         function dataProcessor(text, allDataAvailable) {
 
             var acronyms = allDataAvailable.getAcronyms();
-            acronyms.forEach(function(acronym) {
+            acronyms.forEach(function (acronym) {
                 text = text.replace(" " + acronym[0] + " ", " " + acronym[1] + " ");
             });
 
             var positiveWords = allDataAvailable.getPositiveWords();
-            positiveWords.forEach(function(word) {
-                text = text.replace(" " + word + " ", " POSITIVE_WORD ");
+            positiveWords.forEach(function (word) {
+                text = text.replace(" " + word + " ", " positive_word ");
             });
             
             var neutralWords = allDataAvailable.getNeutralWords();
             neutralWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " NEUTRAL_WORD ");
+                text = text.replace(" " + word + " ", " neutral_word ");
             });
             
             var negativeWords = allDataAvailable.getNegativeWords();
             negativeWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " NEGATIVE_WORD ");
+                text = text.replace(" " + word + " ", " negative_word ");
             });
 
             var stopwordsWords = allDataAvailable.getStopWords();
             stopwordsWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " STOPWORD ");
+                text = text.replace(" " + word + " ", " stopword ");
             });
-            
+
+            var badwordsWords = allDataAvailable.getBadWords();
+            badwordsWords.forEach(function (word) {
+                text = text.replace(" " + word + " ", " badword ");
+            });
+
             //remove some blank extra spaces...
             text = text.replace(/\s+/g, " ");
             text = text.trim();
@@ -97,11 +108,10 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         function processTweet(text, allDataAvailable, textPolarity) {
             
             text.trim();
-            text = text.slice(0, text.length-2);
-            
+            text = text.slice(0, text.length - 2);
             text = regexProcessor(text);
+            text = text.toLowerCase();
             text = dataProcessor(text, allDataAvailable);
-            
             processedTexts[textPolarity].push(text);
         }
         
@@ -139,30 +149,35 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             //// Execute all async tasks in the asyncTasks array
             //async.parallel(asyncTasks, function () {
             //    //All tasks are done now
-            //    measures.ShowTimeCount("All Taks Done."); // +/- 6 minutes
+            //    measures.ShowTimeCount("All Taks Done."); // +/- ? minutes
             //});
         }
 
         //[Public Methods]
         this.Preprocessor = function (allDataAvailable) {
-            console.log("  -Texts processing...");
-            
+            console.log("\n -Process: ");
             var measures = new ProcessData();
             measures.StartTime();
             
             var data = allDataAvailable.getPositiveTweets();
             var countTexts = data.length;
-            textsProcessor(data, allDataAvailable, "positive");
+            var type = "positive";
+            console.log("  -"+ type +" texts[" + data.length + "]...");
+            textsProcessor(data, allDataAvailable, type);
 
             data = allDataAvailable.getNeutralTweets();
             countTexts = countTexts + data.length;
-            textsProcessor(data, allDataAvailable, "neutral");
+            type = "neutral";
+            console.log("  -" + type + " texts[" + data.length + "]...");
+            textsProcessor(data, allDataAvailable, type);
             
             data = allDataAvailable.getNegativeTweets();
             countTexts = countTexts + data.length;
-            textsProcessor(data, allDataAvailable, "negative");
+            type = "negative";
+            console.log("  -" + type + " texts[" + data.length + "]...");
+            textsProcessor(data, allDataAvailable, type);
             
-            measures.ShowTimeCount(countTexts, "All Taks Done.");// +/- 6 minutes
+            measures.ShowTimeCount(countTexts, "All " + countTexts + " texts Done.");
 
             return processedTexts;
         };
