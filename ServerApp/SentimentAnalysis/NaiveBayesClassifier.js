@@ -14,10 +14,10 @@ var fs = require('fs');
         var testData = {};
 
         var classesProbabilities = {};
-        var classesProbabilitiesJsonPath = "./SentimentAnalysis/NB_ClassesProbabilities.txt";
+        var classesProbabilitiesJsonPath = "./SentimentAnalysis/ClassesProbabilities.txt";
 
         var wordsClassePriorProbabilities = {};
-        var wordsClassePriorProbabilitiesJsonPath = "./SentimentAnalysis/NB_WordsProbabilities.txt";
+        var wordsClassePriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsProbabilities.txt";
 
         //[Private Methods]
         function calcClassesPriorProbabilities() {
@@ -92,11 +92,9 @@ var fs = require('fs');
                 wordsClassePriorProbabilities[key] = classewordsProbabilites;
             });
             console.log("  -Words Prior Probabilities calculated.");
-            return wordsClassePriorProbabilities;
         }
         
-        function SaveData() {
-
+        function saveData() {
             var jsonString = JSON.stringify(classesProbabilities);
             fs.writeFileSync(classesProbabilitiesJsonPath, jsonString);
             
@@ -107,10 +105,10 @@ var fs = require('fs');
         }
 
         function trainSystem() {
-            classesProbabilities = calcClassesPriorProbabilities();
-            wordsClassePriorProbabilities = calcWordsPriorProbabilities();
+            calcClassesPriorProbabilities();
+            calcWordsPriorProbabilities();
+            saveData();
 
-            SaveData(classesProbabilities, wordsClassePriorProbabilities);
             console.log("  -Naive Bayes system data saved (system trained).");
         }
         
@@ -121,19 +119,14 @@ var fs = require('fs');
             trainData = data["train"];
             testData = data["test"];
             
-            var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
-            var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
-            
-            if (dataClasses != null && dataWords != null) {
-                //Read trained system...
-                classesProbabilities = JSON.parse(dataClasses);
-                wordsClassePriorProbabilities = JSON.parse(dataWords);
-            } else {
-                //Train...
-                console.log("  -System not trained... Train it:");
-                trainSystem();
-            }
+            //var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
+            //var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
+            //classesProbabilities = JSON.parse(dataClasses);
+            //wordsClassePriorProbabilities = wordsClassePriorProbabilities = JSON.parse(dataWords);
+            //console.log("  -Naive Bayes data loaded.");
 
+            console.log("  -System not trained... Train it:");
+            trainSystem();
             console.log("  -Naive Bayes system ready.");
         }
     }

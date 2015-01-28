@@ -15,12 +15,12 @@ var setup = new SetupData();
 processedTexts = setup.Preprocessor(dataFromFiles);
 
 //[Separate data from training and validation]
-var separator = new Separator();
-var data = separator.Start(processedTexts);
+//var separator = new Separator();
+//var data = separator.Start(processedTexts);
 
 //[Naive Bayes Classificator System]
-var nb = new NaiveBayes();
-nb.Start(data);
+//var nb = new NaiveBayes();
+//nb.Start(data);
 
 //[get a express (Server) app started]
 var serverApp = express();

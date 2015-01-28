@@ -1,6 +1,6 @@
 ﻿//Show Box ---------
 function AddBox() {
-    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"> <img id=\"tattoImg\" src=\"../../images/tatto/tattoo.png\"/> </div>");
+    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\">  </div>");
 }
 
 //document ready event ----------

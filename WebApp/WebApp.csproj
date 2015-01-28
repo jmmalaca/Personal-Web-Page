@@ -104,7 +104,6 @@
     <Content Include="images\Social\Twitter.png" />
     <Content Include="images\Social\youTube.png" />
     <Content Include="images\Presentation\Wordle.PNG" />
-    <Content Include="images\tatto\tattoo.png" />
     <Content Include="images\Work\CV.png" />
     <Content Include="images\Work\Education.png" />
     <Content Include="images\Work\Events.png" />
