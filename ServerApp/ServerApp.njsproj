@@ -1026,6 +1026,8 @@
     <Content Include="package.json" />
     <Content Include="ProcessingData\cpuLoadsJSON.txt" />
     <Content Include="DataAnalytics\tweets.txt" />
+    <Content Include="SentimentAnalysis\NB_ClassesProbabilities.txt" />
+    <Content Include="SentimentAnalysis\NB_WordsProbabilities.txt" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>

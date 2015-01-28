@@ -13,6 +13,12 @@ var fs = require('fs');
         var trainData = {};
         var testData = {};
 
+        var classesProbabilities = {};
+        var classesProbabilitiesJsonPath = "./SentimentAnalysis/NB_ClassesProbabilities.txt";
+
+        var wordsClassePriorProbabilities = {};
+        var wordsClassePriorProbabilitiesJsonPath = "./SentimentAnalysis/NB_WordsProbabilities.txt";
+
         //[Private Methods]
         function calcClassesPriorProbabilities() {
             //Classes Prior Probabilities
@@ -23,15 +29,13 @@ var fs = require('fs');
             var totalNeutralTexts = trainData['neutral'].length;
             var totalNegativeTexts = trainData['negative'].length;
             //Calc probabilities for each class in train data...
-            var classesProbabilities = {};
             classesProbabilities['positive'] = totalPositiveTexts / totalTexts;
             classesProbabilities['neutral'] = totalNeutralTexts / totalTexts;
             classesProbabilities['negative'] = totalNegativeTexts / totalTexts;
-            console.log("  -Prior probability[positive] = " + classesProbabilities['positive'] +
-            "  -Prior probability[neutral] = " + classesProbabilities['neutral'] +
-            "  -Prior probability[negative] = " + classesProbabilities['negative']
+            console.log("  -Classes Prior Probabilities: [positive] = " + classesProbabilities['positive'] +
+            ", [neutral] = " + classesProbabilities['neutral'] +
+            ", [negative] = " + classesProbabilities['negative']
             );
-            return classesProbabilities;
         }
         
         function searchAndCountWordsAvailable() {
@@ -79,7 +83,6 @@ var fs = require('fs');
             //Count total of features(words) in each class of train data...
             var wordsData = searchAndCountWordsClassesAvailable();
 
-            var wordsClassePriorProbabilities = {};
             Object.keys(wordsData).forEach(function(key) {
                 var classeWordsData = wordsData[key];
                 var classewordsProbabilites = {};
@@ -88,14 +91,27 @@ var fs = require('fs');
                 });
                 wordsClassePriorProbabilities[key] = classewordsProbabilites;
             });
+            console.log("  -Words Prior Probabilities calculated.");
             return wordsClassePriorProbabilities;
+        }
+        
+        function SaveData() {
+
+            var jsonString = JSON.stringify(classesProbabilities);
+            fs.writeFileSync(classesProbabilitiesJsonPath, jsonString);
+            
+            jsonString = JSON.stringify(wordsClassePriorProbabilities);
+            fs.writeFileSync(wordsClassePriorProbabilitiesJsonPath, jsonString);
+
+            console.log("  -Classes/Words Prior Probabilities saved on file.");
         }
 
         function trainSystem() {
-            var classesProbabilities = calcClassesPriorProbabilities();
-            var wordsClassePriorProbabilities = calcWordsPriorProbabilities();
+            classesProbabilities = calcClassesPriorProbabilities();
+            wordsClassePriorProbabilities = calcWordsPriorProbabilities();
 
-            console.log();
+            SaveData(classesProbabilities, wordsClassePriorProbabilities);
+            console.log("  -Naive Bayes system data saved (system trained).");
         }
         
         //[Public Methods]
@@ -104,13 +120,21 @@ var fs = require('fs');
 
             trainData = data["train"];
             testData = data["test"];
-
-            //Train...
-            console.log("  -System not trained... Train it:");
-            trainSystem();
             
-            //Or read trained system...
+            var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
+            var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
+            
+            if (dataClasses != null && dataWords != null) {
+                //Read trained system...
+                classesProbabilities = JSON.parse(dataClasses);
+                wordsClassePriorProbabilities = JSON.parse(dataWords);
+            } else {
+                //Train...
+                console.log("  -System not trained... Train it:");
+                trainSystem();
+            }
 
+            console.log("  -Naive Bayes system ready.");
         }
     }
     
