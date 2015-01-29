@@ -3,7 +3,7 @@ function AddPresentationData() {
     //Add data for Presentation Box
     $("#Presentation-Page").append("<div class=\"Presentation-Box animated bounceInRight\"></div>");
     $(".Presentation-Box").append("<img class=\"Me_Picture\" src=\"images/Presentation/Me.PNG\" />");
-    $(".Presentation-Box").append("<p class=\"Resume BlockSelection\"> José Miguel was born in <b>Coimbra</b>, Portugal, and since younger age has the <b>passion</b> about informatics. His academic path on informatics started with a enormous <b>curiosity</b> to discover and play with some little robots in the primary school. Much later in the univerisity, this path founds his end with a project about Sentiment Analysis in Microblogging. The academic year 2013/14 was the last in the <b>Faculty of Sciences and Technology</b>, University of Coimbra, so now, he's a <b>proud</b> member of MSc in Informatics Engineering family. A <b>Full-Stack Software Engineer</b> enjoying his work and his life. </p>");
+    $(".Presentation-Box").append("<p class=\"Resume BlockSelection\"> Born and educated in the city that hosts one of the oldest universities of the world, <b>Coimbra</b> (Portugal). Finished in 2014 his <b>Masters</b> at University of Coimbra, Informatics Engineering, with focus on Sentiment Analysis on Microblogging. A <b>Full Stack Engineer</b> ready for new challenges, always learning, growing, and enjoying his life. </p>");
 
     //Add data for Map Box
     $("#Presentation-Page").append("<div class=\"Location_Map animated bounceInLeft\"></div>");

@@ -118,10 +118,10 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         function textsProcessor(texts, allDataAvailable, textPolarity) {
             
             //for debug
-            //var dat = texts.slice(0, 100);
+            var dat = texts.slice(0, 100);
             
             //usual forEach...
-            texts.forEach(function (text) {
+            dat.forEach(function (text) {
                 processTweet(text, allDataAvailable, textPolarity);
             });
             
