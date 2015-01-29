@@ -19,14 +19,14 @@
     line-height: 130%;
     color: whitesmoke;
     text-align: justify;
-    overflow-y: scroll;
+    margin: 0;
 }
 
-#tattoImg {
+#CountersBox {
     position: relative;
-    width: auto;
+    width: 35%;
     height: 85%;
     top: 6%;
-    left: 37%;
+    left: 3%;
     margin: 0;
 }

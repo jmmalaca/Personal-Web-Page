@@ -112,6 +112,8 @@
     <Content Include="index.html" />
     <Content Include="javascript\Blur\blurJs.js" />
     <Content Include="javascript\Credits\endcredits.js" />
+    <Content Include="javascript\D3\d3.js" />
+    <Content Include="javascript\D3\d3pie.js" />
     <Content Include="javascript\fullPage\jquery.fullPage.js" />
     <Content Include="javascript\jQuery\jquery-2.1.1.js" />
     <Content Include="javascript\jQuery\jquery-ui.js" />
@@ -142,6 +144,7 @@
     <Content Include="fonts\Capture_it.ttf" />
     <Content Include="fonts\J811.ttf" />
     <Content Include="CurriculumVitae\cv_JoseMMalaca.pdf" />
+    <Content Include="javascript\D3\LICENSE" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

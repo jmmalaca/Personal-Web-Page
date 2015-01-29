@@ -72,6 +72,22 @@
         }
 
         //[Public Methods]
+        this.getEmoticonsCount = function(type) {
+            var count = 0;
+            var data = {};
+            if (type === "positive") {
+                data = positivePatterns;
+            } else {
+                data = negativePatterns;
+            }
+            data.forEach(function (pattern) {
+                var str = pattern.toString();
+                var list = str.split("|");
+                count = count + list.length;
+            });
+            return count;
+        }
+
         this.Replace = function (text) {
             
             text = replaceEmoticons(text, positivePatterns, "positive_emoticon");

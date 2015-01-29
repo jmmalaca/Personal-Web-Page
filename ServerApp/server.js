@@ -27,23 +27,23 @@ var serverApp = express();
 
 //[Access-Control: Allow-Origin]
 serverApp.use(function (req, res, next) {
+    
     res.header("Access-Control-Allow-Origin", "*");
-    //res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
-    //res.header("Access-Control-Allow-Headers", "X-Requested-With,Content-Type,Cache-Control");
-    //if (req.method === 'OPTIONS') {
-    //    console.log("\n -OPTIONS requested!");
-    //    res.statusCode = 204;
-    //    return res.end();
-    //} else {
-    //    return next();
-    //
-    console.log("\n -Time: %d: %s %s %s", Date.now(), req.method, req.url, req.path);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    
+    //extra methods: PUT,POST,DELETE
+    res.header('Access-Control-Allow-Methods', 'GET,OPTIONS');
+    
+    console.log("\n -Time: %d: \n -Method: %s, \n -URL: %s, \n -Path: %s", Date.now(), req.method, req.url, req.path);
     next();
 });
 
+//http://enable-cors.org
+//The first call (app.all) should be made before all the other routes in your app (or at least the ones you want to be CORS enabled).
+
 //[route definitio:... home]
 serverApp.get('/', function (req, response, next) {
-    console.log("\n -Hello request");
+    console.log(" -Hello Call...");
     
     request(url, function (err, res, body) {
         response.render('hello.ejs');//file on views folder
@@ -52,7 +52,7 @@ serverApp.get('/', function (req, response, next) {
 
 //[Route definition: /countsData]
 serverApp.get('/countsdata', function (req, response, next) {
-    console.log("\n -Data Counts Call...");
+    console.log(" -Data Counts Call...");
     
     response.type('application/json');
     response.send(dataFromFiles.getDataInfo());
@@ -63,7 +63,7 @@ serverApp.get('/sentiment/:searchString', function (req, response, next) {
     
     //get the request string data...
     var searchString = req.params.searchString;
-    console.log("\n -Sentiment Call... About: " + searchString);
+    console.log(" -Sentiment Call... About: " + searchString);
     
     //Call Tweeter...
     var connector = require('./TwitterConnector/TwitterConnector.js');
@@ -81,7 +81,6 @@ var server = serverApp.listen(8080, function () {
     var host = server.address().address;
     var port = server.address().port;
 
-    if (host == "0.0.0.0")
-        host = "localhost";
+    if (host == "0.0.0.0") host = "localhost";
     console.log('\nApp listening at http://%s:%s', host, port);
 });
