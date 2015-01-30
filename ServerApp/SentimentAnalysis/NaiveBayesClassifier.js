@@ -14,30 +14,30 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         var testData = {};
 
         var classesProbabilities = {};
-        var classesProbabilitiesJsonPath = "./SentimentAnalysis/ClassesProbabilities.txt";
-
+        var classesPolarityProbabilitiesJsonPath = "./SentimentAnalysis/ClassesPolarityProbabilities.json";
+        var classesSubjectivityProbabilitiesJsonPath = "./SentimentAnalysis/ClassesSubjectivityProbabilities.json";
         var wordsClassePriorProbabilities = {};
-        var wordsClassePriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsProbabilities.txt";
-
+        var wordsClassePolarityPriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsPolarityProbabilities.json";
+        var wordsClasseSubjectivityPriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsSubjectivityProbabilities.json";
+        
         //[Private Methods]
         function calcClassesPriorProbabilities() {
             //Classes Prior Probabilities
-            //Count total of texts in train data...
-            var totalTexts = trainData['positive'].length + trainData['neutral'].length + trainData['negative'].length;
-            //Count total of texts for each class in train data...
-            var totalPositiveTexts = trainData['positive'].length;
-            var totalNeutralTexts = trainData['neutral'].length;
-            var totalNegativeTexts = trainData['negative'].length;
-            //Calc probabilities for each class in train data...
-            classesProbabilities['positive'] = totalPositiveTexts / totalTexts;
-            classesProbabilities['neutral'] = totalNeutralTexts / totalTexts;
-            classesProbabilities['negative'] = totalNegativeTexts / totalTexts;
-            console.log("  -Classes Prior Probabilities: [positive] = " + classesProbabilities['positive'] +
-            ", [neutral] = " + classesProbabilities['neutral'] +
-            ", [negative] = " + classesProbabilities['negative']
-            );
+            //Count total of texts in train data... and total of texts for each classe...
+            var countTotalTexts = 0;
+            var countClassesTexts = {};
+            Object.keys(trainData).forEach(function(key) {
+                countClassesTexts[key] = trainData[key].length;
+                countTotalTexts = countTotalTexts + countClassesTexts[key];
+            });
+            //Calc probabilities for each class...
+            console.log("  -Classes Prior Probabilities:");
+            Object.keys(trainData).forEach(function(key) {
+                classesProbabilities[key] = countClassesTexts[key] / countTotalTexts;
+                console.log("  -[" + key + "] = " + classesProbabilities[key]);
+            });
         }
-        
+
         function searchAndCountWordsAvailable() {
             var wordsList = {};
             Object.keys(trainData).forEach(function (key) {
@@ -77,7 +77,6 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         }
 
         function calcWordsPriorProbabilities() {
-            //Features Prior Probabilities
             //Count total of features(words) in train data...
             var wordsTotalData = searchAndCountWordsAvailable();
             //Count total of features(words) in each class of train data...
@@ -94,20 +93,31 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             console.log("  -Words Prior Probabilities calculated.");
         }
         
-        function saveData() {
-            var jsonString = JSON.stringify(classesProbabilities);
-            fs.writeFileSync(classesProbabilitiesJsonPath, jsonString);
-            
-            jsonString = JSON.stringify(wordsClassePriorProbabilities);
-            fs.writeFileSync(wordsClassePriorProbabilitiesJsonPath, jsonString);
+        function saveData(problem) {
+            var jsonString;
 
+            if (problem === "polarity") {
+                jsonString = JSON.stringify(classesProbabilities);
+                fs.writeFileSync(classesPolarityProbabilitiesJsonPath, jsonString);
+
+                jsonString = JSON.stringify(wordsClassePriorProbabilities);
+                fs.writeFileSync(wordsClassePolarityPriorProbabilitiesJsonPath, jsonString);
+
+            }else if (problem === "subjectivity") {
+                jsonString = JSON.stringify(classesProbabilities);
+                fs.writeFileSync(classesSubjectivityProbabilitiesJsonPath, jsonString);
+                
+                jsonString = JSON.stringify(wordsClassePriorProbabilities);
+                fs.writeFileSync(wordsClasseSubjectivityPriorProbabilitiesJsonPath, jsonString);
+            }
             console.log("  -Classes/Words Prior Probabilities saved on file.");
         }
 
-        function trainSystem() {
-            calcClassesPriorProbabilities();
-            calcWordsPriorProbabilities();
-            saveData();
+        function trainSystem(problem) {
+
+            calcClassesPriorProbabilities(problem);
+            calcWordsPriorProbabilities(problem);
+            saveData(problem);
 
             console.log("  -Naive Bayes system data saved (system trained).");
         }
@@ -115,15 +125,6 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         //[Public Methods]
         this.Start = function (processedTexts) {
             
-            //[Separate data from training and validation]
-            var separator = new Separator();
-            //select data from the [beginning], from the [middle] or from the [end] of the array
-            //select problem [subjectivity] ou [polarity]
-            var data = separator.Start(processedTexts, "beginning", "subjectivity");
-            trainData = data["train"];
-            testData = data["test"];
-            
-            console.log("\n -Start Naive Bayes Classifier...");
             //var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
             //var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
             //classesProbabilities = JSON.parse(dataClasses);
@@ -131,8 +132,24 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             //console.log("  -Naive Bayes data loaded.");
 
             console.log("  -System not trained... Train it:");
-            trainSystem();
-            console.log("  -Naive Bayes system ready.");
+            //[Separate data from training and validation]
+            var separator = new Separator();
+            
+            //select problem [subjectivity] ou [polarity]
+            var problems = ["subjectivity", "polarity"];
+            problems.forEach(function(problem) {
+                //select data from the [beginning], from the [middle] or from the [end] of the array
+                var from = "beginning";
+
+                var data = separator.Start(processedTexts, from, problem);
+                trainData = data["train"];
+                testData = data["test"];
+                trainSystem(problem);
+
+                console.log("\n -Naive Bayes for " + problem + " ready...");
+            });
+            
+            console.log("  -Naive Bayes System Ready.");
         }
     }
     
