@@ -1,5 +1,6 @@
 ﻿//[Naive Bayes Classifier System]
 var fs = require('fs');
+var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
 (function () {
     
@@ -9,7 +10,6 @@ var fs = require('fs');
     function NaiveBayesClassifier() {
         
         //[Private data]
-        
         var trainData = {};
         var testData = {};
 
@@ -85,11 +85,11 @@ var fs = require('fs');
 
             Object.keys(wordsData).forEach(function(key) {
                 var classeWordsData = wordsData[key];
-                var classewordsProbabilites = {};
+                var classeWordsProbabilites = {};
                 Object.keys(classeWordsData).forEach(function (word) {
-                    classewordsProbabilites[word] = classeWordsData[word] / wordsTotalData[word];
+                    classeWordsProbabilites[word] = classeWordsData[word] / wordsTotalData[word];
                 });
-                wordsClassePriorProbabilities[key] = classewordsProbabilites;
+                wordsClassePriorProbabilities[key] = classeWordsProbabilites;
             });
             console.log("  -Words Prior Probabilities calculated.");
         }
@@ -113,12 +113,17 @@ var fs = require('fs');
         }
         
         //[Public Methods]
-        this.Start = function (data) {
-            console.log("\n -Start Naive Bayes Classifier...");
-
+        this.Start = function (processedTexts) {
+            
+            //[Separate data from training and validation]
+            var separator = new Separator();
+            //select data from the [beginning], from the [middle] or from the [end] of the array
+            //select problem [subjectivity] ou [polarity]
+            var data = separator.Start(processedTexts, "beginning", "subjectivity");
             trainData = data["train"];
             testData = data["test"];
             
+            console.log("\n -Start Naive Bayes Classifier...");
             //var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
             //var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
             //classesProbabilities = JSON.parse(dataClasses);

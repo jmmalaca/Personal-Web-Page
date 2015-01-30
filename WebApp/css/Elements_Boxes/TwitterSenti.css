@@ -23,10 +23,8 @@
 }
 
 #CountersBox {
-    position: relative;
-    width: 35%;
-    height: 85%;
-    top: 6%;
-    left: 3%;
+    position: absolute;
+    top: 43%;
+    left: 2%;
     margin: 0;
 }

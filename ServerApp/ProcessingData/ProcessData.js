@@ -40,17 +40,17 @@ var fs = require('fs');
             }
             
             // Get total load for all node processes
-            cpu.nodeLoad(function (error, results) {
-                if (error) {
-                    return console.log(error);
-                }
-                console.log("   -Server CPU Load: " + results["load"] + "% needed");
-                console.log("   -Server processes: ");
-                results["found"].forEach(function(item) {
-                    console.log("   -Process[" + item["pid"] + "]: " + item["process"] + ", " + item["load"] + "%");
-                });
-                return results["found"].length + "," + results["load"];
-            });
+            //cpu.nodeLoad(function (error, results) {
+            //    if (error) {
+            //        return console.log(error);
+            //    }
+            //    console.log("   -Server CPU Load: " + results["load"] + "% needed");
+            //    console.log("   -Server processes: ");
+            //    results["found"].forEach(function(item) {
+            //        console.log("   -Process[" + item["pid"] + "]: " + item["process"] + ", " + item["load"] + "%");
+            //    });
+            //    return results["found"].length + "," + results["load"];
+            //});
             
             //var dataToAdd = [cpuPercentage, seconds];
             //if (cpuLoadsData[numberTextsProcessed] == null) {

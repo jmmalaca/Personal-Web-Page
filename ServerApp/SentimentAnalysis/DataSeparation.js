@@ -8,27 +8,31 @@
     function DataSeparation() {
         
         //[Private data]
-        var POSITIVE = 'positive';
-        var NEUTRAL = 'neutral';
-        var NEGATIVE = 'negative';
-        
         var trainingDataPercentage = 70;
         
         //select data from the [beginning], from the [middle] or from the [end] of the array
         var selectDataFrom = 'beginning';
         
+        //subjectivity...
+        var subjectivityTrainData = {};
+        subjectivityTrainData["subjective"] = [];
+        subjectivityTrainData["objective"] = [];
+        var subjectivityTestData = {};
+        subjectivityTestData["subjective"] = [];
+        subjectivityTestData["objective"] = [];
+
+        //polarity...
         var trainData = {};
-        trainData[POSITIVE] = [];
-        trainData[NEUTRAL] = [];
-        trainData[NEGATIVE] = [];
-        
+        trainData["positive"] = [];
+        trainData["neutral"] = [];
+        trainData["negative"] = [];
         var testData = {};
-        testData[POSITIVE] = [];
-        testData[NEUTRAL] = [];
-        testData[NEGATIVE] = [];
-        
+        testData["positive"] = [];
+        testData["neutral"] = [];
+        testData["negative"] = [];
+
         //[Private Methods]
-        function takeElements(data, classe) {
+        function takePolarityElements(data, classe) {
             //Math.ceil() = round up result (i.e. 0.7 = 1)
             var countTraining = Math.ceil((trainingDataPercentage / 100) * data[classe].length);
             var countValidation = data[classe].length - countTraining;
@@ -44,25 +48,50 @@
                 trainData[classe] = data[classe].slice(0, countValidation);
                 testData[classe] = data[classe].slice(countValidation, data[classe].length);
             }
-            console.log("  -For training " + classe + "[" + data[classe].length + "] are: " + countTraining + ", and for Validation = " + countValidation);
         }
         
-        function separateTrainingAndValidationData(data) {
+        function separateTrainingAndValidationData(problem, data) {
             console.log("\n -Percentage data for Training = " + trainingDataPercentage);
             console.log("  -Slice data from the " + selectDataFrom);
-            takeElements(data, POSITIVE);
-            takeElements(data, NEUTRAL);
-            takeElements(data, NEGATIVE);
+            takePolarityElements(data, "positive");
+            takePolarityElements(data, "neutral");
+            takePolarityElements(data, "negative");
+            
+            if (problem === "subjectivity") {
+                //Array.prototype.push.apply(a, b); copy all elements from uma array to the other...
+                
+                Array.prototype.push.apply(subjectivityTrainData["subjective"], trainData["positive"]);
+                Array.prototype.push.apply(subjectivityTrainData["objective"], trainData["neutral"]);
+                Array.prototype.push.apply(subjectivityTrainData["subjective"], trainData["negative"]);
+                
+                Array.prototype.push.apply(subjectivityTestData["subjective"], testData["positive"]);
+                Array.prototype.push.apply(subjectivityTestData["objective"], testData["neutral"]);
+                Array.prototype.push.apply(subjectivityTestData["subjective"], testData["negative"]);
+                
+                trainData = {};
+                trainData = subjectivityTrainData;
+                testData = {};
+                testData = subjectivityTestData;
+            }
         }
         
         //[Public Methods]
-        this.Start = function (data) {
+        this.Start = function (data, fromWhere, problem) {
             
-            separateTrainingAndValidationData(data);
+            selectDataFrom = fromWhere;
 
+            separateTrainingAndValidationData(problem, data);
+            
             var separatedData = {};
             separatedData["train"] = trainData;
             separatedData["test"] = testData;
+
+            Object.keys(trainData).forEach(function(key) {
+                console.log("  -Train Data[ " + key +" ]: " + trainData[key].length);
+            });
+            Object.keys(testData).forEach(function (key) {
+                console.log("  -Test Data[ " + key + " ]: " + testData[key].length);
+            });
 
             return separatedData;
         }

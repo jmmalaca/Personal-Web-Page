@@ -3,7 +3,6 @@ var request = require('request'); //request npm module
 var url = require('url'); //url npm module
 var DataReader = require('./DataAnalytics/DataReader.js');
 var SetupData = require('./DataAnalytics/TextsProcessor.js');
-var Separator = require('./SentimentAnalysis/DataSeparation.js');
 var NaiveBayes = require('./SentimentAnalysis/NaiveBayesClassifier.js');
 
 //[Read Data]
@@ -14,13 +13,9 @@ dataFromFiles.ReadInitialData();
 var setup = new SetupData();
 processedTexts = setup.Preprocessor(dataFromFiles);
 
-//[Separate data from training and validation]
-//var separator = new Separator();
-//var data = separator.Start(processedTexts);
-
 //[Naive Bayes Classificator System]
-//var nb = new NaiveBayes();
-//nb.Start(data);
+var nb = new NaiveBayes();
+nb.Start(processedTexts);
 
 //[get a express (Server) app started]
 var serverApp = express();
