@@ -12,13 +12,12 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         //[Private data]
         var trainData = {};
         var testData = {};
-
+        
         var classesProbabilities = {};
-        var classesPolarityProbabilitiesJsonPath = "./SentimentAnalysis/ClassesPolarityProbabilities.json";
-        var classesSubjectivityProbabilitiesJsonPath = "./SentimentAnalysis/ClassesSubjectivityProbabilities.json";
-        var wordsClassePriorProbabilities = {};
-        var wordsClassePolarityPriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsPolarityProbabilities.json";
-        var wordsClasseSubjectivityPriorProbabilitiesJsonPath = "./SentimentAnalysis/WordsSubjectivityProbabilities.json";
+        var wordsClassesPriorProbabilities = {};
+        
+        var classesProbabilitiesJsonPath = "./SentimentAnalysis/ClassesProbabilities.json";
+        var wordsClassesPriorProbabilitiesJsonPath = "./SentimentAnalysis/ClassesWordsProbabilities.json";
         
         //[Private Methods]
         function calcClassesPriorProbabilities() {
@@ -86,69 +85,107 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 var classeWordsData = wordsData[key];
                 var classeWordsProbabilites = {};
                 Object.keys(classeWordsData).forEach(function (word) {
-                    classeWordsProbabilites[word] = classeWordsData[word] / wordsTotalData[word];
+                    
+                    //Laplace Smoothing...
+                    classeWordsProbabilites[word] = ( classeWordsData[word] + 1) / (wordsTotalData[word] + wordsTotalData.length);
+
                 });
-                wordsClassePriorProbabilities[key] = classeWordsProbabilites;
+                wordsClassesPriorProbabilities[key] = classeWordsProbabilites;
             });
             console.log("  -Words Prior Probabilities calculated.");
         }
         
-        function saveData(problem) {
-            var jsonString;
+        function saveData() {
+            var jsonString = JSON.stringify(classesProbabilities);
+            fs.writeFileSync(classesProbabilitiesJsonPath, jsonString);
 
-            if (problem === "polarity") {
-                jsonString = JSON.stringify(classesProbabilities);
-                fs.writeFileSync(classesPolarityProbabilitiesJsonPath, jsonString);
+            jsonString = JSON.stringify(wordsClassesPriorProbabilities);
+            fs.writeFileSync(wordsClassesPriorProbabilitiesJsonPath, jsonString);
 
-                jsonString = JSON.stringify(wordsClassePriorProbabilities);
-                fs.writeFileSync(wordsClassePolarityPriorProbabilitiesJsonPath, jsonString);
-
-            }else if (problem === "subjectivity") {
-                jsonString = JSON.stringify(classesProbabilities);
-                fs.writeFileSync(classesSubjectivityProbabilitiesJsonPath, jsonString);
-                
-                jsonString = JSON.stringify(wordsClassePriorProbabilities);
-                fs.writeFileSync(wordsClasseSubjectivityPriorProbabilitiesJsonPath, jsonString);
-            }
             console.log("  -Classes/Words Prior Probabilities saved on file.");
         }
 
-        function trainSystem(problem) {
+        function trainSystem() {
 
-            calcClassesPriorProbabilities(problem);
-            calcWordsPriorProbabilities(problem);
-            saveData(problem);
+            calcClassesPriorProbabilities();
+            calcWordsPriorProbabilities();
+            saveData();
 
             console.log("  -Naive Bayes system data saved (system trained).");
         }
-        
+
+        function testSystem() {
+
+            //Object.keys(testData).forEach(function(key) {
+            //    var texts = testData[key];
+
+            //    texts.forEach(function(text) {
+
+            //        //First... attack Subjective VS Objective
+            //        var subjective = 0;
+            //        var objective = 0;
+                    
+            //        var words = text.split(' ');
+            //        words.forEach(function(word) {
+
+            //        });
+            //    });
+            //});
+        }
+
         //[Public Methods]
         this.Start = function (processedTexts) {
             
-            //var dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
-            //var dataWords = fs.readFileSync(wordsClassePriorProbabilitiesJsonPath);
-            //classesProbabilities = JSON.parse(dataClasses);
-            //wordsClassePriorProbabilities = wordsClassePriorProbabilities = JSON.parse(dataWords);
-            //console.log("  -Naive Bayes data loaded.");
-
-            console.log("  -System not trained... Train it:");
-            //[Separate data from training and validation]
-            var separator = new Separator();
+            //Check if there is a system already trained...
+            var systemAlreadyTrained = false;
             
-            //select problem [subjectivity] ou [polarity]
-            var problems = ["subjectivity", "polarity"];
-            problems.forEach(function(problem) {
-                //select data from the [beginning], from the [middle] or from the [end] of the array
-                var from = "beginning";
+            //Subjectivity data...
+            var dataClasses;
+            try {
+                dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
+                classesProbabilities = JSON.parse(dataClasses);
 
-                var data = separator.Start(processedTexts, from, problem);
-                trainData = data["train"];
-                testData = data["test"];
-                trainSystem(problem);
+                var dataWords;
+                try {
+                    dataWords = fs.readFileSync(wordsClassesPriorProbabilitiesJsonPath);
+                    wordsClassesPriorProbabilities = JSON.parse(dataWords);
 
-                console.log("\n -Naive Bayes for " + problem + " ready...");
-            });
-            
+                    systemAlreadyTrained = true;
+                    console.log("  -Naive Bayes System Data Loaded.");
+
+                } catch (e) {
+                    console.log("ERROR: reading Words Classes Probabilities");
+                    //console.log(e);
+                }
+            } catch (e) {
+                console.log("ERROR: reading Classes Probabilities");
+                //console.log(e);
+            }
+
+            if (systemAlreadyTrained != true) {
+                console.log("  -System not trained... Train it:");
+
+                //[Separate data from training and validation]
+                var separator = new Separator();
+
+                //select problem [subjectivity] ou [polarity]
+                var problems = ["subjectivity", "polarity"];
+
+                problems.forEach(function(problem) {
+                    //select data from the [beginning], from the [middle] or from the [end] of the array
+                    var from = "beginning";
+
+                    var data = separator.Start(processedTexts, from, problem);
+                    trainData = data["train"];
+                    testData = data["test"];
+                    trainSystem(problem);
+
+                    testSystem();
+
+                    console.log("\n -Naive Bayes for " + problem + " ready...");
+                });
+            }
+
             console.log("  -Naive Bayes System Ready.");
         }
     }

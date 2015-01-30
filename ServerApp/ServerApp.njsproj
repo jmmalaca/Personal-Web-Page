@@ -1026,10 +1026,8 @@
     <Content Include="package.json" />
     <Content Include="ProcessingData\cpuLoadsJSON.txt" />
     <Content Include="DataAnalytics\tweets.txt" />
-    <Content Include="SentimentAnalysis\ClassesPolarityProbabilities.json" />
-    <Content Include="SentimentAnalysis\ClassesSubjectivityProbabilities.json" />
-    <Content Include="SentimentAnalysis\WordsPolarityProbabilities.json" />
-    <Content Include="SentimentAnalysis\WordsSubjectivityProbabilities.json" />
+    <Content Include="SentimentAnalysis\ClassesProbabilities.json" />
+    <Content Include="SentimentAnalysis\ClassesWordsProbabilities.json" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>
