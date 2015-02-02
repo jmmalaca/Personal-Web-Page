@@ -13,26 +13,14 @@
         //select data from the [beginning], from the [middle] or from the [end] of the array
         var selectDataFrom = 'beginning';
         
-        //subjectivity...
-        var subjectivityTrainData = {};
-        subjectivityTrainData["subjective"] = [];
-        subjectivityTrainData["objective"] = [];
-        var subjectivityTestData = {};
-        subjectivityTestData["subjective"] = [];
-        subjectivityTestData["objective"] = [];
-
-        //polarity...
+        //train data...
         var trainData = {};
-        trainData["positive"] = [];
-        trainData["neutral"] = [];
-        trainData["negative"] = [];
+        
+        //test data...
         var testData = {};
-        testData["positive"] = [];
-        testData["neutral"] = [];
-        testData["negative"] = [];
-
+        
         //[Private Methods]
-        function takePolarityElements(data, classe) {
+        function takeElements(data, classe) {
             //Math.ceil() = round up result (i.e. 0.7 = 1)
             var countTraining = Math.ceil((trainingDataPercentage / 100) * data[classe].length);
             var countValidation = data[classe].length - countTraining;
@@ -53,24 +41,34 @@
         function separateTrainingAndValidationData(problem, data) {
             console.log("\n -Percentage data for Training = " + trainingDataPercentage);
             console.log("  -Slice data from the " + selectDataFrom);
-            takePolarityElements(data, "positive");
-            takePolarityElements(data, "neutral");
-            takePolarityElements(data, "negative");
             
-            if (problem === "subjectivity") {
-                //Array.prototype.push.apply(a, b); copy all elements from uma array to the other...
+            if (problem === "polarity") {
                 
+                takeElements(data, "positive");
+                takeElements(data, "negative");
+
+            } else if (problem === "subjectivity") {
+                takeElements(data, "positive");
+                takeElements(data, "neutral");
+                takeElements(data, "negative");
+
+                var subjectivityTrainData = {};
+                subjectivityTrainData["subjective"] = [];
+                subjectivityTrainData["objective"] = [];
+                var subjectivityTestData = {};
+                subjectivityTestData["subjective"] = [];
+                subjectivityTestData["objective"] = [];
+                //Array.prototype.push.apply(a, b); copy all elements from uma array to the other...
                 Array.prototype.push.apply(subjectivityTrainData["subjective"], trainData["positive"]);
                 Array.prototype.push.apply(subjectivityTrainData["objective"], trainData["neutral"]);
                 Array.prototype.push.apply(subjectivityTrainData["subjective"], trainData["negative"]);
-                
                 Array.prototype.push.apply(subjectivityTestData["subjective"], testData["positive"]);
                 Array.prototype.push.apply(subjectivityTestData["objective"], testData["neutral"]);
                 Array.prototype.push.apply(subjectivityTestData["subjective"], testData["negative"]);
-                
+
                 trainData = {};
-                trainData = subjectivityTrainData;
                 testData = {};
+                trainData = subjectivityTrainData;
                 testData = subjectivityTestData;
             }
         }

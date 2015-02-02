@@ -15,7 +15,9 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         processedTexts['positive'] = [];
         processedTexts['neutral'] = [];
         processedTexts['negative'] = [];
-        
+
+        var allDataAvailable = {};
+            
         //[Private Methods]
         function regexProcessor(text) {
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
@@ -66,7 +68,7 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             return text;
         }
         
-        function dataProcessor(text, allDataAvailable) {
+        function dataProcessor(text) {
 
             var acronyms = allDataAvailable.getAcronyms();
             acronyms.forEach(function (acronym) {
@@ -104,25 +106,29 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
 
             return text;
         }
-
-        function processTweet(text, allDataAvailable, textPolarity) {
-            
+        
+        function processText(text) {
             text.trim();
             text = text.slice(0, text.length - 2);
             text = regexProcessor(text);
             text = text.toLowerCase();
-            text = dataProcessor(text, allDataAvailable);
+            text = dataProcessor(text);
+            return text;
+        }
+
+        function processTweet(text, textPolarity) {
+            text = processText(text);
             processedTexts[textPolarity].push(text);
         }
-        
-        function textsProcessor(texts, allDataAvailable, textPolarity) {
+
+        function textsProcessor(texts, textPolarity) {
             
             //for debug
             //var dat = texts.slice(0, 100);
             
             //usual forEach...
             texts.forEach(function (text) {
-                processTweet(text, allDataAvailable, textPolarity);
+                processTweet(text, textPolarity);
             });
             
             //async forEach...
@@ -156,7 +162,10 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         }
 
         //[Public Methods]
-        this.Preprocessor = function (allDataAvailable) {
+        this.Preprocessor = function (dataReveivedFromFiles) {
+
+            allDataAvailable = dataReveivedFromFiles;
+
             console.log("\n -Process: ");
             var measures = new ProcessData();
             measures.StartTime();
@@ -165,24 +174,28 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             var countTexts = data.length;
             var type = "positive";
             console.log("  -"+ type +" texts[" + data.length + "]...");
-            textsProcessor(data, allDataAvailable, type);
+            textsProcessor(data, type);
 
             data = allDataAvailable.getNeutralTweets();
             countTexts = countTexts + data.length;
             type = "neutral";
             console.log("  -" + type + " texts[" + data.length + "]...");
-            textsProcessor(data, allDataAvailable, type);
+            textsProcessor(data, type);
             
             data = allDataAvailable.getNegativeTweets();
             countTexts = countTexts + data.length;
             type = "negative";
             console.log("  -" + type + " texts[" + data.length + "]...");
-            textsProcessor(data, allDataAvailable, type);
+            textsProcessor(data, type);
             
             measures.ShowTimeCount(countTexts, "All " + countTexts + " texts Done.");
 
             return processedTexts;
         };
+
+        this.IndependentStringProcessor = function (string) {
+            return processText(string);
+        }
     }
     
     //[Export the Texts Processor Object]

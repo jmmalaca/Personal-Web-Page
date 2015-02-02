@@ -15,7 +15,7 @@ processedTexts = setup.Preprocessor(dataFromFiles);
 
 //[Naive Bayes Classificator System]
 var nb = new NaiveBayes();
-nb.Start(processedTexts);
+nb.Start(processedTexts, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();
