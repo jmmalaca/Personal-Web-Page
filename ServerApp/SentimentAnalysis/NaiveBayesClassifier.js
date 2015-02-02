@@ -30,11 +30,12 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 countTotalTexts = countTotalTexts + countClassesTexts[key];
             });
             //Calc probabilities for each class...
-            console.log("  -Classes Prior Probabilities:");
-            Object.keys(trainData).forEach(function(key) {
-                classesProbabilities[key] = countClassesTexts[key] / countTotalTexts;
-                console.log("  -[" + key + "] = " + classesProbabilities[key]);
-            });
+            console.log("  -Classes Prior Probabilities calculated.");
+            //console.log("  -Classes Prior Probabilities:");
+            //Object.keys(trainData).forEach(function(key) {
+            //    classesProbabilities[key] = countClassesTexts[key] / countTotalTexts;
+            //    console.log("  -[" + key + "] = " + classesProbabilities[key]);
+            //});
         }
 
         function searchAndCountWordsAvailable() {
@@ -85,10 +86,18 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 var classeWordsData = wordsData[key];
                 var classeWordsProbabilites = {};
                 Object.keys(classeWordsData).forEach(function (word) {
-                    
-                    //Laplace Smoothing...
-                    classeWordsProbabilites[word] = ( classeWordsData[word] + 1) / (wordsTotalData[word] + wordsTotalData.length);
-
+                    /*
+                     * W = word
+                     * C = Classe ( positive, negative, etc... )
+                     * 
+                     * Probability(W|C) = counts W in class C / counts of words in class C
+                     * 
+                     * But, what happens with unknown words... the probability will be 0.
+                     * The solution: Laplace Smoothing:
+                     * 
+                     * Probability(W|C) = count(W,C) + 1 / count(W,C) + |V| + 1, where |V| represents the Vocabulary
+                     */
+                    classeWordsProbabilites[word] = (classeWordsData[word] + 1) / (classeWordsData[word] + wordsTotalData.length + 1);
                 });
                 wordsClassesPriorProbabilities[key] = classeWordsProbabilites;
             });
