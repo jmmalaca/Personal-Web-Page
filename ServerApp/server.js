@@ -14,8 +14,8 @@ var setup = new SetupData();
 processedTexts = setup.Preprocessor(dataFromFiles);
 
 //[Naive Bayes Classificator System]
-var nb = new NaiveBayes();
-nb.Start(processedTexts, setup);
+//var nb = new NaiveBayes();
+//nb.Start(processedTexts, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();
@@ -51,6 +51,14 @@ serverApp.get('/countsdata', function (req, response, next) {
     
     response.type('application/json');
     response.send(dataFromFiles.getDataInfo());
+});
+
+//[Route definition: /countsFeatures]
+serverApp.get('/countsfeatures', function (req, response, next) {
+    console.log(" -Features Counts Call...");
+    
+    response.type('application/json');
+    response.send(setup.GetProcessDataResults());
 });
 
 //[Route definition: /sentiment/searchString]

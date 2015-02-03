@@ -22,9 +22,38 @@
     margin: 0;
 }
 
-#CountersBox {
+#PiesBox {
     position: absolute;
-    top: 43%;
+    top: 34%;
     left: 2%;
     margin: 0;
+}
+
+#GroupedBarBox {
+    position: absolute;
+    top: 29%;
+    left: 27%;
+    margin: 0;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #ffffff;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: Arial, cursive;
+    word-spacing: 3px;
+    color: #ffffff;
+	font-size: 10px;
+}
+
+.x.axis path {
+  display: none;
+}
+
+.chart .title {
+  font: 14px sans-serif;
 }

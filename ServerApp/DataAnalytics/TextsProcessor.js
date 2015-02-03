@@ -1,6 +1,6 @@
 ﻿//[Setup Data]
-var Emoticons = require('../DataAnalytics/Emoticons.js');
 var async = require('async');
+var Emoticons = require('../DataAnalytics/Emoticons.js');
 var ProcessData = require('../ProcessingData/ProcessData.js');
 
 (function () {
@@ -17,20 +17,49 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         processedTexts['negative'] = [];
 
         var allDataAvailable = {};
-            
+        
+        //[Counters]
+        var countersInfoPositive = {"Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1};
+        var countersInfoNeutral = { "Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1 };
+        var countersInfoNegative = { "Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1 };
+        
         //[Private Methods]
-        function regexProcessor(text) {
+        function addToDataInfo(key, value, textPolarity){
+            if (textPolarity === "positive") {
+                countersInfoPositive[key] = countersInfoPositive[key] + value;
+            } else if (textPolarity === "neutral") {
+                countersInfoNeutral[key] = countersInfoNeutral[key] + value;
+            } else if (textPolarity === "negative") {
+                countersInfoNegative[key] = countersInfoNegative[key] + value;
+            }
+        }
+
+        function regexProcessor(text, textPolarity) {
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
             //validate your regex: www.regex101.com ;)
+            
+            var count = [];
 
             //Uppercases
             text = text.replace(/(!?^RT)[A-Z][A-Z]+/g, " uppercase ");
-            
+            count = text.match(/uppercase/g);
+            if (count != null) {
+                addToDataInfo("Uppercases", count.length, textPolarity);
+            }
+
             //URLs to URL
             text = text.replace(/((http|https)\:\/\/){0,1}(www\.){0,1}([a-z]|[0-9]|\_|\-)+(\~|\/|\.)[a-z]{2,}(\/([a-zA-Z]|[0-9]|_|-)+){0,}/g, " url ");
-            
+            count = text.match(/url/g);
+            if (count != null) {
+                addToDataInfo("URLs", count.length, textPolarity);
+            }
+
             //RT to Retweet
             text = text.replace(/^RT /g, "retweet ");
+            count = text.match(/retweet/g);
+            if (count != null) {
+                addToDataInfo("Retweets", count.length, textPolarity);
+            }
 
             //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
             var emoticonsSetup = new Emoticons();
@@ -39,24 +68,52 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
             text = text.replace(/[\!\?]+/g, " pontuation ");
-            
+            count = text.match(/pontuation/g);
+            if (count != null) {
+                addToDataInfo("Pontuations", count.length, textPolarity);
+            }
+
             //@blabla to Usernames
             text = text.replace(/\@[a-zA-Z0-9_]+/g, " username ");
-            
+            count = text.match(/username/g);
+            if (count != null) {
+                addToDataInfo("Usernames", count.length, textPolarity);
+            }
+
             //#blabla to Hashtags
             text = text.replace(/\#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, " hashtag ");
-            
+            count = text.match(/hashtag/g);
+            if (count != null) {
+                addToDataInfo("Hashtags", count.length, textPolarity);
+            }
+
             //numbers...
             text = text.replace(/(?![a-z])[0-9]+(?![a-z])/g, " number ");
-            
+            count = text.match(/number/g);
+            if (count != null) {
+                addToDataInfo("Numbers", count.length, textPolarity);
+            }
+
             //acentos e caracteres especiais em HTML
             text = text.replace(/\&.+;/g, " htmlchar ");
-            
+            count = text.match(/htmlchar/g);
+            if (count != null) {
+                addToDataInfo("Html_Chars", count.length, textPolarity);
+            }
+
             //repetitions...
             text = text.replace(/([a-z])\1{2,}/g, " repetition ");
-            
+            count = text.match(/repetition/g);
+            if (count != null) {
+                addToDataInfo("Repetitions", count.length, textPolarity);
+            }
+
             //negations
-            text = text.replace(/([a-z]+\'t|not|no|never|neither|seldom|hardly|nobody|none|nor|nothing|nowhere)/g," negation ");
+            text = text.replace(/([a-z]+\'t|not|no|never|neither|seldom|hardly|nobody|none|nor|nothing|nowhere)/g, " negation ");
+            count = text.match(/negation/g);
+            if (count != null) {
+                addToDataInfo("Negations", count.length, textPolarity);
+            }
 
             //remove all others pontuation marks... …
             text = text.replace(/(\\|\.|,|\"|\/|\#|\!|\$|\%|\^|\&|\*|\;|\:|\{|\}|\=|\-|\~|\(|\)|(?![a-z0-9])\_(?![a-z0-9]))/g, " ");
@@ -68,10 +125,17 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             return text;
         }
         
-        function dataProcessor(text) {
+        function dataProcessor(text, textPolarity) {
+
+            var count = [];
 
             var acronyms = allDataAvailable.getAcronyms();
             acronyms.forEach(function (acronym) {
+                var reg = new RegExp(acronym[0]);
+                count = text.match(reg);
+                if (count != null) {
+                    addToDataInfo("Acronyms", count.length, textPolarity);
+                }
                 text = text.replace(" " + acronym[0] + " ", " " + acronym[1] + " ");
             });
 
@@ -79,26 +143,46 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             positiveWords.forEach(function (word) {
                 text = text.replace(" " + word + " ", " positive_word ");
             });
-            
+            count = text.match(/positive_word/g);
+            if (count != null) {
+                addToDataInfo("Positive_Words", count.length, textPolarity);
+            }
+
             var neutralWords = allDataAvailable.getNeutralWords();
             neutralWords.forEach(function (word) {
                 text = text.replace(" " + word + " ", " neutral_word ");
             });
-            
+            count = text.match(/neutral_word/g);
+            if (count != null) {
+                addToDataInfo("Neutral_Words", count.length, textPolarity);
+            }
+
             var negativeWords = allDataAvailable.getNegativeWords();
             negativeWords.forEach(function (word) {
                 text = text.replace(" " + word + " ", " negative_word ");
             });
+            count = text.match(/negative_word/g);
+            if (count != null) {
+                addToDataInfo("Negative_Words", count.length, textPolarity);
+            }
 
             var stopwordsWords = allDataAvailable.getStopWords();
             stopwordsWords.forEach(function (word) {
                 text = text.replace(" " + word + " ", " stopword ");
             });
+            count = text.match(/stopword/g);
+            if (count != null) {
+                addToDataInfo("Stopwords", count.length, textPolarity);
+            }
 
             var badwordsWords = allDataAvailable.getBadWords();
             badwordsWords.forEach(function (word) {
                 text = text.replace(" " + word + " ", " badword ");
             });
+            count = text.match(/badword/g);
+            if (count != null) {
+                addToDataInfo("Badwords", count.length, textPolarity);
+            }
 
             //remove some blank extra spaces...
             text = text.replace(/\s+/g, " ");
@@ -107,17 +191,17 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             return text;
         }
         
-        function processText(text) {
+        function processText(text, textPolarity) {
             text.trim();
             text = text.slice(0, text.length - 2);
-            text = regexProcessor(text);
+            text = regexProcessor(text, textPolarity);
             text = text.toLowerCase();
-            text = dataProcessor(text);
+            text = dataProcessor(text, textPolarity);
             return text;
         }
 
         function processTweet(text, textPolarity) {
-            text = processText(text);
+            text = processText(text, textPolarity);
             processedTexts[textPolarity].push(text);
         }
 
@@ -160,6 +244,13 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             //    measures.ShowTimeCount("All Taks Done."); // +/- ? minutes
             //});
         }
+        
+        function printResults() {
+            console.log("\n -Process Results: [Positive] [Neutral] [Negative]");
+            Object.keys(countersInfoPositive).forEach(function(key) {
+                console.log("  -" + key +":  ["+ countersInfoPositive[key] +"] ["+ countersInfoNeutral[key] +"] ["+ countersInfoNegative[key] +"] ");
+            });
+        }
 
         //[Public Methods]
         this.Preprocessor = function (dataReveivedFromFiles) {
@@ -190,11 +281,53 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             
             measures.ShowTimeCount(countTexts, "All " + countTexts + " texts Done.");
 
+            printResults();
+
             return processedTexts;
         };
-
+        
         this.IndependentStringProcessor = function (string) {
             return processText(string);
+        }
+
+        this.GetProcessDataResults = function () {
+            var featuresNames = Object.keys(countersInfoPositive);
+            var polarityNames = ["Positive", "Neutral", "Negative"];
+            var data = [];
+
+            var featuresDataArray = [];
+            //Positive Data...
+            Object.keys(countersInfoPositive).forEach(function (key) {
+                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
+                var value = (countersInfoPositive[key] * 100) / total;
+                featuresDataArray.push(value);
+            });
+            data.push(featuresDataArray);
+
+            featuresDataArray = [];
+            //Neutral Data...
+            Object.keys(countersInfoNeutral).forEach(function (key) {
+                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
+                var value = (countersInfoNeutral[key] * 100) / total;
+                featuresDataArray.push(value);
+            });
+            data.push(featuresDataArray);
+
+            featuresDataArray = [];
+            //Negative Data...
+            Object.keys(countersInfoNegative).forEach(function (key) {
+                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
+                var value = (countersInfoNegative[key] * 100) / total;
+                featuresDataArray.push(value);
+            });
+            data.push(featuresDataArray);
+            
+            var info = {
+                "FeaturesNames": featuresNames,
+                "PolarityNames": polarityNames,
+                "Data": data
+            }
+            return info;
         }
     }
     

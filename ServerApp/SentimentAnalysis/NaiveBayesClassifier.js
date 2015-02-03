@@ -322,7 +322,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 //All data ready... train it... save it... and test it...
                 trainSystem();
                 //saveData();
-                testSystem();
+                //testSystem();
             }
 
             console.log("\n  -Naive Bayes System Ready.");
