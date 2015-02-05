@@ -10,18 +10,29 @@ function AddStatsBox() {
     $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
 }
 
-function EmoticonsPieChart(divName, pieTitle, values, labels, colors) {
+function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
     var content = [];
     var count = 0;
-    values.forEach(function (value) {
-        var data = {
-            "value": value,
-            "color": colors[count],
-            "caption": labels[count]
-        };
-        content.push(data);
-        count++;
-    });
+    if (showLabels) {
+        values.forEach(function(value) {
+            var data = {
+                "value": value,
+                "color": colors[count],
+                "caption": labels[count]
+            };
+            content.push(data);
+            count++;
+        });
+    } else {
+        values.forEach(function (value) {
+            var data = {
+                "value": value,
+                "color": colors[count]
+            };
+            content.push(data);
+            count++;
+        });
+    }
     var pie = new d3pie(divName, {
         "header": {
             "subtitle": {
@@ -70,36 +81,39 @@ function AddDataInfo(data) {
     //console.log(data);
     if (Object.keys(data).length > 0) {
 
+        var showLabels = true;
+
         var values = [data["Positive_Emoticons"], data["Negative_Emoticons"]];
         var labels = ["Positive", "Negative"];
         var colors = ["#248838", "#830909"];
-        EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors);
+        EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors, showLabels);
 
         colors = ["#248838", "#0070BA"];
         values = [data["Subjective_Words"], data["Objective_Words"]];
         labels = ["Subjective", "Objective"];
-        EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors);
+        EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors, showLabels);
 
         colors = ["#248838", "#0070BA", "#830909"];
         values = [data["Positive_Words"], data["Neutral_Words"], data["Negative_Words"]];
         labels = ["Positive", "Neutral", "Negative"];
-        EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors);
+        EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
 
         colors = ["#4D8BB5", "#FF6600", "#A347FF"];
         values = [data["Acronyms"], data["Stopwords"], data["Badwords"]];
         labels = ["Acronyms", "Stopwords", "Badwords"];
-        EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors);
+        EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
     }
 }
 
 function AddDataInfoNull() {
-    var values = [100];
-    var labels = ["Null"];
+    var values = [0];
     var colors = ["#001429"];
-    EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors);
-    EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors);
-    EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors);
-    EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors);
+    var showLabels = false;
+    var labels = [];
+    EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors, showLabels);
+    EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors, showLabels);
+    EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
+    EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
 }
 
 function CallServer_RequestDataInfo() {
@@ -132,105 +146,155 @@ function CallServer_RequestDataInfo() {
     });
 }
 
-function AddFeaturesInfo(featuresData, colors) {
+function AddFeaturesInfo(data, colors) {
+    
     //console.log(data);
 
-    var featuresValues = featuresData["Data"];
-    var m = featuresValues.length;
-    var n = featuresValues[0].length;
-    var data = featuresValues;
-
-    var color = d3.scale.ordinal().range(colors);
-
     var margin = { top: 30, right: 20, bottom: 80, left: 30 },
-        width = 500 - margin.left - margin.right,
-        height = 350 - margin.top - margin.bottom;
-
-    var y = d3.scale.linear()
-        .domain([0, 100])
-        .range([height, 0]);
+     width = 500 - margin.left - margin.right,
+     height = 350 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
-        .domain(d3.range(n))
-        .rangeBands([0, width], .2);
+       .rangeRoundBands([0, width], .1);
 
-    var x1 = d3.scale.ordinal()
-        .domain(d3.range(m))
-        .rangeBands([0, x0.rangeBand()]);
+    var x1 = d3.scale.ordinal();
+
+    var color = d3.scale.ordinal()
+        .range(colors);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
 
     var xAxis = d3.svg.axis()
         .scale(x0)
-        .tickFormat(function (d) { return featuresData["FeaturesNames"][d]; }) //specify the x axis labels
         .orient("bottom");
 
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left");
 
-    var svg = d3.select("#GroupedBarBox").append("svg")
+    var field_name = ['positive', 'neutral', 'negative'];
+    data.forEach(function (d) {
+        d.compare = field_name.map(function (name) {
+            return { name: name, value: +d[name] };
+        });
+    });
+
+    x0.domain(data.map(function (d) { console.log(d); return d.name; }));
+    x1.domain(field_name).rangeRoundBands([0, x0.rangeBand()]);
+    y.domain([0, d3.max(data, function (d) {
+        return d3.max(d.compare, function (d) {
+            return d.value + 10;
+        });
+    })]);
+
+    var tip = d3.tip()
+        .attr('class', 'd3-tip')
+        .offset([-10, 0])
+        .html(function (d) {
+            return "<span style='color:white'>"+ (Math.round(d.value*100)/100) + "% </span>";
+        }
+    );
+
+    var svg = d3.select("#GroupedBarBox").append("svg:svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-      .append("svg:g")
+       .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.append("g")
-        .attr("class", "y axis")
-        .attr("stroke", "white")
-        .call(yAxis);
+    svg.call(tip);
 
     svg.append("g")
         .attr("class", "x axis")
-        .attr("stroke", "white")
+        .style("fill", "white")
         .attr("transform", "translate(0," + height + ")")
         .call(xAxis)
         .selectAll("text")
+           .style("text-anchor", "end")
+           .attr("transform", function (d) {
+               return "rotate(-40)";
+           });
+
+    svg.append("g")
+        .attr("class", "y axis")
+        .style("fill", "white")
+        .call(yAxis)
+        .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 6)
+            .attr("dy", ".71em")
             .style("text-anchor", "end")
-            .attr("transform", function (d) {
-                return "rotate(-40)";
-            });
+            .text("Percentage");
 
-    svg.append("g").selectAll("g")
+    var name = svg.selectAll(".name")
         .data(data)
-        .enter().append("g")
-        .attr("transform", function(d, i) { return "translate(" + x1(i) + ",0)"; })
-        .selectAll("rect")
-        .data(function(d) { return d; })
+      .enter().append("g")
+        .attr("class", "g")
+        .attr("transform", function (d) { return "translate(" + x0(d.name) + ",0)"; });
+        svg.append("text")
+            .attr("x", (width / 2))
+            .attr("y", 0 - (margin.top / 2))
+            .attr("text-anchor", "middle")
+            .style("fill", "white")
+            .text("Words Detection");// chart title
+
+    name.selectAll(".bar")
+            .data(function(d) { return d.compare; })
         .enter().append("rect")
-        .attr("id", function(d, i, j) { return j; }) //set a ID to rects
-        .attr("width", x1.rangeBand())
-        .attr("height", y)
-        .attr("stroke", "black") //border color around the rects
-        .attr("x", function(d, i) { return x0(i); })
-        .attr("y", function(d) { return height - y(d); })
-        .style("fill", function(d, i, j) { return color(j); })
-        .on('mouseover', MouseOverEvent(d, i, j) );
+            .attr("class", "bar")
+            .attr("stroke", "black")
+            .attr("x", function(d) { return x1(d.name); })
+            .attr("width", x1.rangeBand())
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); })
+            .attr("fill", function(d) { return color(d.name); })
+            .on('mouseover', tip.show)
+            .on('mouseout', tip.hide);
 
-    svg.append("text")
-        .attr("x", (width / 2))
-        .attr("y", 0 - (margin.top / 2))
-        .attr("text-anchor", "middle")
-        .attr("stroke", "white")
-        .text("% Words Detection");// chart title
-}
+    var legend = svg.selectAll(".legend")
+        .data(field_name.slice().reverse())
+      .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
 
-function MouseOverEvent(d, i, j) {
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
 
+    legend.append("text")
+        .attr("x", width - 24)
+        .attr("y", 9)
+        .style("fill", "white")
+        .attr("dy", ".30em")
+        .style("text-anchor", "end")
+        .text(function (d) { return d; });
 }
 
 function AddFeaturesInfoNull() {
-    var data = [];
-    data.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    data.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-    data.push([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-
-    var nullInfo = {
-        "FeaturesNames": ["Acronyms", "Stopwords", "Retweets", "Usernames", "Negations", "Positive_Words", "Neutral_Words", "Negative_Words", "Pontuations", "Hashtags", "Repetitions", "Numbers", "Html_Chars", "URLs"],
-        "PolarityNames": ["Positive", "Neutral", "Negative"],
-        "Data": data
-    }
+    var emptyData = [
+        {"name":"Acronyms","positive":0,"neutral":0,"negative":0},
+        {"name":"Stopwords","positive":0,"neutral":0,"negative":0},
+        {"name":"Retweets","positive":0,"neutral":0,"negative":0},
+        {"name":"Usernames","positive":0,"neutral":0,"negative":0},
+        {"name":"Negations","positive":0,"neutral":0,"negative":0},
+        {"name":"Positive_Words","positive":0,"neutral":0,"negative":0},
+        {"name":"Neutral_Words","positive":0,"neutral":0,"negative":0},
+        {"name":"Negative_Words","positive":0,"neutral":0,"negative":0},
+        {"name":"Pontuations","positive":0,"neutral":0,"negative":0},
+        {"name":"Hashtags","positive":0,"neutral":0,"negative":0},
+        {"name":"Repetitions","positive":0,"neutral":0,"negative":0},
+        {"name":"Numbers","positive":0,"neutral":0,"negative":0},
+        {"name":"Html_Chars","positive":0,"neutral":0,"negative":0},
+        { "name": "URLs", "positive": 0, "neutral": 0, "negative": 0 },
+        { "name": "Badwords", "positive": 0, "neutral": 0, "negative": 0 },
+        { "name": "Uppercases", "positive": 0, "neutral": 0, "negative": 0 }
+    ];
 
     var colors = ["#001429"];
-    AddFeaturesInfo(nullInfo, colors);
+
+    AddFeaturesInfo(emptyData, colors);
 }
 
 function CallServer_RequestFeaturesInfo() {

@@ -7,7 +7,10 @@
     
     function Emoticons() {
         //[Private Data]
-        
+        var countersInfoPositive = { "positive": 0, "negative": 0 };
+        var countersInfoNeutral = { "positive": 0, "negative": 0 };
+        var countersInfoNegative = { "positive": 0, "negative": 0 };
+
         //[Positive Emoticons]
         var patternHappy = /:\)+|\(+:|:>+|<+:|:-\)|\(-:|:\]|=\]|B-\)/g;
         var patternLaughing = /:-D|:D|:d|8-D|x-D| xD | xd |X-D| XD |=-D|=D|=-3|=3|B\^D/g;
@@ -64,9 +67,32 @@
         ];
 
         //[Private Methods]
-        function replaceEmoticons(text, patterns, keyword) {
-            patterns.forEach(function (pattern) {
+        function replaceEmoticons(text, textPolarity, patterns, keyword) {
+            patterns.forEach(function(pattern) {
                 text = text.replace(pattern, keyword);
+
+                var reg = new RegExp(keyword);
+                var count = text.match(reg);
+
+                if (count != null) {
+                    if (textPolarity.indexOf("positive") >= 0) {
+                        if (keyword.indexOf("positive") != -1) {
+                            countersInfoPositive["positive"] = countersInfoPositive["positive"] + count.length;
+                        } else {
+                            countersInfoPositive["negative"] = countersInfoPositive["negative"] + count.length;
+                        }
+                    } else if (textPolarity.indexOf("neutral") >= 0) {
+                        if (keyword.indexOf("positive") != -1) {
+                            countersInfoNeutral["positive"] = countersInfoNeutral["positive"] + count.length;
+                        } else {
+                            countersInfoNeutral["positive"] = countersInfoNeutral["positive"] + count.length;
+                        }
+                    } else if (keyword.indexOf("positive") != -1) {
+                        countersInfoNegative["positive"] = countersInfoNegative["positive"] + count.length;
+                    } else {
+                        countersInfoNegative["positive"] = countersInfoNegative["positive"] + count.length;
+                    }
+                }
             });
             return text;
         }
@@ -88,12 +114,20 @@
             return count;
         }
 
-        this.Replace = function (text) {
-            
-            text = replaceEmoticons(text, positivePatterns, "positive_emoticon");
-            text = replaceEmoticons(text, negativePatterns, "negative_emoticon");
+        this.Replace = function (text, textPolarity) {
+
+            text = replaceEmoticons(text, textPolarity, positivePatterns, "positive_emoticon");
+            text = replaceEmoticons(text, textPolarity, negativePatterns, "negative_emoticon");
 
             return text;
+        }
+
+        this.GetEmoticonsCounts = function() {
+            var keyData = {};
+            keyData["positive"] = countersInfoPositive;
+            keyData["neutral"] = countersInfoNeutral;
+            keyData["negative"] = countersInfoNegative;
+            return keyData;
         }
     }
     

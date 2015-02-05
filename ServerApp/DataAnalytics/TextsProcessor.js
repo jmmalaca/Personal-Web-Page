@@ -11,6 +11,8 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
     function TextsProcessor() {
         
         //[Private Data]
+        var emoticonsSetup = new Emoticons();
+        
         var processedTexts = {};
         processedTexts['positive'] = [];
         processedTexts['neutral'] = [];
@@ -19,9 +21,9 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         var allDataAvailable = {};
         
         //[Counters]
-        var countersInfoPositive = {"Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1};
-        var countersInfoNeutral = { "Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1 };
-        var countersInfoNegative = { "Acronyms": 1, "Stopwords": 1, "Retweets": 1, "Usernames": 1, "Negations": 1, "Positive_Words": 1, "Neutral_Words": 1, "Negative_Words": 1, "Pontuations": 1, "Hashtags": 1, "Repetitions": 1, "Numbers": 1, "Html_Chars": 1, "URLs": 1 };
+        var countersInfoPositive = {"Acronyms": 0, "Stopwords": 0, "Retweets": 0, "Usernames": 0, "Negations": 0, "Positive_Words": 0, "Neutral_Words": 0, "Negative_Words": 0, "Pontuations": 0, "Hashtags": 0, "Repetitions": 0, "Numbers": 0, "Html_Chars": 0, "URLs": 0, "Badwords": 0, "Uppercases": 0};
+        var countersInfoNeutral = { "Acronyms": 0, "Stopwords": 0, "Retweets": 0, "Usernames": 0, "Negations": 0, "Positive_Words": 0, "Neutral_Words": 0, "Negative_Words": 0, "Pontuations": 0, "Hashtags": 0, "Repetitions": 0, "Numbers": 0, "Html_Chars": 0, "URLs": 0, "Badwords": 0, "Uppercases": 0};
+        var countersInfoNegative = { "Acronyms": 0, "Stopwords": 0, "Retweets": 0, "Usernames": 0, "Negations": 0, "Positive_Words": 0, "Neutral_Words": 0, "Negative_Words": 0, "Pontuations": 0, "Hashtags": 0, "Repetitions": 0, "Numbers": 0, "Html_Chars": 0, "URLs": 0, "Badwords": 0, "Uppercases": 0};
         
         //[Private Methods]
         function addToDataInfo(key, value, textPolarity){
@@ -62,8 +64,7 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             }
 
             //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
-            var emoticonsSetup = new Emoticons();
-            text = emoticonsSetup.Replace(text);
+            text = emoticonsSetup.Replace(text, textPolarity);
             
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
@@ -156,6 +157,15 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             if (count != null) {
                 addToDataInfo("Neutral_Words", count.length, textPolarity);
             }
+            
+            var badwordsWords = allDataAvailable.getBadWords();
+            badwordsWords.forEach(function (word) {
+                text = text.replace(" " + word + " ", " badword ");
+            });
+            count = text.match(/badword/g);
+            if (count != null) {
+                addToDataInfo("Badwords", count.length, textPolarity);
+            }
 
             var negativeWords = allDataAvailable.getNegativeWords();
             negativeWords.forEach(function (word) {
@@ -173,15 +183,6 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             count = text.match(/stopword/g);
             if (count != null) {
                 addToDataInfo("Stopwords", count.length, textPolarity);
-            }
-
-            var badwordsWords = allDataAvailable.getBadWords();
-            badwordsWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " badword ");
-            });
-            count = text.match(/badword/g);
-            if (count != null) {
-                addToDataInfo("Badwords", count.length, textPolarity);
             }
 
             //remove some blank extra spaces...
@@ -291,42 +292,34 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         }
 
         this.GetProcessDataResults = function () {
-            var featuresNames = Object.keys(countersInfoPositive);
-            var polarityNames = ["Positive", "Neutral", "Negative"];
-            var data = [];
+            var info = [];
+            
+            /*Data to send example:
+             * var info = [
+                {"name":"Acronyms","positive":0,"neutral":0,"negative":0},
+                {"name":"Stopwords","positive":0,"neutral":0,"negative":0},
+                {"name":"Retweets","positive":0,"neutral":0,"negative":0},
+                {"name":"Usernames","positive":0,"neutral":0,"negative":0},
+                ......
+             */
 
-            var featuresDataArray = [];
-            //Positive Data...
             Object.keys(countersInfoPositive).forEach(function (key) {
                 var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
-                var value = (countersInfoPositive[key] * 100) / total;
-                featuresDataArray.push(value);
-            });
-            data.push(featuresDataArray);
 
-            featuresDataArray = [];
-            //Neutral Data...
-            Object.keys(countersInfoNeutral).forEach(function (key) {
-                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
-                var value = (countersInfoNeutral[key] * 100) / total;
-                featuresDataArray.push(value);
-            });
-            data.push(featuresDataArray);
+                var valuePositive = (countersInfoPositive[key] * 100) / total;
+                var valueNeutral = (countersInfoNeutral[key] * 100) / total;
+                var valueNegative = (countersInfoNegative[key] * 100) / total;
 
-            featuresDataArray = [];
-            //Negative Data...
-            Object.keys(countersInfoNegative).forEach(function (key) {
-                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
-                var value = (countersInfoNegative[key] * 100) / total;
-                featuresDataArray.push(value);
+                var keyData = {};
+                keyData["name"] = key;
+                keyData["positive"] = valuePositive;
+                keyData["neutral"] = valueNeutral;
+                keyData["negative"] = valueNegative;
+                info.push(keyData);
             });
-            data.push(featuresDataArray);
             
-            var info = {
-                "FeaturesNames": featuresNames,
-                "PolarityNames": polarityNames,
-                "Data": data
-            }
+            var emoticonsResults = emoticonsSetup.GetEmoticonsCounts();
+
             return info;
         }
     }
