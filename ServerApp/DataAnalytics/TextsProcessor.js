@@ -1,7 +1,9 @@
 ﻿//[Setup Data]
+var fs = require('fs');
 var async = require('async');
 var Emoticons = require('../DataAnalytics/Emoticons.js');
 var ProcessData = require('../ProcessingData/ProcessData.js');
+var TextData = require('../DataAnalytics/TextData.js');
 
 (function () {
     
@@ -19,7 +21,8 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
         processedTexts['negative'] = [];
 
         var allDataAvailable = {};
-        
+        var allDataOnProcessedTexts = [];
+
         //[Counters]
         var countersInfoPositive = {"Acronyms": 0, "Stopwords": 0, "Retweets": 0, "Usernames": 0, "Negations": 0, "Positive_Words": 0, "Neutral_Words": 0, "Negative_Words": 0, "Pontuations": 0, "Hashtags": 0, "Repetitions": 0, "Numbers": 0, "Html_Chars": 0, "URLs": 0, "Badwords": 0, "Uppercases": 0};
         var countersInfoNeutral = { "Acronyms": 0, "Stopwords": 0, "Retweets": 0, "Usernames": 0, "Negations": 0, "Positive_Words": 0, "Neutral_Words": 0, "Negative_Words": 0, "Pontuations": 0, "Hashtags": 0, "Repetitions": 0, "Numbers": 0, "Html_Chars": 0, "URLs": 0, "Badwords": 0, "Uppercases": 0};
@@ -36,174 +39,246 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             }
         }
 
-        function regexProcessor(text, textPolarity) {
+        function regexProcessor(text, textPolarity, processedTextData) {
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
             //validate your regex: www.regex101.com ;)
             
             var count = [];
+            
+            //acentos e caracteres especiais em HTML
+            var pattern = /\&.+;/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " htmlchar ");
+            if (count != null) {
+                count.forEach(function(value) {
+                    processedTextData.AddHtmlChar(value);
+                });
+                addToDataInfo("Html_Chars", count.length, textPolarity);
+            }
 
             //Uppercases
-            text = text.replace(/(!?^RT)[A-Z][A-Z]+/g, " uppercase ");
-            count = text.match(/uppercase/g);
+            pattern = /(?!RT)[A-Z][A-Z]+/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " uppercase ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddUppercase(value);
+                });
                 addToDataInfo("Uppercases", count.length, textPolarity);
             }
 
-            //URLs to URL
-            text = text.replace(/((http|https)\:\/\/){0,1}(www\.){0,1}([a-z]|[0-9]|\_|\-)+(\~|\/|\.)[a-z]{2,}(\/([a-zA-Z]|[0-9]|_|-)+){0,}/g, " url ");
-            count = text.match(/url/g);
-            if (count != null) {
-                addToDataInfo("URLs", count.length, textPolarity);
-            }
-
             //RT to Retweet
-            text = text.replace(/^RT /g, "retweet ");
-            count = text.match(/retweet/g);
+            pattern = /^RT /g;
+            count = text.match(pattern);
+            text = text.replace(pattern, "retweet ");
             if (count != null) {
+                processedTextData.SetRetweet();
                 addToDataInfo("Retweets", count.length, textPolarity);
             }
 
+            //URLs to URL
+            pattern = /((http|https)\:\/\/){0,1}(www\.){0,1}([a-z]|[0-9]|\_|\-)+(\~|\/|\.)[a-z]{2,}(\/([a-zA-Z]|[0-9]|_|-)+){0,}/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " url ");
+            if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddUrl(value);
+                });
+                addToDataInfo("URLs", count.length, textPolarity);
+            }
+
             //Replace emoticons (positive, negative, etc...) to emoticon (Positive, etc...) keywords
-            text = emoticonsSetup.Replace(text, textPolarity);
+            text = emoticonsSetup.Replace(text, textPolarity, processedTextData);
             
             //Remove pontuation...
             //Mark pontuation that may express a feeling... like ! or ?...
-            text = text.replace(/[\!\?]+/g, " pontuation ");
-            count = text.match(/pontuation/g);
+            pattern = /[\!\?]+/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " pontuation ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddPontuation(value);
+                });
                 addToDataInfo("Pontuations", count.length, textPolarity);
             }
 
             //@blabla to Usernames
-            text = text.replace(/\@[a-zA-Z0-9_]+/g, " username ");
-            count = text.match(/username/g);
+            pattern = /\@[a-zA-Z0-9_]+/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " username ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddUsername(value);
+                });
                 addToDataInfo("Usernames", count.length, textPolarity);
             }
-
+            
             //#blabla to Hashtags
-            text = text.replace(/\#[a-zA-Z0-9_][a-zA-Z0-9_]+/g, " hashtag ");
-            count = text.match(/hashtag/g);
+            pattern = /\#[a-zA-Z0-9_][a-zA-Z0-9_]+/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " hashtag ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddHashtag(value);
+                });
                 addToDataInfo("Hashtags", count.length, textPolarity);
             }
 
             //numbers...
-            text = text.replace(/(?![a-z])[0-9]+(?![a-z])/g, " number ");
-            count = text.match(/number/g);
+            pattern = /(?![a-z])[0-9]+(?![a-z])/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " number ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddNumber(value);
+                });
                 addToDataInfo("Numbers", count.length, textPolarity);
             }
 
-            //acentos e caracteres especiais em HTML
-            text = text.replace(/\&.+;/g, " htmlchar ");
-            count = text.match(/htmlchar/g);
+            //repetitions
+            pattern = /([a-z])\1{2,}/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " repetition ");
             if (count != null) {
-                addToDataInfo("Html_Chars", count.length, textPolarity);
-            }
-
-            //repetitions...
-            text = text.replace(/([a-z])\1{2,}/g, " repetition ");
-            count = text.match(/repetition/g);
-            if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddRepetition(value);
+                });
                 addToDataInfo("Repetitions", count.length, textPolarity);
             }
 
             //negations
-            text = text.replace(/([a-z]+\'t|not|no|never|neither|seldom|hardly|nobody|none|nor|nothing|nowhere)/g, " negation ");
-            count = text.match(/negation/g);
+            pattern = /([a-z]+\'t|not|no|never|neither|seldom|hardly|nobody|none|nor|nothing|nowhere)/g;
+            count = text.match(pattern);
+            text = text.replace(pattern, " negation ");
             if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddNegation(value);
+                });
                 addToDataInfo("Negations", count.length, textPolarity);
             }
 
-            //remove all others pontuation marks... …
-            text = text.replace(/(\\|\.|,|\"|\/|\#|\!|\$|\%|\^|\&|\*|\;|\:|\{|\}|\=|\-|\~|\(|\)|(?![a-z0-9])\_(?![a-z0-9]))/g, " ");
+            //remove all others pontuation marks …
+            text = text.replace(/(\\|\.|,|\"|\/|\#|\!|\$|\%|\^|\&|\;|\:|\{|\}|\=|\~|\(|\)|(?![a-z0-9])\_(?![a-z0-9]))/g, " ");
             
-            //remove any [ "\r", "\n", "\t", "\f" ]...
+            //remove any [ "\r", "\n", "\t", "\f" ]
             text = text.replace(/\s+/g, " ");
             text = text.trim();
             
             return text;
         }
         
-        function dataProcessor(text, textPolarity) {
+        function dataProcessor(text, textPolarity, processedTextData) {
+            
+            text = text.toLowerCase();
 
             var count = [];
 
             var acronyms = allDataAvailable.getAcronyms();
             acronyms.forEach(function (acronym) {
-                var reg = new RegExp(acronym[0]);
+                var reg = new RegExp(" " + acronym[0].toLowerCase() + " ");
                 count = text.match(reg);
                 if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddAcronym(value);
+                    });
                     addToDataInfo("Acronyms", count.length, textPolarity);
+                    text = text.replace(" " + acronym[0] + " ", " " + acronym[1] + " ");
                 }
-                text = text.replace(" " + acronym[0] + " ", " " + acronym[1] + " ");
             });
 
             var positiveWords = allDataAvailable.getPositiveWords();
             positiveWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " positive_word ");
+                var reg = new RegExp(" " + word + " ");
+                count = text.match(reg);
+                if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddPositiveWord(value);
+                    });
+                    addToDataInfo("Positive_Words", count.length, textPolarity);
+                    text = text.replace(reg, " positive_word ");
+                }
             });
-            count = text.match(/positive_word/g);
-            if (count != null) {
-                addToDataInfo("Positive_Words", count.length, textPolarity);
-            }
 
             var neutralWords = allDataAvailable.getNeutralWords();
             neutralWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " neutral_word ");
+                var reg = new RegExp(" " + word + " ");
+                count = text.match(reg);
+                if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddNeutralWord(value);
+                    });
+                    addToDataInfo("Neutral_Words", count.length, textPolarity);
+                    text = text.replace(" " + word.toLowerCase() + " ", " neutral_word ");
+                }
             });
-            count = text.match(/neutral_word/g);
-            if (count != null) {
-                addToDataInfo("Neutral_Words", count.length, textPolarity);
-            }
             
             var badwordsWords = allDataAvailable.getBadWords();
             badwordsWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " badword ");
+                var reg = new RegExp(" " + word + " ");
+                count = text.match(reg);
+                if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddBadword(value);
+                    });
+                    addToDataInfo("Badwords", count.length, textPolarity);
+                    text = text.replace(" " + word.toLowerCase() + " ", " badword ");
+                }
             });
-            count = text.match(/badword/g);
-            if (count != null) {
-                addToDataInfo("Badwords", count.length, textPolarity);
-            }
-
+            
             var negativeWords = allDataAvailable.getNegativeWords();
             negativeWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " negative_word ");
+                var reg = new RegExp(" " + word + " ");
+                count = text.match(reg);
+                if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddNegativeWord(value);
+                    });
+                    addToDataInfo("Negative_Words", count.length, textPolarity);
+                    text = text.replace(" " + word.toLowerCase() + " ", " negative_word ");
+                }
             });
-            count = text.match(/negative_word/g);
-            if (count != null) {
-                addToDataInfo("Negative_Words", count.length, textPolarity);
-            }
-
+            
             var stopwordsWords = allDataAvailable.getStopWords();
             stopwordsWords.forEach(function (word) {
-                text = text.replace(" " + word + " ", " stopword ");
+                var reg = new RegExp(" " + word + " ");
+                count = text.match(reg);
+                if (count != null) {
+                    count.forEach(function (value) {
+                        processedTextData.AddStopword(value);
+                    });
+                    addToDataInfo("Stopwords", count.length, textPolarity);
+                    text = text.replace(" " + word.toLowerCase() + " ", " stopword ");
+                }
             });
-            count = text.match(/stopword/g);
-            if (count != null) {
-                addToDataInfo("Stopwords", count.length, textPolarity);
-            }
-
-            //remove some blank extra spaces...
+            
+            //remove all others pontuation marks
+            text = text.replace(/(\*|\-)/g, " ");
+            
+            //remove any [ "\r", "\n", "\t", "\f" ]
             text = text.replace(/\s+/g, " ");
             text = text.trim();
-
+            
             return text;
         }
         
         function processText(text, textPolarity) {
+            var processedTextData = new TextData();
+
             text.trim();
             text = text.slice(0, text.length - 2);
-            text = regexProcessor(text, textPolarity);
-            text = text.toLowerCase();
-            text = dataProcessor(text, textPolarity);
-            return text;
-        }
 
-        function processTweet(text, textPolarity) {
-            text = processText(text, textPolarity);
-            processedTexts[textPolarity].push(text);
+            processedTextData.SetOriginalText(text);
+            processedTextData.SetPriorPolarity(textPolarity);
+
+            text = regexProcessor(text, textPolarity, processedTextData);
+            
+            text = text.toLowerCase();
+            text = dataProcessor(text, textPolarity, processedTextData);
+            
+            processedTextData.SetProcessedText(text);
+            allDataOnProcessedTexts.push(processedTextData);
+
+            return text;
         }
 
         function textsProcessor(texts, textPolarity) {
@@ -213,7 +288,8 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             
             //usual forEach...
             texts.forEach(function (text) {
-                processTweet(text, textPolarity);
+                text = processText(text, textPolarity);
+                processedTexts[textPolarity].push(text);
             });
             
             //async forEach...
@@ -252,11 +328,53 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
                 console.log("  -" + key +":  ["+ countersInfoPositive[key] +"] ["+ countersInfoNeutral[key] +"] ["+ countersInfoNegative[key] +"] ");
             });
         }
+        
+        function addTextFeaturesData(info) {
+            Object.keys(countersInfoPositive).forEach(function (key) {
+                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
+                
+                var valuePositive = (countersInfoPositive[key] * 100) / total;
+                var valueNeutral = (countersInfoNeutral[key] * 100) / total;
+                var valueNegative = (countersInfoNegative[key] * 100) / total;
+                
+                var keyData = {};
+                keyData["name"] = key;
+                keyData["positive"] = valuePositive;
+                keyData["neutral"] = valueNeutral;
+                keyData["negative"] = valueNegative;
+                info.push(keyData);
+            });
+            return info;
+        }
+
+        function addEmoticonsData(info) {
+            var emoticons = emoticonsSetup.GetEmoticonsCounts();
+            var emoticonsOnPositiveTexts = emoticons["positive"];
+            var emoticonsOnNeutralTexts = emoticons["neutral"];
+            var emoticonsOnNegativeTexts = emoticons["negative"];
+            
+            var keyData = {};
+            keyData["name"] = "Emoticons_Pos";
+            var total = emoticonsOnPositiveTexts["positive"] + emoticonsOnNeutralTexts["positive"] + emoticonsOnNegativeTexts["positive"];
+            keyData["positive"] = (emoticonsOnPositiveTexts["positive"] * 100) / total;
+            keyData["neutral"] = (emoticonsOnNeutralTexts["positive"] * 100) / total;
+            keyData["negative"] = (emoticonsOnNegativeTexts["positive"] * 100) / total;
+            info.push(keyData);
+            keyData = {};
+            total = emoticonsOnPositiveTexts["negative"] + emoticonsOnNeutralTexts["negative"] + emoticonsOnNegativeTexts["negative"];
+            keyData["name"] = "Emoticons_Neg";
+            keyData["positive"] = (emoticonsOnPositiveTexts["negative"] * 100) / total;
+            keyData["neutral"] = (emoticonsOnNeutralTexts["negative"] * 100) / total;
+            keyData["negative"] = (emoticonsOnNegativeTexts["negative"] * 100) / total;
+            info.push(keyData);
+            return info;
+        }
 
         //[Public Methods]
-        this.Preprocessor = function (dataReveivedFromFiles) {
+        this.Preprocessor = function (dataReceivedFromFiles) {
 
-            allDataAvailable = dataReveivedFromFiles;
+            allDataAvailable = dataReceivedFromFiles;
+            allDataOnProcessedTexts = [];
 
             console.log("\n -Process: ");
             var measures = new ProcessData();
@@ -283,8 +401,13 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
             measures.ShowTimeCount(countTexts, "All " + countTexts + " texts Done.");
 
             printResults();
-
-            return processedTexts;
+            emoticonsSetup.PrintResults();
+            
+            //[Debug]
+            //var jsonString = JSON.stringify(allDataOnProcessedTexts);
+            //fs.writeFileSync("./DataAnalytics/ProcessedTextsInfo.json", jsonString);
+            
+            return allDataOnProcessedTexts;
         };
         
         this.IndependentStringProcessor = function (string) {
@@ -293,7 +416,6 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
 
         this.GetProcessDataResults = function () {
             var info = [];
-            
             /*Data to send example:
              * var info = [
                 {"name":"Acronyms","positive":0,"neutral":0,"negative":0},
@@ -302,24 +424,8 @@ var ProcessData = require('../ProcessingData/ProcessData.js');
                 {"name":"Usernames","positive":0,"neutral":0,"negative":0},
                 ......
              */
-
-            Object.keys(countersInfoPositive).forEach(function (key) {
-                var total = countersInfoPositive[key] + countersInfoNeutral[key] + countersInfoNegative[key];
-
-                var valuePositive = (countersInfoPositive[key] * 100) / total;
-                var valueNeutral = (countersInfoNeutral[key] * 100) / total;
-                var valueNegative = (countersInfoNegative[key] * 100) / total;
-
-                var keyData = {};
-                keyData["name"] = key;
-                keyData["positive"] = valuePositive;
-                keyData["neutral"] = valueNeutral;
-                keyData["negative"] = valueNegative;
-                info.push(keyData);
-            });
-            
-            var emoticonsResults = emoticonsSetup.GetEmoticonsCounts();
-
+            info = addTextFeaturesData(info);
+            info = addEmoticonsData(info);
             return info;
         }
     }

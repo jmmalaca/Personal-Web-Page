@@ -30,7 +30,7 @@
             } else if (selectDataFrom === 'middle') {
                 var divisionInTwo = Math.ceil(countValidation / 2);
                 trainData[classe] = data[classe].slice(divisionInTwo, countTraining);
-                testData[classe].push(data[classe].slice(0, divisionInTwo));
+                testData[classe] = data[classe].slice(0, divisionInTwo);
                 testData[classe].push(data[classe].slice((divisionInTwo + countTraining), data[classe].length));
             } else if (selectDataFrom === 'end') {
                 trainData[classe] = data[classe].slice(0, countValidation);
@@ -74,13 +74,15 @@
         }
         
         //[Public Methods]
-        this.Start = function (data, fromWhere, problem) {
-            
-            selectDataFrom = fromWhere;
-
-            separateTrainingAndValidationData(problem, data);
-            
+        this.Start = function (data, fromWhere) {
             var separatedData = {};
+            selectDataFrom = fromWhere;
+            
+            var problems = ["subjectivity", "polarity"];
+            problems.forEach(function(problem) {
+                separateTrainingAndValidationData(problem, data);    
+            });
+            
             separatedData["train"] = trainData;
             separatedData["test"] = testData;
 

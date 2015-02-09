@@ -11,6 +11,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
     function NaiveBayesClassifier() {
         
         //[Private data]
+        var features = ["stopword", "retweet", "username", "name", "negation", "positive_word", "neutral_Word", "negative_word", "pontuation", "hashtag", "repetition", "number", "htmlchar", "url", "badword", "uppercase"];
 
         var dataProcessor;//needed to process thw new texts the system receive...
 
@@ -47,6 +48,19 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             Object.keys(trainData).forEach(function (key) {
                 var texts = trainData[key];
                 texts.forEach(function (text) {
+                    //this is to count for just the features we choose...
+                    //features.forEach(function(feature) {
+                    //    var reg = new RegExp(feature);
+                    //    var count = text.match(reg);
+                    //    if (wordsList.hasOwnProperty(feature)) {
+                    //        if (count != null) {
+                    //            wordsList[feature] = wordsList[feature] + count.length;
+                    //        }
+                    //    } else {
+                    //        wordsList[feature] = 0;
+                    //    }
+                    //});
+                    //this is to count for all words in the texts...
                     var words = text.split(' ');
                     words.forEach(function (word) {
                         if (wordsList.hasOwnProperty(word)) {
@@ -65,7 +79,20 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             Object.keys(trainData).forEach(function (key) {
                 var texts = trainData[key];
                 var wordsList = {};
-                texts.forEach(function(text) {
+                texts.forEach(function (text) {
+                    //this is to count for just the features we choose...
+                    //features.forEach(function (feature) {
+                    //    var reg = new RegExp(feature);
+                    //    var count = text.match(reg);
+                    //    if (wordsList.hasOwnProperty(feature)) {
+                    //        if (count != null) {
+                    //            wordsList[feature] = wordsList[feature] + count.length;
+                    //        }
+                    //    } else {
+                    //        wordsList[feature] = 0;
+                    //    }
+                    //});
+                    //this is to count for all words in the texts...
                     var words = text.split(' ');
                     words.forEach(function(word) {
                         if (wordsList.hasOwnProperty(word)) {
@@ -85,12 +112,26 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             var wordsTotalData = searchAndCountWordsAvailable();
             //Count total of features(words) in each class of train data...
             var wordsData = searchAndCountWordsClassesAvailable();
+            var vocabulary = Object.keys(wordsTotalData);
 
             Object.keys(wordsData).forEach(function(key) {
                 var classeWordsData = wordsData[key];
                 var classeWordsProbabilites = {};
                 Object.keys(classeWordsData).forEach(function (word) {
-                    classeWordsProbabilites[word] = classeWordsData[word] / wordsTotalData[word];
+                    /*
+                    * W = word
+                    * C = Classe ( positive, negative, etc... )
+                    * 
+                    * Probability(W|C) = counts W in class C / counts of words in class C
+                    * 
+                    * But, what happens with unknown words... the probability will be 0.
+                    * The solution: Laplace Smoothing:
+                    * 
+                    * Probability(W|C) = counts W in class C + 1 / counts of words in class C + |V| (+ 1 ???), where |V| represents the Vocabulary
+                    */
+                    var a = classeWordsData[word] + 1;
+                    var b = wordsTotalData[word] + vocabulary.length;
+                    classeWordsProbabilites[word] = a / b;
                 });
                 wordsClassesPriorProbabilities[key] = classeWordsProbabilites;
             });
@@ -129,7 +170,9 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         }
 
         function classifyProblemResolve(stringToClassifiy, classA, classB) {
+
             var processedText = dataProcessor.IndependentStringProcessor(stringToClassifiy);
+            
             var stringData = extractWordsAndValues(processedText);
 
             var classAData = wordsClassesPriorProbabilities[classA];
@@ -140,23 +183,11 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
             Object.keys(stringData).forEach(function (word) {
                 
-                /*
-                * W = word
-                * C = Classe ( positive, negative, etc... )
-                * 
-                * Probability(W|C) = counts W in class C / counts of words in class C
-                * 
-                * But, what happens with unknown words... the probability will be 0.
-                * The solution: Laplace Smoothing:
-                * 
-                * Probability(W|C) = count(W,C) + 1 / count(W,C) + |V| + 1, where |V| represents the Vocabulary
-                */
-
-                var conditionalProbA = 1;
+                var conditionalProbA = 0;
                 if (classAData.hasOwnProperty(word)) {
                     conditionalProbA = classAData[word];
                 }
-                var conditionalProbB = 1;
+                var conditionalProbB = 0;
                 if (classBData.hasOwnProperty(word)) {
                     conditionalProbB = classBData[word];
                 }
@@ -173,11 +204,10 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 classBResult = classBResult + logB;
             });
 
-            if (classAResult > classBResult) {
+            if (classAResult >= classBResult) {
                 return classA;
-            } else {
-                return classB;
             }
+            return classB;
         }
 
         function testSystem() {
@@ -269,27 +299,41 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
             console.log("  Total Correct Classification Percentage: " + (rightPositiveClassifications + rightNeutralClassifications + rightNegativeClassifications) * 100 / totalCount + "%.");
 
-        }
-
-        //[Public Methods]
-        this.Start = function (processedTexts, setupData) {
-
-            dataProcessor = setupData;
-
-            //Check if there is a system already trained...
-            var systemAlreadyTrained = false;
+            console.log("\n  -Sensibility VS Specificity:");
+            //True Positive Rate (another term for recall)
+            var sensitivitySubjectivity = truePositiveSubjectivity / (truePositiveSubjectivity + falseNegativeSubjectivity);
+            var sensitivityPolarity = truePositivePolarity / (truePositivePolarity + falseNegativePolarity);
             
+            //False Positive Rate
+            var specificitySubjectivity = trueNegativeSubjectivity / (trueNegativeSubjectivity + falsePositiveSubjectivity);
+            var specificityPolarity = trueNegativePolarity / (trueNegativePolarity + falsePositivePolarity);
+            
+            var precisionSubjetivity = truePositiveSubjectivity / (truePositiveSubjectivity + falsePositiveSubjectivity);
+            var precisionPolarity = truePositivePolarity / (truePositivePolarity + falsePositivePolarity);
+            
+            //accuracy...the fraction of classifications that are correct
+            //accuracy F1 = ( 2 * precision * recall ) / (precison + recall)
+            var accuracySubjectivity = (2 * precisionSubjetivity * sensitivitySubjectivity) / (precisionSubjetivity + sensitivitySubjectivity);
+            var accuracyPolarity = (2 * precisionPolarity * sensitivityPolarity) / (precisionPolarity + sensitivityPolarity);
+            
+            console.log("   -Subjectivity: Sensitivity: " + sensitivitySubjectivity + ", Specificity: " + specificitySubjectivity + ", F1_Accuracy: " + accuracySubjectivity);
+            console.log("   -Polarity: Sensitivity: " + sensitivityPolarity + ", Specificity: " + specificityPolarity + ", F1_Accuracy: " + accuracyPolarity);
+
+        }
+        
+        function readNaiveBayesSystemData() {
+            var systemAlreadyTrained = false;
             //Subjectivity data...
             var dataClasses;
             try {
                 dataClasses = fs.readFileSync(classesProbabilitiesJsonPath);
                 classesProbabilities = JSON.parse(dataClasses);
-
+                
                 var dataWords;
                 try {
                     dataWords = fs.readFileSync(wordsClassesPriorProbabilitiesJsonPath);
                     wordsClassesPriorProbabilities = JSON.parse(dataWords);
-
+                    
                     systemAlreadyTrained = true;
                     console.log("  -Naive Bayes System Data Loaded.");
 
@@ -301,31 +345,39 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 console.log("\n -ERROR: reading Classes Probabilities");
                 //console.log(e);
             }
+            return systemAlreadyTrained;
+        }
 
-            if (systemAlreadyTrained != true) {
-                console.log("  -System not trained... Train it:");
+        //[Public Methods]
+        this.Start = function (processedTextsData, setupData) {
+            
+            //[Debug]
+            var jsonString = JSON.stringify(processedTextsData);
+            fs.writeFileSync("./DataAnalytics/ProcessedTextsInfo.json", jsonString);
+            
+            //dataProcessor = setupData;
 
-                //[Separate data from training and validation]
-                var separator = new Separator();
-                var problems = ["subjectivity", "polarity"];
-                problems.forEach(function(problem) {
-                    //select data from the [beginning], from the [middle] or from the [end] of the array
-                    var from = "beginning";
-
-                    var data = separator.Start(processedTexts, from, problem);
-                    trainData = data["train"];
-                    testData = data["test"];
-
-                    console.log("\n -Naive Bayes data for " + problem + " ready...");
-                });
+            ////Check if there is a system already trained...
+            //var systemAlreadyTrained = readNaiveBayesSystemData();
+            
+            //if (systemAlreadyTrained != true) {
+            //    console.log("  -System not trained... Train it...");
                 
-                //All data ready... train it... save it... and test it...
-                trainSystem();
-                //saveData();
-                //testSystem();
-            }
+            //    //[Separate data from training and validation]
+            //    var separator = new Separator();
+            //    var from = "middle";
+            //    var data = separator.Start(processedTexts, from);
+            //    trainData = data["train"];
+            //    testData = data["test"];
+            //    console.log("\n -Naive Bayes data ready...");
 
-            console.log("\n  -Naive Bayes System Ready.");
+            //    //All data ready... train it... save it... and test it...
+            //    trainSystem();
+            //    //saveData();
+            //    testSystem();
+            //}
+
+            //console.log("\n  -Naive Bayes System Ready.");
         }
     }
     

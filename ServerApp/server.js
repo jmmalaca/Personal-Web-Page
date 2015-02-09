@@ -11,11 +11,11 @@ dataFromFiles.ReadInitialData();
 
 //[Process Texts]
 var setup = new SetupData();
-processedTexts = setup.Preprocessor(dataFromFiles);
+var processedTextsData = setup.Preprocessor(dataFromFiles);
 
 //[Naive Bayes Classificator System]
 //var nb = new NaiveBayes();
-//nb.Start(processedTexts, setup);
+//nb.Start(processedTextsData, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();

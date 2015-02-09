@@ -1,7 +1,7 @@
 ﻿//Show Box ---------
 function AddStatsBox() {
     $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
-    $("#SentiBox").append("<div id=\"PiesBox\">Available Data</div>");
+    $("#SentiBox").append("<div id=\"PiesBox\">Bags of Words</div>");
     $("#PiesBox").append("<table> <tr> " +
         "<td id=\"EmoticonsPie\"> </td>" +
         "<td id=\"SubjectivityWordsPie\"> </td> </tr>" +
@@ -42,10 +42,10 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
             }
         },
         "size": {
-            "pieInnerRadius": "35%",
+            "pieInnerRadius": "30%",
             "pieOuterRadius": "100%",
-            "canvasHeight": 125,
-            "canvasWidth": 125
+            "canvasHeight": 135,
+            "canvasWidth": 135
         },
         "data": {
             "sortOrder": "value-desc",
@@ -151,7 +151,7 @@ function AddFeaturesInfo(data, colors) {
     //console.log(data);
 
     var margin = { top: 30, right: 20, bottom: 80, left: 30 },
-     width = 500 - margin.left - margin.right,
+     width = 550 - margin.left - margin.right,
      height = 350 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
@@ -233,7 +233,7 @@ function AddFeaturesInfo(data, colors) {
         .attr("transform", function (d) { return "translate(" + x0(d.name) + ",0)"; });
         svg.append("text")
             .attr("x", (width / 2))
-            .attr("y", 0 - (margin.top / 2))
+            .attr("y", (0 - (margin.top / 2)) + 35)
             .attr("text-anchor", "middle")
             .style("fill", "white")
             .text("Words Detection");// chart title
@@ -251,25 +251,25 @@ function AddFeaturesInfo(data, colors) {
             .on('mouseover', tip.show)
             .on('mouseout', tip.hide);
 
-    var legend = svg.selectAll(".legend")
-        .data(field_name.slice().reverse())
-      .enter().append("g")
-        .attr("class", "legend")
-        .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
+    //var legend = svg.selectAll(".legend")
+    //    .data(field_name.slice().reverse())
+    //  .enter().append("g")
+    //    .attr("class", "legend")
+    //    .attr("transform", function (d, i) { return "translate(0," + i * 20 + ")"; });
 
-    legend.append("rect")
-        .attr("x", width - 18)
-        .attr("width", 18)
-        .attr("height", 18)
-        .style("fill", color);
+    //legend.append("rect")
+    //    .attr("x", width - 18)
+    //    .attr("width", 18)
+    //    .attr("height", 18)
+    //    .style("fill", color);
 
-    legend.append("text")
-        .attr("x", width - 24)
-        .attr("y", 9)
-        .style("fill", "white")
-        .attr("dy", ".30em")
-        .style("text-anchor", "end")
-        .text(function (d) { return d; });
+    //legend.append("text")
+    //    .attr("x", width - 24)
+    //    .attr("y", 9)
+    //    .style("fill", "white")
+    //    .attr("dy", ".30em")
+    //    .style("text-anchor", "end")
+    //    .text(function (d) { return d; });
 }
 
 function AddFeaturesInfoNull() {

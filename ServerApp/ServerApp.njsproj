@@ -464,10 +464,14 @@
     <Compile Include="DataAnalytics\DataReader.js" />
     <Compile Include="DataAnalytics\Emoticons.js" />
     <Compile Include="DataAnalytics\TextsProcessor.js" />
+    <Compile Include="DataAnalytics\TextData.js" />
     <Compile Include="server.js" />
     <Compile Include="TwitterConnector\TwitterConnector.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
     <Content Include="DataAnalytics\Acronyms\acronyms.txt" />
+    <Content Include="DataAnalytics\Afinn\AFINN-111.txt" />
+    <Content Include="DataAnalytics\Afinn\AFINN-96.txt" />
+    <Content Include="DataAnalytics\Afinn\AFINN-README.txt" />
     <Content Include="DataAnalytics\Stanford\stopwords.txt" />
     <Content Include="DataAnalytics\Stanford\README" />
     <Content Include="DataAnalytics\TexasU\badwords.txt" />
@@ -1028,11 +1032,13 @@
     <Content Include="DataAnalytics\tweets.txt" />
     <Content Include="SentimentAnalysis\ClassesProbabilities.json" />
     <Content Include="SentimentAnalysis\ClassesWordsProbabilities.json" />
+    <Content Include="DataAnalytics\ProcessedTextsInfo.json" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
     <Folder Include="DataAnalytics\Acronyms\" />
+    <Folder Include="DataAnalytics\Afinn\" />
     <Folder Include="DataAnalytics\TexasU\" />
     <Folder Include="DataAnalytics\WebConfs\" />
     <Folder Include="DataAnalytics\Stanford\" />
