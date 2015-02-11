@@ -15,6 +15,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
         var trainData = {};
         var testData = {};
+        var functionThreshold = -1;
         
         var classesProbabilities = {};
         var wordsClassesPriorProbabilities = {};
@@ -162,7 +163,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 classBResult = classBResult + logB;
             }
 
-            if (classAResult > classBResult) {
+            if (classAResult > functionThreshold) {
                 return classA;
             }
             return classB;

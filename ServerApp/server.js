@@ -15,12 +15,12 @@ var setup = new SetupData();
 var allDataOnProcessedTexts = setup.Preprocessor(dataFromFiles);
 
 //[Naive Bayes - Classificator System]
-//var nb = new NaiveBayes();
-//nb.Start(allDataOnProcessedTexts, setup);
+var nb = new NaiveBayes();
+nb.Start(allDataOnProcessedTexts, setup);
 
 //[Neural Network - Classificator System]
-var nn = new NeuralNetwork();
-nn.Start(allDataOnProcessedTexts, setup);
+//var nn = new NeuralNetwork();
+//nn.Start(allDataOnProcessedTexts, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();

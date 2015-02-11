@@ -1034,7 +1034,8 @@
     <Content Include="SentimentAnalysis\ClassesProbabilities.json" />
     <Content Include="SentimentAnalysis\ClassesFeaturesFrequencies.json" />
     <Content Include="DataAnalytics\ProcessedTextsInfo.json" />
-    <Content Include="SentimentAnalysis\Weights.json" />
+    <Content Include="SentimentAnalysis\WeightsPolarity.json" />
+    <Content Include="SentimentAnalysis\WeightsSubjectivity.json" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>

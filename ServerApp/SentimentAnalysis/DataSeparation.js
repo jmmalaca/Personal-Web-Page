@@ -29,12 +29,12 @@
                 testData[classe] = data[classe].slice(countTraining, data[classe].length);
             } else if (selectDataFrom === 'middle') {
                 var divisionInTwo = Math.ceil(countValidation / 2);
-                trainData[classe] = data[classe].slice(divisionInTwo, countTraining);
+                trainData[classe] = data[classe].slice(divisionInTwo, (divisionInTwo + countTraining));
                 testData[classe] = data[classe].slice(0, divisionInTwo);
                 testData[classe].push(data[classe].slice((divisionInTwo + countTraining), data[classe].length));
             } else if (selectDataFrom === 'end') {
-                trainData[classe] = data[classe].slice(0, countValidation);
-                testData[classe] = data[classe].slice(countValidation, data[classe].length);
+                trainData[classe] = data[classe].slice(countValidation, data[classe].length);
+                testData[classe] = data[classe].slice(0, countValidation);
             }
         }
         
