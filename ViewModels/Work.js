@@ -45,7 +45,7 @@ var eventData = function (title, url, data) {
 // The view model is an abstract description of the state of the UI, but without any knowledge of the UI technology (HTML)
 var viewModelData = {
     WorksData: [
-        new workData("Junior Software Engineer", "BroadScope, Lda", "http://www.broadscope.eu/", "'14/..", "The traineeship focus on R&D has been closed, the result was positive, and so I have been <b>invited</b> to continue on the company and be part of the BroadScope <b>team</b>. With this I'm inserted in the BroadScope team and in the processs of building of the main project of the company."),
+        new workData("Software Engineer", "BroadScope, Lda", "http://www.broadscope.eu/", "'14/..", "The traineeship focus on R&D has been closed, the result was positive, and so I have been <b>invited</b> to continue on the company and be part of the BroadScope <b>team</b>. With this I'm inserted in the BroadScope team and in the processs of building of the main project of the company."),
         new workData("Software Engineer Trainee", "BroadScope, Lda", "http://www.broadscope.eu/", "'13/14", "<b>Research and develop</b> solutions, analyze results and present reports. Turn raw data into useful data, was the project presented by the BroadScope involving three major areas: <b>\"Social/Text Mining\", \"Natural Language Processing\" and \"Machine Learning\"</b>.")
     ],
 

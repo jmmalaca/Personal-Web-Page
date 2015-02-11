@@ -32,8 +32,19 @@
 
 .Events-List {
     position: relative;
-    top: 30%;
-    left: 7%;
+    margin-top: 3%;
+    margin-bottom: 3%;
+    left: 2%;
+    width: 90%;
+    height: auto;
+    padding: 10px;
+    font-family: Arial, cursive;
+    font-size: 18px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    display: inline-block;
 }
 
 .Event {

@@ -71,10 +71,10 @@ $(document).ready(function () {
         afterLoad: function (anchorLink, index) {
             //using anchorLink
             if (anchorLink == 'Presentation') {
-                Home_Button_Action();
+                //Home_Button_Action();
             }
             else if (anchorLink == 'Work') {
-                Work_Button_Action();
+                //Work_Button_Action();
                 //$(".fp-prev").css("visibility", 'hidden');
                 //$(".fp-next").css("visibility", 'visible');
             }
@@ -83,10 +83,10 @@ $(document).ready(function () {
             //    $(".fp-next").css("visibility", 'hidden');
             //}
             else if (anchorLink == 'Social') {
-                Social_Button_Action();
+                //Social_Button_Action();
             }
             else if (anchorLink == 'Prompt') {
-                Prompt_Button_Action();
+                //Prompt_Button_Action();
                 StartPrompt('#Console-Box');
             }
         }

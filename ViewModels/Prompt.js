@@ -1,6 +1,7 @@
 ﻿//Show Console ---------
 function AddConsoleBox() {
-    $("#Prompt-Page").append("<div id=\"Console-Box\"></div>");
+    $("#Prompt-Page").append("<div id=\"Laptop-Box\"></div>");
+    $("#Laptop-Box").append("<div id=\"Console-Box\"></div>");
 }
 
 //Start Prompt...
