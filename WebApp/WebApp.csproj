@@ -82,6 +82,7 @@
     <Content Include="css\WebPage_Global\WebPage.css" />
     <Content Include="images\Background\bike.jpg" />
     <Content Include="images\Background\blurBike.png" />
+    <Content Include="images\Background\macbook.png" />
     <Content Include="images\Presentation\Europe.png" />
     <Content Include="images\favicon\favicon.ico" />
     <Content Include="images\Presentation\Location_transp.png" />

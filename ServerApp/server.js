@@ -4,6 +4,7 @@ var url = require('url'); //url npm module
 var DataReader = require('./DataAnalytics/DataReader.js');
 var SetupData = require('./DataAnalytics/TextsProcessor.js');
 var NaiveBayes = require('./SentimentAnalysis/NaiveBayesClassifier.js');
+var NeuralNetwork = require('./SentimentAnalysis/NeuralNetwork.js');
 
 //[Read Data]
 var dataFromFiles = new DataReader();
@@ -11,11 +12,15 @@ dataFromFiles.ReadInitialData();
 
 //[Process Texts]
 var setup = new SetupData();
-var processedTextsData = setup.Preprocessor(dataFromFiles);
+var allDataOnProcessedTexts = setup.Preprocessor(dataFromFiles);
 
-//[Naive Bayes Classificator System]
+//[Naive Bayes - Classificator System]
 //var nb = new NaiveBayes();
-//nb.Start(processedTextsData, setup);
+//nb.Start(allDataOnProcessedTexts, setup);
+
+//[Neural Network - Classificator System]
+var nn = new NeuralNetwork();
+nn.Start(allDataOnProcessedTexts, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();

@@ -11,9 +11,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
     function NaiveBayesClassifier() {
         
         //[Private data]
-        var features = ["stopword", "retweet", "username", "name", "negation", "positive_word", "neutral_Word", "negative_word", "pontuation", "hashtag", "repetition", "number", "htmlchar", "url", "badword", "uppercase"];
-
-        var dataProcessor;//needed to process thw new texts the system receive...
+        var dataProcessor;//needed to process the new texts the system receive...
 
         var trainData = {};
         var testData = {};
@@ -22,102 +20,73 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         var wordsClassesPriorProbabilities = {};
         
         var classesProbabilitiesJsonPath = "./SentimentAnalysis/ClassesProbabilities.json";
-        var wordsClassesPriorProbabilitiesJsonPath = "./SentimentAnalysis/ClassesWordsProbabilities.json";
+        var wordsClassesPriorProbabilitiesJsonPath = "./SentimentAnalysis/ClassesFeaturesFrequencies.json";
         
         //[Private Methods]
         function calcClassesPriorProbabilities() {
             //Classes Prior Probabilities
-            //Count total of texts in train data... and total of texts for each classe...
-            var countTotalTexts = 0;
-            var countClassesTexts = {};
+            //Count total of arrays in train data... and total of arrays for each classe in the train data...
+            var countTotalArrays = 0;
+            var countClassesArrays = {};
             Object.keys(trainData).forEach(function(key) {
-                countClassesTexts[key] = trainData[key].length;
-                countTotalTexts = countTotalTexts + countClassesTexts[key];
+                countClassesArrays[key] = trainData[key].length;
+                countTotalArrays = countTotalArrays + countClassesArrays[key];
             });
             //Calc probabilities for each class...
             //console.log("  -Classes Prior Probabilities:");
             Object.keys(trainData).forEach(function(key) {
-                classesProbabilities[key] = countClassesTexts[key] / countTotalTexts;
+                classesProbabilities[key] = countClassesArrays[key] / countTotalArrays;
             //    console.log("  -[" + key + "] = " + classesProbabilities[key]);
             });
             console.log("  -Classes Prior Probabilities calculated.");
         }
 
-        function searchAndCountWordsAvailable() {
-            var wordsList = {};
+        function countClassesFeaturesAvailable() {
+            var featuresList = {};
             Object.keys(trainData).forEach(function (key) {
-                var texts = trainData[key];
-                texts.forEach(function (text) {
-                    //this is to count for just the features we choose...
-                    //features.forEach(function(feature) {
-                    //    var reg = new RegExp(feature);
-                    //    var count = text.match(reg);
-                    //    if (wordsList.hasOwnProperty(feature)) {
-                    //        if (count != null) {
-                    //            wordsList[feature] = wordsList[feature] + count.length;
-                    //        }
-                    //    } else {
-                    //        wordsList[feature] = 0;
-                    //    }
-                    //});
-                    //this is to count for all words in the texts...
-                    var words = text.split(' ');
-                    words.forEach(function (word) {
-                        if (wordsList.hasOwnProperty(word)) {
-                            wordsList[word] = wordsList[word] + 1;
-                        } else {
-                            wordsList[word] = 1;
+                featuresList[key] = [];
+                var textsData = trainData[key];
+                for (var i = 0; i < textsData.length; i++) {
+                    var featuresData = textsData[i];
+                    if (i == 0) {
+                        featuresList[key] = featuresData;
+                    } else {
+                        for (var j = 0; j < featuresList[key].length; j++) {
+                            featuresList[key][j] += featuresData[j];
                         }
-                    });
-                });
+                    }
+                }
             });
-            return wordsList;
+            return featuresList;
+        }
+        
+        function sumAllFeaturesData(featuresClassesData) {
+            var featuresSum = [];
+            var keys = ["subjective", "objective"];
+            for (var i = 0; i < keys.length; i++) {
+                var key = keys[i];
+                if (i == 0) {
+                    Array.prototype.push.apply(featuresSum, featuresClassesData[key]);
+                } else {
+                    for (var j = 0; j < featuresSum.length; j++) {
+                        featuresSum[j] += featuresClassesData[key][j];
+                    }   
+                }
+            }
+            return featuresSum;
         }
 
-        function searchAndCountWordsClassesAvailable() {
-            var wordsClassesList = {};
-            Object.keys(trainData).forEach(function (key) {
-                var texts = trainData[key];
-                var wordsList = {};
-                texts.forEach(function (text) {
-                    //this is to count for just the features we choose...
-                    //features.forEach(function (feature) {
-                    //    var reg = new RegExp(feature);
-                    //    var count = text.match(reg);
-                    //    if (wordsList.hasOwnProperty(feature)) {
-                    //        if (count != null) {
-                    //            wordsList[feature] = wordsList[feature] + count.length;
-                    //        }
-                    //    } else {
-                    //        wordsList[feature] = 0;
-                    //    }
-                    //});
-                    //this is to count for all words in the texts...
-                    var words = text.split(' ');
-                    words.forEach(function(word) {
-                        if (wordsList.hasOwnProperty(word)) {
-                            wordsList[word] = wordsList[word] + 1;
-                        } else {
-                            wordsList[word] = 1;
-                        }
-                    });
-                });
-                wordsClassesList[key] = wordsList;
-            });
-            return wordsClassesList;
-        }
+        function calcFeaturesPriorProbabilities() {
+            //Count total of features for each class of the train data...
+            var featuresClassesData = countClassesFeaturesAvailable();
+            //sum all features to get the total of features available...
+            var featuresTotalData = sumAllFeaturesData(featuresClassesData);
+            var vocabulary = featuresTotalData.length;
 
-        function calcWordsPriorProbabilities() {
-            //Count total of features(words) in train data...
-            var wordsTotalData = searchAndCountWordsAvailable();
-            //Count total of features(words) in each class of train data...
-            var wordsData = searchAndCountWordsClassesAvailable();
-            var vocabulary = Object.keys(wordsTotalData);
-
-            Object.keys(wordsData).forEach(function(key) {
-                var classeWordsData = wordsData[key];
-                var classeWordsProbabilites = {};
-                Object.keys(classeWordsData).forEach(function (word) {
+            Object.keys(featuresClassesData).forEach(function(key) {
+                var featuresData = featuresClassesData[key];
+                var featuresClassesFrequency = [];
+                for (var i = 0; i < featuresData.length; i++) {
                     /*
                     * W = word
                     * C = Classe ( positive, negative, etc... )
@@ -129,11 +98,11 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                     * 
                     * Probability(W|C) = counts W in class C + 1 / counts of words in class C + |V| (+ 1 ???), where |V| represents the Vocabulary
                     */
-                    var a = classeWordsData[word] + 1;
-                    var b = wordsTotalData[word] + vocabulary.length;
-                    classeWordsProbabilites[word] = a / b;
-                });
-                wordsClassesPriorProbabilities[key] = classeWordsProbabilites;
+                    var a = featuresData[i] + 1;
+                    var b = featuresTotalData[i] + vocabulary;
+                    featuresClassesFrequency[i] = a / b;
+                }
+                wordsClassesPriorProbabilities[key] = featuresClassesFrequency;
             });
             console.log("  -Words Prior Probabilities calculated.");
         }
@@ -151,7 +120,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         function trainSystem() {
 
             calcClassesPriorProbabilities();
-            calcWordsPriorProbabilities();
+            calcFeaturesPriorProbabilities();
             
             console.log("  -Naive Bayes system trained.");
         }
@@ -169,11 +138,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             return results;
         }
 
-        function classifyProblemResolve(stringToClassifiy, classA, classB) {
-
-            var processedText = dataProcessor.IndependentStringProcessor(stringToClassifiy);
-            
-            var stringData = extractWordsAndValues(processedText);
+        function classifyProblemResolve(dataToClassifiy, classA, classB) {
 
             var classAData = wordsClassesPriorProbabilities[classA];
             var classAResult = math.log(classesProbabilities[classA], 10);
@@ -181,18 +146,11 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             var classBData = wordsClassesPriorProbabilities[classB];
             var classBResult = math.log(classesProbabilities[classB], 10);
 
-            Object.keys(stringData).forEach(function (word) {
+            for (var i = 0; i < dataToClassifiy.length; i++) {
                 
-                var conditionalProbA = 0;
-                if (classAData.hasOwnProperty(word)) {
-                    conditionalProbA = classAData[word];
-                }
-                var conditionalProbB = 0;
-                if (classBData.hasOwnProperty(word)) {
-                    conditionalProbB = classBData[word];
-                }
-                
-                var countsAppear = stringData[word];
+                var conditionalProbA = classAData[i];
+                var conditionalProbB = classBData[i];
+                var countsAppear = dataToClassifiy[i];
 
                 var powA = math.pow(conditionalProbA, countsAppear);
                 var powB = math.pow(conditionalProbB, countsAppear);
@@ -202,9 +160,9 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
                 classAResult = classAResult + logA;
                 classBResult = classBResult + logB;
-            });
+            }
 
-            if (classAResult >= classBResult) {
+            if (classAResult > classBResult) {
                 return classA;
             }
             return classB;
@@ -237,10 +195,10 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
             Object.keys(testData).forEach(function (key) {
 
-                var textsToClassify = testData[key];
-                textsToClassify.forEach(function (text) {
+                var dataToClassify = testData[key];
+                dataToClassify.forEach(function (textData) {
                     
-                    var classification = classifyProblemResolve(text, "subjective", "objective");
+                    var classification = classifyProblemResolve(textData, "subjective", "objective");
                     if (classification === "subjective") {
                         if (key === "subjective") {
                             rightSubjectiveClassifications++;
@@ -250,7 +208,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                             falsePositiveSubjectivity++;
                         }
 
-                        classification = classifyProblemResolve(text, "positive", "negative");
+                        classification = classifyProblemResolve(textData, "positive", "negative");
                         if (classification === "positive") {
                             if (key === "positive") {
                                 rightPositiveClassifications++;
@@ -349,35 +307,41 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         }
 
         //[Public Methods]
-        this.Start = function (processedTextsData, setupData) {
-            
-            //[Debug]
-            var jsonString = JSON.stringify(processedTextsData);
-            fs.writeFileSync("./DataAnalytics/ProcessedTextsInfo.json", jsonString);
-            
-            //dataProcessor = setupData;
+        this.Start = function (allDataOnProcessedTexts, setupData) {
+            dataProcessor = setupData;
 
-            ////Check if there is a system already trained...
-            //var systemAlreadyTrained = readNaiveBayesSystemData();
+            //Check if there is a system already trained...
+            var systemAlreadyTrained = readNaiveBayesSystemData();
             
-            //if (systemAlreadyTrained != true) {
-            //    console.log("  -System not trained... Train it...");
+            var separator = new Separator();
+            //select data from the [beginning], from the [middle] or from the [end] of the array and percentage for training and test
+            var trainingDataPercentage = 70;
+            var from = "middle";
+            var data = separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
+
+            if (systemAlreadyTrained != true) {
+                console.log("  -System not trained... Train it...");
+
+                //[Separate data from training and validation]
+                trainData = data["train"];
+                testData = data["test"];
+
+                //All data ready... train it... save it... and test it...
+                trainSystem();
+                //saveData();
+                testSystem();
+
+            } else {
+                console.log("  -System trained...");
                 
-            //    //[Separate data from training and validation]
-            //    var separator = new Separator();
-            //    var from = "middle";
-            //    var data = separator.Start(processedTexts, from);
-            //    trainData = data["train"];
-            //    testData = data["test"];
-            //    console.log("\n -Naive Bayes data ready...");
+                //[Separate data from training and validation]
+                testData = data["test"];
+                
+                //All data ready... test it...
+                testSystem();
+            }
 
-            //    //All data ready... train it... save it... and test it...
-            //    trainSystem();
-            //    //saveData();
-            //    testSystem();
-            //}
-
-            //console.log("\n  -Naive Bayes System Ready.");
+            console.log("\n  -Naive Bayes System Ready.");
         }
     }
     

@@ -236,7 +236,7 @@ function AddFeaturesInfo(data, colors) {
             .attr("y", (0 - (margin.top / 2)) + 35)
             .attr("text-anchor", "middle")
             .style("fill", "white")
-            .text("Words Detection");// chart title
+            .text("Features Detection");// chart title
 
     name.selectAll(".bar")
             .data(function(d) { return d.compare; })

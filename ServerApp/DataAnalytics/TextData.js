@@ -28,8 +28,8 @@
         this.PriorPolarity = "";
         this.positiveEmoticons = {};
         this.negativeEmoticons = {};
-
-        this.TextDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        
+        this.textDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         
         //[Sets and Gets]
 
@@ -56,7 +56,7 @@
             } else {
                 this.acronyms[acronym] = 1;
             }
-            this.TextDataArray[0]++;
+            //this.textDataArray[0]++;
         }
 
         this.GetAcronyms = function () {
@@ -69,7 +69,7 @@
             } else {
                 this.stopwords[stopword] = 1;
             }
-            this.TextDataArray[1]++;
+            //this.textDataArray[1]++;
         }
 
         this.GetStopwords = function () {
@@ -78,7 +78,7 @@
         //[retweets]
         this.SetRetweet = function () {
             this.retweet = true;
-            this.TextDataArray[2]++;
+            this.textDataArray[0]++;
         }
         
         this.GetRetweet = function () {
@@ -91,7 +91,7 @@
             } else {
                 this.usernames[username] = 1;
             }
-            this.TextDataArray[3]++;
+            this.textDataArray[1]++;
         }
 
         this.GetUsernames = function () {
@@ -104,7 +104,7 @@
             } else {
                 this.negations[negation] = 1;
             }
-            this.TextDataArray[4]++;
+            this.textDataArray[2]++;
         }
         
         this.GetNegations = function () {
@@ -117,7 +117,7 @@
             } else {
                 this.positiveWords[positiveWord] = 1;
             }
-            this.TextDataArray[5]++;
+            this.textDataArray[3]++;
         }
 
         this.GetPositiveWords = function () {
@@ -130,7 +130,7 @@
             } else {
                 this.neutralWords[neutralWord] = 1;
             }
-            this.TextDataArray[6]++;
+            this.textDataArray[4]++;
         }
 
         this.GetNeutralWords = function () {
@@ -143,7 +143,7 @@
             } else {
                 this.negativeWords[negativeWord] = 1;
             }
-            this.TextDataArray[7]++;
+            this.textDataArray[5]++;
         }
 
         this.GetNegativeWords = function () {
@@ -156,7 +156,7 @@
             } else {
                 this.pontuations[pontuation] = 1;
             }
-            this.TextDataArray[8]++;
+            this.textDataArray[6]++;
         }
 
         this.GetPontuations = function () {
@@ -169,7 +169,7 @@
             } else {
                 this.hashtags[hashtag] = 1;
             }
-            this.TextDataArray[9]++;
+            this.textDataArray[7]++;
         }
 
         this.GetHashtags = function () {
@@ -182,7 +182,7 @@
             } else {
                 this.repetitions[repetition] = 1;
             }
-            this.TextDataArray[10]++;
+            this.textDataArray[8]++;
         }
 
         this.GetRepetitions = function () {
@@ -195,7 +195,7 @@
             } else {
                 this.numbers[number] = 1;
             }
-            this.TextDataArray[11]++;
+            //this.textDataArray[9]++;
         }
 
         this.GetNumbers = function () {
@@ -208,7 +208,7 @@
             } else {
                 this.htmlChars[htmlChar] = 1;
             }
-            this.TextDataArray[12]++;
+            this.textDataArray[9]++;
         }
 
         this.GetHtmlChars = function () {
@@ -221,7 +221,7 @@
             } else {
                 this.urls[url] = 1;
             }
-            this.TextDataArray[13]++;
+            this.textDataArray[10]++;
         }
 
         this.GetUrls = function () {
@@ -234,7 +234,7 @@
             } else {
                 this.badwords[badword] = 1;
             }
-            this.TextDataArray[14]++;
+            //this.textDataArray[12]++;
         }
 
         this.GetBadwords = function () {
@@ -247,7 +247,7 @@
             } else {
                 this.uppercases[uppercase] = 1;
             }
-            this.TextDataArray[15]++;
+            this.textDataArray[11]++;
         }
 
         this.GetUppercases = function () {
@@ -261,6 +261,7 @@
         this.GetPriorPolarity = function () {
             return this.PriorPolarity;
         }
+
         //[Positive Emoticons]
         this.AddPositiveEmoticon = function (positiveEmoticon) {
             if (Object.keys(this.positiveEmoticons).indexOf(positiveEmoticon) > -1) {
@@ -268,7 +269,7 @@
             } else {
                 this.positiveEmoticons[positiveEmoticon] = 1;
             }
-            this.TextDataArray[16]++;
+            this.textDataArray[12]++;
         }
 
         this.GetPositiveEmoticons = function () {
@@ -281,18 +282,22 @@
             } else {
                 this.negativeEmoticons[negativeEmoticon] = 1;
             }
-            this.TextDataArray[17]++;
+            this.textDataArray[13]++;
         }
 
         this.GetNegativeEmoticons = function () {
             return this.negativeEmoticons;
+        }
+        //[Get Text Data Array]
+        this.GetTextDataArray = function() {
+            return this.textDataArray;
         }
         //[Get All Data Info]
         this.GetAllDataInfo = function () {
             var info = {
                 "originalText": this.originalText,
                 "processedText": this.processedText,
-                "textDataArray": this.TextDataArray,
+                "textDataArray": this.textDataArray,
                 "acronyms": this.acronyms,
                 "stopwords": this.stopwords,
                 "retweet": this.retweet,

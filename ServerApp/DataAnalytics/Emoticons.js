@@ -7,10 +7,6 @@
     
     function Emoticons() {
         //[Private Data]
-        var countersInfoPositive = { "positive": 0, "negative": 0 };
-        var countersInfoNeutral = { "positive": 0, "negative": 0 };
-        var countersInfoNegative = { "positive": 0, "negative": 0 };
-
         //[Positive Emoticons]
         var patternHappy = /:\)+|\(+:|:>+|<+:|:-\)|\(-:|:\]|=\]|B-\)/g;
         var patternLaughing = /:-D|:D|:d|8-D|x-D| xD | xd |X-D| XD |=-D|=D|=-3|=3|B\^D/g;
@@ -75,36 +71,30 @@
                 if (count != null && textPolarity != null) {
                     if (textPolarity.indexOf("positive") > -1) {
                         if (keyword.indexOf("positive") > -1) {
-                            countersInfoPositive["positive"] = countersInfoPositive["positive"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddPositiveEmoticon(value);
                             });
                         } else {
-                            countersInfoPositive["negative"] = countersInfoPositive["negative"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddNegativeEmoticon(value);
                             });
                         }
                     } else if (textPolarity.indexOf("neutral") > -1) {
                         if (keyword.indexOf("positive") > -1) {
-                            countersInfoNeutral["positive"] = countersInfoNeutral["positive"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddPositiveEmoticon(value);
                             });
                         } else {
-                            countersInfoNeutral["negative"] = countersInfoNeutral["negative"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddNegativeEmoticon(value);
                             });
                         }
                     } else {
                         if (keyword.indexOf("positive") > -1) {
-                            countersInfoNegative["positive"] = countersInfoNegative["positive"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddPositiveEmoticon(value);
                             });
                         } else {
-                            countersInfoNegative["negative"] = countersInfoNegative["negative"] + count.length;
                             count.forEach(function (value) {
                                 processedTextData.AddNegativeEmoticon(value);
                             });
@@ -138,19 +128,6 @@
             text = replaceEmoticons(text, textPolarity, negativePatterns, "negative_emoticon", processedTextData);
 
             return text;
-        }
-
-        this.GetEmoticonsCounts = function() {
-            var keyData = {};
-            keyData["positive"] = countersInfoPositive;
-            keyData["neutral"] = countersInfoNeutral;
-            keyData["negative"] = countersInfoNegative;
-            return keyData;
-        }
-
-        this.PrintResults = function () {
-            console.log("  -Positive_Emoticons:  [" + countersInfoPositive["positive"] + "] [" + countersInfoNeutral["positive"] + "] [" + countersInfoNegative["positive"] + "] ");
-            console.log("  -Negative_Emoticons:  [" + countersInfoPositive["negative"] + "] [" + countersInfoNeutral["negative"] + "] [" + countersInfoNegative["negative"] + "] ");
         }
     }
     

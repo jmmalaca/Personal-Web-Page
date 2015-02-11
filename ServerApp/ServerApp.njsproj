@@ -465,6 +465,7 @@
     <Compile Include="DataAnalytics\Emoticons.js" />
     <Compile Include="DataAnalytics\TextsProcessor.js" />
     <Compile Include="DataAnalytics\TextData.js" />
+    <Compile Include="SentimentAnalysis\NeuralNetwork.js" />
     <Compile Include="server.js" />
     <Compile Include="TwitterConnector\TwitterConnector.js" />
     <Content Include="bin\Microsoft.NodejsTools.WebRole.dll" />
@@ -1031,8 +1032,9 @@
     <Content Include="ProcessingData\cpuLoadsJSON.txt" />
     <Content Include="DataAnalytics\tweets.txt" />
     <Content Include="SentimentAnalysis\ClassesProbabilities.json" />
-    <Content Include="SentimentAnalysis\ClassesWordsProbabilities.json" />
+    <Content Include="SentimentAnalysis\ClassesFeaturesFrequencies.json" />
     <Content Include="DataAnalytics\ProcessedTextsInfo.json" />
+    <Content Include="SentimentAnalysis\Weights.json" />
     <Content Include="views\hello.ejs" />
   </ItemGroup>
   <ItemGroup>

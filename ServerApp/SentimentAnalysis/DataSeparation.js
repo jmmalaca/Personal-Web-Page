@@ -73,26 +73,47 @@
             }
         }
         
-        //[Public Methods]
-        this.Start = function (data, fromWhere) {
+        function getTextDataArraysOnly() {
             var separatedData = {};
+            //Just retreive the Text Arrays Data
+            var trainArrays = {};
+            var testArrays = {};
+            Object.keys(trainData).forEach(function (key) {
+                trainArrays[key] = [];
+                trainData[key].forEach(function (textData) {
+                    if (textData.textDataArray != null) {
+                        trainArrays[key].push(textData.textDataArray);
+                    }
+                });
+                testArrays[key] = [];
+                testData[key].forEach(function (textData) {
+                    if (textData.textDataArray != null) {
+                        testArrays[key].push(textData.textDataArray);
+                    }
+                }); 
+            });
+            separatedData["train"] = trainArrays;
+            separatedData["test"] = testArrays;
+            return separatedData;
+        }
+
+        //[Public Methods]
+        this.Start = function (data, fromWhere, percentage) {
             selectDataFrom = fromWhere;
-            
+            trainingDataPercentage = percentage;
+
             var problems = ["subjectivity", "polarity"];
             problems.forEach(function(problem) {
                 separateTrainingAndValidationData(problem, data);    
             });
-            
-            separatedData["train"] = trainData;
-            separatedData["test"] = testData;
-
-            Object.keys(trainData).forEach(function(key) {
-                console.log("  -Train Data[ " + key +" ]: " + trainData[key].length);
+            Object.keys(trainData).forEach(function (key) {
+                console.log("  -Train Data[ " + key + " ]: " + trainData[key].length);
             });
             Object.keys(testData).forEach(function (key) {
                 console.log("  -Test Data[ " + key + " ]: " + testData[key].length);
             });
-
+            
+            var separatedData = getTextDataArraysOnly();
             return separatedData;
         }
     }
