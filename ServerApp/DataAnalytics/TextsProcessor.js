@@ -4,6 +4,7 @@ var async = require('async');
 var Emoticons = require('../DataAnalytics/Emoticons.js');
 var ProcessData = require('../ProcessingData/ProcessData.js');
 var TextData = require('../DataAnalytics/TextData.js');
+var NLP = require('../DataAnalytics/NLP.js');
 
 (function () {
     
@@ -16,6 +17,7 @@ var TextData = require('../DataAnalytics/TextData.js');
         var processedDataFilePath = "./DataAnalytics/ProcessedTextsInfo.json";
 
         var emoticonsSetup = new Emoticons();
+        var nlp = new NLP();
 
         var allDataReceivedFromFiles = {};
         var allDataOnProcessedTexts = {};
@@ -236,6 +238,8 @@ var TextData = require('../DataAnalytics/TextData.js');
             processedTextData.SetOriginalText(text);
             processedTextData.SetPriorPolarity(textPolarity);
 
+            nlp.ProcessText(text, processedTextData);
+
             text = regexProcessor(text, textPolarity, processedTextData);
             
             text = text.toLowerCase();
@@ -316,61 +320,59 @@ var TextData = require('../DataAnalytics/TextData.js');
             var negativeResults = featuresTotalsCounts["negative"];
             for (var i = 0; i < positiveResults.length; i++) {
                 switch (i) {
-                    //[retweets]
                     case 0:
                         console.log("  -Retweets:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[username]
                     case 1:
                         console.log("  -Usernames:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[negations]
                     case 2:
                         console.log("  -Negations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[positiveWords]
                     case 3:
                         console.log("  -Positive_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[neutralWords]
                     case 4:
                         console.log("  -Neutral_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[negativeWords]
                     case 5:
                         console.log("  -Negative_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[pontuations]
                     case 6:
                         console.log("  -Pontuations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[hashtags]
                     case 7:
                         console.log("  -Hashtags:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[repetitions]
                     case 8:
                         console.log("  -Repetitions:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[htmlChars]
                     case 9:
                         console.log("  -Html_Chars:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[urls]
                     case 10:
                         console.log("  -Urls:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[uppercases]
                     case 11:
                         console.log("  -Uppercases:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[Positive Emoticons]
                     case 12:
                         console.log("  -Positive_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
-                    //[Negative Emoticons]
                     case 13:
                         console.log("  -Negative_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 14:
+                        console.log("  -Adjectives:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 15:
+                        console.log("  -Nouns:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 16:
+                        console.log("  -Verbs:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 17:
+                        console.log("  -Adverbs:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                 }
             }
@@ -390,62 +392,48 @@ var TextData = require('../DataAnalytics/TextData.js');
             var positiveResults = featuresTotalsCounts["positive"];
             var neutralResults = featuresTotalsCounts["neutral"];
             var negativeResults = featuresTotalsCounts["negative"];
-            for (var i = 0; i < positiveResults.length; i++) {
+            for (var i = 0; i < (positiveResults.length - 4); i++) {
                 var data = {};
                 switch (i) {
-                    //[retweets]
                     case 0:
                         data["name"] = "Retweets";
                         break;
-                    //[username]
                     case 1:
                         data["name"] = "Usernames";
                         break;
-                    //[negations]
                     case 2:
                         data["name"] = "Negations";
                         break;
-                    //[positiveWords]
                     case 3:
                         data["name"] = "Positive_Words";
                         break;
-                    //[neutralWords]
                     case 4:
                         data["name"] = "Neutral_Words";
                         break;
-                    //[negativeWords]
                     case 5:
                         data["name"] = "Negative_Words";
                         break;
-                    //[pontuations]
                     case 6:
                         data["name"] = "Pontuations";
                         break;
-                    //[hashtags]
                     case 7:
                         data["name"] = "Hashtags";
                         break;
-                    //[repetitions]
                     case 8:
                         data["name"] = "Repetitions";
                         break;
-                    //[htmlChars]
                     case 9:
                         data["name"] = "Html_Chars";
                         break;
-                    //[urls]
                     case 10:
                         data["name"] = "Urls";
                         break;
-                    //[uppercases]
                     case 11:
                         data["name"] = "Uppercases";
                         break;
-                    //[Positive Emoticons]
                     case 12:
                         data["name"] = "Positive_Emoticons";
                         break;
-                    //[Negative Emoticons]
                     case 13:
                         data["name"] = "Negative_Emoticons";
                         break;

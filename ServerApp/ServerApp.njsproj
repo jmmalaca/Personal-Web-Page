@@ -30,6 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="DataAnalytics\NLP.js" />
     <Compile Include="node_modules\ejs\benchmark.js" />
     <Compile Include="node_modules\ejs\ejs.js" />
     <Compile Include="node_modules\ejs\ejs.min.js" />

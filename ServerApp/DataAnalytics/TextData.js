@@ -9,27 +9,37 @@
         //[properties]
         this.originalText = "";
         this.processedText = "";
+        this.PriorPolarity = "";
+
+        //twitter features
         this.acronyms = {};
-        this.stopwords = {};
         this.retweet = false;
         this.usernames = {};
-        this.negations = {};
-        this.positiveWords = {};
-        this.neutralWords = {};
-        this.negativeWords = {};
-        this.pontuations = {};
         this.hashtags = {};
-        this.repetitions = {};
-        this.numbers = {};
         this.htmlChars = {};
         this.urls = {};
         this.badwords = {};
         this.uppercases = {};
-        this.PriorPolarity = "";
+        
+        //emoticons features
         this.positiveEmoticons = {};
         this.negativeEmoticons = {};
         
-        this.textDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        //language features
+        this.stopwords = {};
+        this.positiveWords = {};
+        this.neutralWords = {};
+        this.negativeWords = {};
+        this.pontuations = {};
+        this.negations = {};
+        this.repetitions = {};
+        this.numbers = {};
+        this.adjectives = {};
+        this.nouns = {};
+        this.verbs = {};
+        this.adverbs = {};
+        
+        this.textDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         
         //[Sets and Gets]
 
@@ -78,7 +88,7 @@
         //[retweets]
         this.SetRetweet = function () {
             this.retweet = true;
-            this.textDataArray[0]++;
+            this.textDataArray[0] = 1;
         }
         
         this.GetRetweet = function () {
@@ -287,6 +297,58 @@
 
         this.GetNegativeEmoticons = function () {
             return this.negativeEmoticons;
+        }
+        //[Adjectives]
+        this.AddAdjective = function (adjective) {
+            if (Object.keys(this.adjectives).indexOf(adjective) > -1) {
+                this.adjectives[adjective]++;
+            } else {
+                this.adjectives[adjective] = 1;
+            }
+            this.textDataArray[14]++;
+        }
+        
+        this.GetAdjectives = function () {
+            return this.adjectives;
+        }
+        //[Nouns]
+        this.AddNoun = function (noun) {
+            if (Object.keys(this.nouns).indexOf(noun) > -1) {
+                this.nouns[noun]++;
+            } else {
+                this.nouns[noun] = 1;
+            }
+            this.textDataArray[15]++;
+        }
+        
+        this.GetNouns = function () {
+            return this.nouns;
+        }
+        //[Verbs]
+        this.AddVerb = function (verb) {
+            if (Object.keys(this.verbs).indexOf(verb) > -1) {
+                this.verbs[verb]++;
+            } else {
+                this.verbs[verb] = 1;
+            }
+            this.textDataArray[16]++;
+        }
+        
+        this.GetVerbs = function () {
+            return this.verbs;
+        }
+        //[Adverbs]
+        this.AddAdverb = function (adverb) {
+            if (Object.keys(this.adverbs).indexOf(adverb) > -1) {
+                this.adverbs[adverb]++;
+            } else {
+                this.adverbs[adverb] = 1;
+            }
+            this.textDataArray[17]++;
+        }
+        
+        this.GetAdverbs = function () {
+            return this.adverbs;
         }
         //[Get Text Data Array]
         this.GetTextDataArray = function() {

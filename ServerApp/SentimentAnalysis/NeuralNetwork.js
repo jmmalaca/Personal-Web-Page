@@ -50,10 +50,10 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                     console.log("  -Neural Network (Perceptron) Data Loaded.");
 
                 } catch (e) {
-                    console.log("\n -ERROR: reading weights Polarity File.");
+                    console.log("\n  -ERROR: reading weights Polarity File.");
                 }
             } catch (e) {
-                console.log("\n -ERROR: reading weights Subjectivity File.");
+                console.log("\n  -ERROR: reading weights Subjectivity File.");
             }
             return systemAlreadyTrained;
         }
@@ -134,7 +134,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 if (activationLevel != expectedValue) { //wrong prediction
                     weights[i] = weights[i] + -1 * learningRate * activationLevel * textData[i];
                 } else {
-                    weights[i] = weights[i] + learningRate * expectedValue * textData[i];
+                    weights[i] = weights[i] + learningRate * activationLevel * textData[i];
                 }
             }
         }
@@ -153,6 +153,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             var trainingDataPercentage = 70;
             var fromList = ["middle"];
 
+            var i = 0;
             fromList.forEach(function(from) {
                 var data = separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
                 //[Separate data from training and validation]
@@ -161,32 +162,30 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
                 //Subjectivity Problem
                 var keys = ["subjective", "objective"];
-                setupWeights("subjectivity");
+                if (i == 0) {
+                    setupWeights("subjectivity");
+                }
                 keys.forEach(trainKey);
+
                 //Polarity Problem
                 keys = ["positive", "negative"];
-                setupWeights("polarity");
+                if (i == 0) {
+                    setupWeights("polarity");
+                    i++;
+                }
                 keys.forEach(trainKey);
                 
+                console.log("  -Perceptron system trained.");
+
                 testSystem();
             });
         }
         
         function testSystem() {
-            var rightSubjectiveClassifications = 0,
-                wrongSubjectiveClassifications = 0,
-                rightPositiveClassifications = 0,
-                wrongPositiveClassifications = 0,
-                rightNeutralClassifications = 0,
-                wrongNeutralClassifications = 0,
-                rightNegativeClassifications = 0,
-                wrongNegativeClassifications = 0;
-            
             var truePositiveSubjectivity = 0, //result class Subjective and tweet with class Subjective
                 trueNegativeSubjectivity = 0, //result class Subjective but tweet com a class Objective
                 falsePositiveSubjectivity = 0, //result class Objective and tweet com a class Objective
                 falseNegativeSubjectivity = 0; //result class Objective but tweet com a class Subjective
-            
             var truePositivePolarity = 0, //result class Positive and tweet with class Positive
                 trueNegativePolarity = 0, //result class Positive but tweet with class Negative
                 falsePositivePolarity = 0, //result class Negative and tweet with class Negative
@@ -200,10 +199,8 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
                     if (activationLevel === 1) {
                         if (key === "subjective") {
-                            rightSubjectiveClassifications++;
                             truePositiveSubjectivity++;
                         } else {
-                            wrongSubjectiveClassifications++;
                             falsePositiveSubjectivity++;
                         }
                         
@@ -211,92 +208,59 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                         activationLevel = calcActivationFunctionValue(entranceSignal);
                         if (activationLevel === 1) {
                             if (key === "positive") {
-                                rightPositiveClassifications++;
                                 truePositivePolarity++;
                             } else {
-                                wrongPositiveClassifications++;
                                 falsePositivePolarity++;
                             }
                         } else {
                             if (key === "negative") {
-                                rightNegativeClassifications++;
                                 trueNegativePolarity++;
                             } else {
-                                wrongNegativeClassifications++;
                                 falseNegativePolarity++;
                             }
                         }
                     } else {
                         if (key === "objective") {
-                            rightNeutralClassifications++;
                             trueNegativeSubjectivity++;
                         } else {
-                            wrongNeutralClassifications++;
                             falseNegativeSubjectivity++;
                         }
                     }
                 });
             });
-
-            console.log("\n  -Results:");
-            console.log("   -Correct Subjective Classifications: " + rightSubjectiveClassifications + ", wrong: " + wrongSubjectiveClassifications);
-            console.log("   -Correct Neutral Classifications: " + rightNeutralClassifications + ", wrong: " + wrongNeutralClassifications);
-            console.log("   -Correct Positive Classifications: " + rightPositiveClassifications + ", wrong: " + wrongPositiveClassifications);
-            console.log("   -Correct Negative Classifications: " + rightNegativeClassifications + ", wrong: " + wrongNegativeClassifications);
-            
-            var positiveCount = testData["positive"].length;
-            var neutralCount = testData["objective"].length;
-            var negativeCount = testData["negative"].length;
-            var totalCount = positiveCount + neutralCount + negativeCount;
-            
-            console.log("\n  -By Percentages:");
-            console.log("   -Subjective: " + ((rightSubjectiveClassifications * 100) / (positiveCount + negativeCount)) + "% Correct");
-            console.log("   -Neutral: " + ((rightNeutralClassifications * 100) / neutralCount) + "% Correct");
-            console.log("   -Positive: " + ((rightPositiveClassifications * 100) / positiveCount) + "% Correct");
-            console.log("   -Negative: " + ((rightNegativeClassifications * 100) / negativeCount) + "% Correct");
-            
-            console.log("  Total Correct Classification Percentage: " + (rightPositiveClassifications + rightNeutralClassifications + rightNegativeClassifications) * 100 / totalCount + "%.");
-            
-            console.log("\n  -Sensibility VS Specificity:");
-            //True Positive Rate (another term for recall)
+            console.log("  -Sensibility VS Specificity:");
+            //Sensitivity = True Positive Rate  = Hit Rate = Recall
             var sensitivitySubjectivity = truePositiveSubjectivity / (truePositiveSubjectivity + falseNegativeSubjectivity);
             var sensitivityPolarity = truePositivePolarity / (truePositivePolarity + falseNegativePolarity);
             
-            //False Positive Rate
+            //Specificity = True Negative Rate
             var specificitySubjectivity = trueNegativeSubjectivity / (trueNegativeSubjectivity + falsePositiveSubjectivity);
             var specificityPolarity = trueNegativePolarity / (trueNegativePolarity + falsePositivePolarity);
             
-            var precisionSubjetivity = truePositiveSubjectivity / (truePositiveSubjectivity + falsePositiveSubjectivity);
-            var precisionPolarity = truePositivePolarity / (truePositivePolarity + falsePositivePolarity);
+            //accuracy...the fraction of classifications that are correct =  accuracy_F1 = 2TP / (2TP + FP + FN)
+            var accuracySubjectivity = (2 * truePositiveSubjectivity) / ((2 * truePositiveSubjectivity) + falsePositiveSubjectivity + falseNegativeSubjectivity);
+            var accuracyPolarity = (2 * truePositivePolarity) / ((2 * truePositivePolarity) + falsePositivePolarity + falseNegativePolarity);
             
-            //accuracy...the fraction of classifications that are correct
-            //accuracy F1 = ( 2 * precision * recall ) / (precison + recall)
-            var accuracySubjectivity = (2 * precisionSubjetivity * sensitivitySubjectivity) / (precisionSubjetivity + sensitivitySubjectivity);
-            var accuracyPolarity = (2 * precisionPolarity * sensitivityPolarity) / (precisionPolarity + sensitivityPolarity);
-            
-            console.log("   -Subjectivity: Sensitivity: " + sensitivitySubjectivity + ", Specificity: " + specificitySubjectivity + ", F1_Accuracy: " + accuracySubjectivity);
-            console.log("   -Polarity: Sensitivity: " + sensitivityPolarity + ", Specificity: " + specificityPolarity + ", F1_Accuracy: " + accuracyPolarity);
+            console.log("   -Subjectivity:\n    -Sensitivity: " + sensitivitySubjectivity + ", Specificity: " + specificitySubjectivity + "\n    -F1_Accuracy: " + accuracySubjectivity);
+            console.log("   -Polarity:\n    -Sensitivity: " + sensitivityPolarity + ", Specificity: " + specificityPolarity + "\n    -F1_Accuracy: " + accuracyPolarity);
         }
         
         //[Public Methods]
         this.Start = function (allDataOnProcessedTexts, setupData) {
             dataProcessor = setupData;
-
+            
+            console.log("\n  -Neural Network (Perceptron) System Starting...");
             //Check if there is a system already trained...
             var systemAlreadyTrained = readNeuralNetworkSystemData();
             
             if (systemAlreadyTrained != true) {
-                console.log("\n  -System not trained... Train it...");
-                
+                console.log("  -System not trained... Train it...");
                 //All data ready... train it... save it... and test it...
                 trainSystem(allDataOnProcessedTexts);
                 //saveData();
-                
             } else {
                 console.log("  -System trained...");
-                
             }
-            
             console.log("\n  -Neural Network (Perceptron) System Ready.");
         }
     }

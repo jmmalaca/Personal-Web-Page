@@ -19,8 +19,8 @@ var nb = new NaiveBayes();
 nb.Start(allDataOnProcessedTexts, setup);
 
 //[Neural Network - Classificator System]
-//var nn = new NeuralNetwork();
-//nn.Start(allDataOnProcessedTexts, setup);
+var nn = new NeuralNetwork();
+nn.Start(allDataOnProcessedTexts, setup);
 
 //[get a express (Server) app started]
 var serverApp = express();
