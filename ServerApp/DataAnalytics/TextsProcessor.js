@@ -21,6 +21,7 @@ var NLP = require('../DataAnalytics/NLP.js');
 
         var allDataReceivedFromFiles = {};
         var allDataOnProcessedTexts = {};
+        var posTagsResults = {};
 
         //[Private Methods]
         function regexProcessor(text, textPolarity, processedTextData) {
@@ -112,7 +113,7 @@ var NLP = require('../DataAnalytics/NLP.js');
             }
 
             //repetitions
-            pattern = /([a-z])\1{2,}/g;
+            pattern = /[^\s]+([a-z])\1{2,}[^\s]+/g;
             count = text.match(pattern);
             text = text.replace(pattern, " repetition ");
             if (count != null) {
@@ -188,13 +189,21 @@ var NLP = require('../DataAnalytics/NLP.js');
                 var reg = new RegExp(" " + word + " ");
                 count = text.match(reg);
                 if (count != null) {
-                    count.forEach(function (value) {
+                    count.forEach(function(value) {
                         processedTextData.AddBadword(value);
                     });
                     text = text.replace(" " + word.toLowerCase() + " ", " badword ");
                 }
             });
-            
+            var pattern = new RegExp(/[^\s]+(\*)+[^\s]*/g);
+            count = text.match(pattern);
+            if (count != null) {
+                count.forEach(function (value) {
+                    processedTextData.AddBadword(value);
+                });
+                text = text.replace(pattern, " badword ");
+            }
+
             var negativeWords = allDataReceivedFromFiles.getNegativeWords();
             negativeWords.forEach(function (word) {
                 var reg = new RegExp(" " + word + " ");
@@ -238,8 +247,6 @@ var NLP = require('../DataAnalytics/NLP.js');
             processedTextData.SetOriginalText(text);
             processedTextData.SetPriorPolarity(textPolarity);
 
-            nlp.ProcessText(text, processedTextData);
-
             text = regexProcessor(text, textPolarity, processedTextData);
             
             text = text.toLowerCase();
@@ -247,8 +254,10 @@ var NLP = require('../DataAnalytics/NLP.js');
             
             processedTextData.SetProcessedText(text);
             allDataOnProcessedTexts[textPolarity].push(processedTextData);
+            
+            nlp.ProcessText(processedTextData);
 
-            return text;
+            return processedTextData.processedText;
         }
 
         function textsProcessor(texts, textPolarity) {
@@ -321,57 +330,69 @@ var NLP = require('../DataAnalytics/NLP.js');
             for (var i = 0; i < positiveResults.length; i++) {
                 switch (i) {
                     case 0:
-                        console.log("  -Retweets:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Acronyms:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 1:
-                        console.log("  -Usernames:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Stopwords:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 2:
-                        console.log("  -Negations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Retweets:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 3:
-                        console.log("  -Positive_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Usernames:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 4:
-                        console.log("  -Neutral_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Negations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 5:
-                        console.log("  -Negative_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Positive_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 6:
-                        console.log("  -Pontuations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Neutral_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 7:
-                        console.log("  -Hashtags:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Negative_Words:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 8:
-                        console.log("  -Repetitions:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Pontuations:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 9:
-                        console.log("  -Html_Chars:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Hashtags:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 10:
-                        console.log("  -Urls:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Repetitions:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 11:
-                        console.log("  -Uppercases:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Numbers:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 12:
-                        console.log("  -Positive_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Html_Chars:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 13:
-                        console.log("  -Negative_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Urls:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 14:
-                        console.log("  -Adjectives:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Badwords:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 15:
-                        console.log("  -Nouns:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Uppercases:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 16:
-                        console.log("  -Verbs:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        console.log("  -Positive_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                     case 17:
+                        console.log("  -Negative_Emoticons:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 18:
+                        console.log("  -Adjectives:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 19:
+                        console.log("  -Nouns:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 20:
+                        console.log("  -Verbs:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
+                        break;
+                    case 21:
                         console.log("  -Adverbs:  [" + positiveResults[i] + "] [" + neutralResults[i] + "] [" + negativeResults[i] + "] ");
                         break;
                 }
@@ -395,46 +416,46 @@ var NLP = require('../DataAnalytics/NLP.js');
             for (var i = 0; i < (positiveResults.length - 4); i++) {
                 var data = {};
                 switch (i) {
-                    case 0:
+                    case 2:
                         data["name"] = "Retweets";
                         break;
-                    case 1:
+                    case 3:
                         data["name"] = "Usernames";
                         break;
-                    case 2:
+                    case 4:
                         data["name"] = "Negations";
                         break;
-                    case 3:
+                    case 5:
                         data["name"] = "Positive_Words";
                         break;
-                    case 4:
+                    case 6:
                         data["name"] = "Neutral_Words";
                         break;
-                    case 5:
+                    case 7:
                         data["name"] = "Negative_Words";
                         break;
-                    case 6:
+                    case 8:
                         data["name"] = "Pontuations";
                         break;
-                    case 7:
+                    case 9:
                         data["name"] = "Hashtags";
                         break;
-                    case 8:
+                    case 10:
                         data["name"] = "Repetitions";
                         break;
-                    case 9:
+                    case 12:
                         data["name"] = "Html_Chars";
                         break;
-                    case 10:
+                    case 13:
                         data["name"] = "Urls";
                         break;
-                    case 11:
+                    case 15:
                         data["name"] = "Uppercases";
                         break;
-                    case 12:
+                    case 16:
                         data["name"] = "Positive_Emoticons";
                         break;
-                    case 13:
+                    case 17:
                         data["name"] = "Negative_Emoticons";
                         break;
                 }
@@ -467,6 +488,41 @@ var NLP = require('../DataAnalytics/NLP.js');
         function saveSystemProcessedData() {
             var jsonString = JSON.stringify(allDataOnProcessedTexts);
             fs.writeFileSync(processedDataFilePath, jsonString);
+        }
+        
+        function posTagsCounts(data, results) {
+            if (Object.keys(data).length > 0) {
+                Object.keys(data).forEach(function(posTag) {
+                    if (Object.keys(results).indexOf(posTag) > -1) {
+                        results[posTag]++;
+                    } else {
+                        results[posTag] = 1;
+                    }
+                });
+            }
+        }
+
+        function printPosTaggingResults() {
+            //Get the data...
+            Object.keys(allDataOnProcessedTexts).forEach(function(key) {
+                var textsData = allDataOnProcessedTexts[key];
+                posTagsResults[key] = {};
+                textsData.forEach(function (textData) {
+                    posTagsCounts(textData.adverbs, posTagsResults[key]);
+                    posTagsCounts(textData.adjectives, posTagsResults[key]);
+                    posTagsCounts(textData.nouns, posTagsResults[key]);
+                    posTagsCounts(textData.verbs, posTagsResults[key]);
+                });
+            });
+            //print it...
+            console.log(" -Pos-Tags detected: ");
+            Object.keys(posTagsResults).forEach(function(key) {
+                console.log("  -" + key + ":");
+                var data = posTagsResults[key];
+                Object.keys(data).forEach(function(posTag) {
+                    console.log("   -" + posTag + " + " + data[posTag]);
+                });
+            });
         }
 
         //[Public Methods]
@@ -506,6 +562,8 @@ var NLP = require('../DataAnalytics/NLP.js');
             }
             
             printResults();
+            //printPosTaggingResults();
+            
             return allDataOnProcessedTexts;
         };
         

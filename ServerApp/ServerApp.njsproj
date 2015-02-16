@@ -461,6 +461,7 @@
     <Compile Include="node_modules\url\url.js" />
     <Compile Include="ProcessingData\ProcessData.js" />
     <Compile Include="SentimentAnalysis\DataSeparation.js" />
+    <Compile Include="SentimentAnalysis\FeaturesSelection.js" />
     <Compile Include="SentimentAnalysis\NaiveBayesClassifier.js" />
     <Compile Include="DataAnalytics\DataReader.js" />
     <Compile Include="DataAnalytics\Emoticons.js" />

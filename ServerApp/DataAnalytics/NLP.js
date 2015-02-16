@@ -17,23 +17,48 @@ var pos = require('retext-pos');
             .use(pos);
 
         //[Private Methods]
-        function process(text, processedTextData) {
-            
+        function checkWord(word) {
+            var result = word != "htmlchar" && word != "uppercase" && word != "retweet" &&
+                word != "url" && word != "pontuation" && word != "username" &&
+                word != "hashtag" && word != "number" && word != "repetition" &&
+                word != "negation" && word != "positive_word" && word != "neutral_word" &&
+                word != "badword" && word != "negative_word" && word != "stopword" &&
+                word != "positive_emoticon" && word != "negative_emoticon";
+            return result;
+        }
+
+        function process(processedTextData) {
             retext.parse(
-                text,
+                processedTextData.processedText,
                 function(err, tree) {
-                    tree.visit(tree.WORD_NODE, function(wordNode) {
-                        var data = wordNode.data;
-                        var partOfSpeechTag = data['partOfSpeech'];
-                        //console.log(partOfSpeechTag);
-                        if (partOfSpeechTag === "JJ" || partOfSpeechTag === "JJR" || partOfSpeechTag === "JJS") {
-                            processedTextData.AddAdjective(partOfSpeechTag);
-                        }else if (partOfSpeechTag === "NN" || partOfSpeechTag === "NNP" || partOfSpeechTag === "NNPS" || partOfSpeechTag === "NNS") {
-                            processedTextData.AddNoun(partOfSpeechTag);
-                        } else if (partOfSpeechTag === "VB" || partOfSpeechTag === "VBD" || partOfSpeechTag === "VBG" || partOfSpeechTag === "VBN") {
-                            processedTextData.AddVerb(partOfSpeechTag);
-                        } else if (partOfSpeechTag === "RB" || partOfSpeechTag === "RBR" || partOfSpeechTag === "RBS") {
-                            processedTextData.AddAdverb(partOfSpeechTag);
+                    tree.visit(tree.WORD_NODE, function (wordNode) {
+                        var wordData = wordNode.head,
+                            posData = wordNode.data,
+                            word = wordData['internalValue'].toLowerCase(),
+                            partOfSpeechTag = posData['partOfSpeech'],
+                            size = wordNode.length;
+                        
+                        if (size > 1) {
+                            for (var i = 1; i < size; i++) {
+                                word = word + wordNode[i];
+                            }
+                        }
+
+                        if (checkWord(word) != false) {
+
+                            if (partOfSpeechTag === "JJ" || partOfSpeechTag === "JJR" || partOfSpeechTag === "JJS") {
+                                processedTextData.AddAdjective(partOfSpeechTag);
+                            } else if (partOfSpeechTag === "NN" || partOfSpeechTag === "NNP" || partOfSpeechTag === "NNPS" || partOfSpeechTag === "NNS") {
+                                processedTextData.AddNoun(partOfSpeechTag);
+                            } else if (partOfSpeechTag === "VB" || partOfSpeechTag === "VBD" || partOfSpeechTag === "VBG" || partOfSpeechTag === "VBN") {
+                                processedTextData.AddVerb(partOfSpeechTag);
+                            } else if (partOfSpeechTag === "RB" || partOfSpeechTag === "RBR" || partOfSpeechTag === "RBS") {
+                                processedTextData.AddAdverb(partOfSpeechTag);
+                            }
+
+                            var reg = new RegExp("(^|[^a-z])"+word+"[^a-z]");
+                            processedTextData.processedText = processedTextData.processedText.replace(reg, " " + word + "_" + partOfSpeechTag + " ");
+                            processedTextData.processedText = processedTextData.processedText.trim();
                         }
                     });
                 }

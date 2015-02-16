@@ -39,7 +39,7 @@
         this.verbs = {};
         this.adverbs = {};
         
-        this.textDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.textDataArray = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
         
         //[Sets and Gets]
 
@@ -66,7 +66,7 @@
             } else {
                 this.acronyms[acronym] = 1;
             }
-            //this.textDataArray[0]++;
+            this.textDataArray[0] = 0;
         }
 
         this.GetAcronyms = function () {
@@ -79,7 +79,7 @@
             } else {
                 this.stopwords[stopword] = 1;
             }
-            //this.textDataArray[1]++;
+            this.textDataArray[1] = 0;
         }
 
         this.GetStopwords = function () {
@@ -88,7 +88,7 @@
         //[retweets]
         this.SetRetweet = function () {
             this.retweet = true;
-            this.textDataArray[0] = 1;
+            this.textDataArray[2] = 1;
         }
         
         this.GetRetweet = function () {
@@ -101,7 +101,7 @@
             } else {
                 this.usernames[username] = 1;
             }
-            this.textDataArray[1]++;
+            this.textDataArray[3] = 1;
         }
 
         this.GetUsernames = function () {
@@ -114,7 +114,7 @@
             } else {
                 this.negations[negation] = 1;
             }
-            this.textDataArray[2]++;
+            this.textDataArray[4] = 0;
         }
         
         this.GetNegations = function () {
@@ -127,7 +127,7 @@
             } else {
                 this.positiveWords[positiveWord] = 1;
             }
-            this.textDataArray[3]++;
+            this.textDataArray[5] = 1;
         }
 
         this.GetPositiveWords = function () {
@@ -140,7 +140,7 @@
             } else {
                 this.neutralWords[neutralWord] = 1;
             }
-            this.textDataArray[4]++;
+            this.textDataArray[6] = 1;
         }
 
         this.GetNeutralWords = function () {
@@ -153,7 +153,7 @@
             } else {
                 this.negativeWords[negativeWord] = 1;
             }
-            this.textDataArray[5]++;
+            this.textDataArray[7] = 1;
         }
 
         this.GetNegativeWords = function () {
@@ -166,7 +166,7 @@
             } else {
                 this.pontuations[pontuation] = 1;
             }
-            this.textDataArray[6]++;
+            this.textDataArray[8] = 0;
         }
 
         this.GetPontuations = function () {
@@ -179,7 +179,7 @@
             } else {
                 this.hashtags[hashtag] = 1;
             }
-            this.textDataArray[7]++;
+            this.textDataArray[9] = 1;
         }
 
         this.GetHashtags = function () {
@@ -192,7 +192,7 @@
             } else {
                 this.repetitions[repetition] = 1;
             }
-            this.textDataArray[8]++;
+            this.textDataArray[10] = 0;
         }
 
         this.GetRepetitions = function () {
@@ -205,7 +205,7 @@
             } else {
                 this.numbers[number] = 1;
             }
-            //this.textDataArray[9]++;
+            this.textDataArray[11] = 0;
         }
 
         this.GetNumbers = function () {
@@ -218,7 +218,7 @@
             } else {
                 this.htmlChars[htmlChar] = 1;
             }
-            this.textDataArray[9]++;
+            this.textDataArray[12] = 0;
         }
 
         this.GetHtmlChars = function () {
@@ -231,7 +231,7 @@
             } else {
                 this.urls[url] = 1;
             }
-            this.textDataArray[10]++;
+            this.textDataArray[13] = 1;
         }
 
         this.GetUrls = function () {
@@ -244,7 +244,7 @@
             } else {
                 this.badwords[badword] = 1;
             }
-            //this.textDataArray[12]++;
+            this.textDataArray[14] = 0;
         }
 
         this.GetBadwords = function () {
@@ -257,7 +257,7 @@
             } else {
                 this.uppercases[uppercase] = 1;
             }
-            this.textDataArray[11]++;
+            this.textDataArray[15] = 0;
         }
 
         this.GetUppercases = function () {
@@ -279,7 +279,7 @@
             } else {
                 this.positiveEmoticons[positiveEmoticon] = 1;
             }
-            this.textDataArray[12]++;
+            this.textDataArray[16] = 1;
         }
 
         this.GetPositiveEmoticons = function () {
@@ -292,7 +292,7 @@
             } else {
                 this.negativeEmoticons[negativeEmoticon] = 1;
             }
-            this.textDataArray[13]++;
+            this.textDataArray[17] = 1;
         }
 
         this.GetNegativeEmoticons = function () {
@@ -305,7 +305,7 @@
             } else {
                 this.adjectives[adjective] = 1;
             }
-            this.textDataArray[14]++;
+            this.textDataArray[18] = 0;
         }
         
         this.GetAdjectives = function () {
@@ -318,7 +318,7 @@
             } else {
                 this.nouns[noun] = 1;
             }
-            this.textDataArray[15]++;
+            this.textDataArray[19] = 0;
         }
         
         this.GetNouns = function () {
@@ -331,7 +331,7 @@
             } else {
                 this.verbs[verb] = 1;
             }
-            this.textDataArray[16]++;
+            this.textDataArray[20] = 0;
         }
         
         this.GetVerbs = function () {
@@ -344,7 +344,7 @@
             } else {
                 this.adverbs[adverb] = 1;
             }
-            this.textDataArray[17]++;
+            this.textDataArray[21] = 0;
         }
         
         this.GetAdverbs = function () {

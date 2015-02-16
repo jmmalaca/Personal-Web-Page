@@ -260,7 +260,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             var separator = new Separator();
             //select data from the [beginning], from the [middle] or from the [end] of the array and percentage for training and test
             var trainingDataPercentage = 70;
-            var fromList = ["middle"];
+            var fromList = ["beginning", "middle"];
             
             if (systemAlreadyTrained != true) {
                 console.log("  -System not trained... Train it...");

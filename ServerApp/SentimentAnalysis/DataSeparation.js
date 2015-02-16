@@ -39,7 +39,7 @@
         }
         
         function separateTrainingAndValidationData(data) {
-            console.log("  -Slice data from the " + selectDataFrom + ", Training percentage = " + trainingDataPercentage);
+            //console.log("  -Slice data from the " + selectDataFrom + ", Training percentage = " + trainingDataPercentage);
             
             takeElements(data, "positive", "positive");
             takeElements(data, "negative", "negative");

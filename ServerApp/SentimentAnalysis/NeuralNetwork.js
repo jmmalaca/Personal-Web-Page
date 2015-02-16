@@ -20,11 +20,11 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             weightsPolarityJsonPath = "./SentimentAnalysis/WeightsPolarity.json";
         
         //[Activation Function data]
-        var weightsRandomMin = -1,
-            weightsRandomMax = 1,
-            stepFunctionThreshold = 0,
+        var weightsRandomMin = -0.5,
+            weightsRandomMax = 0.5,
             activationFunction = 1,
-            learningRate = 0.1;
+            stepFunctionThreshold = 0, //if activationFunction = 1 => choose a threshold
+            learningRate = 1;
         
         //[Private Methods]
         function saveData() {
@@ -82,8 +82,8 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             pushtoWeightsArray(numberOfWeights, weights);
         }
         
-        function calcEntranceSignal(textData, polarity) {
-            var entranceSignal = 0;
+        function calcActualOutput(textData, polarity) {
+            var actualOutput = 0;
             var weights;
             if (polarity === "subjective" || polarity === "objective") {
                 weights = weightsSubjectivity;
@@ -91,47 +91,45 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                 weights = weightsPolarity;
             }
             for (var i = 0; i < textData.length; i++) {
-                entranceSignal = entranceSignal + (weights[i] * textData[i]);
+                actualOutput = actualOutput + (weights[i] * textData[i]);
             }
-            return entranceSignal;
+            return actualOutput;
         }
 
-        function calcActivationFunctionValue(entranceSignal) {
+        function calcActivationFunctionValue(actualOutput) {
             var activationLevel = 0;
             switch (activationFunction) {
                 case 1:
                     //Step Function: The activationLevel is a certain value if the entranceSignal is above a certain threshold, and other value if is below.
-                    if (entranceSignal > stepFunctionThreshold) {
+                    if (actualOutput > stepFunctionThreshold) {
                         activationLevel = 1;
-                    } else {
-                        activationLevel = 0;
                     }
                     break;
                 default:
                     //Linear Function: activationLevel = f(entranceSignal) = entranceSignal
-                    activationLevel = entranceSignal;
+                    activationLevel = actualOutput;
             }
             return activationLevel;
         }
         
         function updateWeights(activationLevel, polarity, textData) {
             var weights;
-            var expectedValue = 0;
+            var expectedOutput = 0;
             if (polarity === "subjective" || polarity === "objective") {
                 //Subjectivity problem
                 weights = weightsSubjectivity;
                 if (polarity === "subjective") {
-                    expectedValue = 1;
+                    expectedOutput = 1;
                 }
             } else {
                 //polarity problem
                 weights = weightsPolarity;
                 if (polarity === "positive") {
-                    expectedValue = 1;
+                    expectedOutput = 1;
                 }
             }
             for (var i = 0; i < weights.length; i++) {
-                if (activationLevel != expectedValue) { //wrong prediction
+                if (activationLevel != expectedOutput) { //wrong prediction
                     weights[i] = weights[i] + -1 * learningRate * activationLevel * textData[i];
                 } else {
                     weights[i] = weights[i] + learningRate * activationLevel * textData[i];
@@ -141,47 +139,56 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
         function trainKey(key) {
             trainData[key].forEach( function(textData) {
-                var entranceSignal = calcEntranceSignal(textData, key),
-                    activationLevel = calcActivationFunctionValue(entranceSignal);
+                var actualOutput = calcActualOutput(textData, key),
+                    activationLevel = calcActivationFunctionValue(actualOutput);
                 updateWeights(activationLevel, key, textData);
             });
         }
-
-        function trainSystem(allDataOnProcessedTexts) {
+        
+        function train(allDataOnProcessedTexts, startWeights) {
             var separator = new Separator();
             //select data from the [beginning], from the [middle] or from the [end] of the array and percentage for training and test
             var trainingDataPercentage = 70;
-            var fromList = ["middle"];
-
-            var i = 0;
-            fromList.forEach(function(from) {
+            var fromList = ["beginning","middle"];
+            
+            fromList.forEach(function (from) {
                 var data = separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
                 //[Separate data from training and validation]
                 trainData = data["train"];
                 testData = data["test"];
-
+                
                 //Subjectivity Problem
                 var keys = ["subjective", "objective"];
-                if (i == 0) {
+                if (startWeights == 0) {
                     setupWeights("subjectivity");
                 }
                 keys.forEach(trainKey);
-
+                
                 //Polarity Problem
                 keys = ["positive", "negative"];
-                if (i == 0) {
+                if (startWeights == 0) {
                     setupWeights("polarity");
-                    i++;
                 }
                 keys.forEach(trainKey);
                 
                 console.log("  -Perceptron system trained.");
-
-                testSystem();
             });
         }
+
+        function trainSystem(allDataOnProcessedTexts) {
+            var numEpocas = 10;
+            for (var i = 0; i < numEpocas; i++) {
+                train(allDataOnProcessedTexts, i);
+                var accuracy = testSystem(false);
+
+                console.log("Epoch[" + i + "]: " + accuracy);
+                if (accuracy > 0.6) {
+                    break;
+                }
+            }
+        }
         
-        function testSystem() {
+        function testSystem(printResults) {
             var truePositiveSubjectivity = 0, //result class Subjective and tweet with class Subjective
                 trueNegativeSubjectivity = 0, //result class Subjective but tweet com a class Objective
                 falsePositiveSubjectivity = 0, //result class Objective and tweet com a class Objective
@@ -194,7 +201,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             Object.keys(testData).forEach(function(key) {
                 testData[key].forEach(function (textData) {
 
-                    var entranceSignal = calcEntranceSignal(textData, "subjective");
+                    var entranceSignal = calcActualOutput(textData, "subjective");
                     var activationLevel = calcActivationFunctionValue(entranceSignal);
 
                     if (activationLevel === 1) {
@@ -204,7 +211,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                             falsePositiveSubjectivity++;
                         }
                         
-                        entranceSignal = calcEntranceSignal(textData, "positive");
+                        entranceSignal = calcActualOutput(textData, "positive");
                         activationLevel = calcActivationFunctionValue(entranceSignal);
                         if (activationLevel === 1) {
                             if (key === "positive") {
@@ -228,21 +235,21 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
                     }
                 });
             });
-            console.log("  -Sensibility VS Specificity:");
             //Sensitivity = True Positive Rate  = Hit Rate = Recall
             var sensitivitySubjectivity = truePositiveSubjectivity / (truePositiveSubjectivity + falseNegativeSubjectivity);
             var sensitivityPolarity = truePositivePolarity / (truePositivePolarity + falseNegativePolarity);
-            
             //Specificity = True Negative Rate
             var specificitySubjectivity = trueNegativeSubjectivity / (trueNegativeSubjectivity + falsePositiveSubjectivity);
             var specificityPolarity = trueNegativePolarity / (trueNegativePolarity + falsePositivePolarity);
-            
             //accuracy...the fraction of classifications that are correct =  accuracy_F1 = 2TP / (2TP + FP + FN)
             var accuracySubjectivity = (2 * truePositiveSubjectivity) / ((2 * truePositiveSubjectivity) + falsePositiveSubjectivity + falseNegativeSubjectivity);
             var accuracyPolarity = (2 * truePositivePolarity) / ((2 * truePositivePolarity) + falsePositivePolarity + falseNegativePolarity);
-            
-            console.log("   -Subjectivity:\n    -Sensitivity: " + sensitivitySubjectivity + ", Specificity: " + specificitySubjectivity + "\n    -F1_Accuracy: " + accuracySubjectivity);
-            console.log("   -Polarity:\n    -Sensitivity: " + sensitivityPolarity + ", Specificity: " + specificityPolarity + "\n    -F1_Accuracy: " + accuracyPolarity);
+            if (printResults) {
+                console.log("  -Sensibility VS Specificity:");
+                console.log("   -Subjectivity:\n    -Sensitivity: " + sensitivitySubjectivity + ", Specificity: " + specificitySubjectivity + "\n    -F1_Accuracy: " + accuracySubjectivity);
+                console.log("   -Polarity:\n    -Sensitivity: " + sensitivityPolarity + ", Specificity: " + specificityPolarity + "\n    -F1_Accuracy: " + accuracyPolarity);
+            }
+            return (accuracySubjectivity + accuracyPolarity) / 2;
         }
         
         //[Public Methods]
