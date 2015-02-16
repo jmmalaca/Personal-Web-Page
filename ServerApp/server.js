@@ -1,26 +1,11 @@
 ﻿var express = require('express'); //express npm module
 var request = require('request'); //request npm module
 var url = require('url'); //url npm module
-var DataReader = require('./DataAnalytics/DataReader.js');
-var SetupData = require('./DataAnalytics/TextsProcessor.js');
-var NaiveBayes = require('./SentimentAnalysis/NaiveBayesClassifier.js');
-var NeuralNetwork = require('./SentimentAnalysis/NeuralNetwork.js');
+var SentimentAnalysis = require('./SentimentAnalysis/SentimentAnalysis.js');
 
-//[Read Data]
-var dataFromFiles = new DataReader();
-dataFromFiles.ReadInitialData();
-
-//[Process Texts]
-var setup = new SetupData();
-var allDataOnProcessedTexts = setup.Preprocessor(dataFromFiles);
-
-//[Naive Bayes - Classificator System]
-//var nb = new NaiveBayes();
-//nb.Start(allDataOnProcessedTexts, setup);
-
-//[Neural Network - Classificator System]
-//var nn = new NeuralNetwork();
-//nn.Start(allDataOnProcessedTexts, setup);
+//[Start the Sentiment Analysis System]
+var sentiment = new SentimentAnalysis();
+sentiment.Start();
 
 //[get a express (Server) app started]
 var serverApp = express();
@@ -55,7 +40,7 @@ serverApp.get('/countsdata', function (req, response, next) {
     console.log(" -Data Counts Call...");
     
     response.type('application/json');
-    response.send(dataFromFiles.getDataInfo());
+    response.send(sentiment.GetDataInfo());
 });
 
 //[Route definition: /countsFeatures]
@@ -63,7 +48,7 @@ serverApp.get('/countsfeatures', function (req, response, next) {
     console.log(" -Features Counts Call...");
     
     response.type('application/json');
-    response.send(setup.GetProcessDataResults());
+    response.send(sentiment.GetProcessingResults());
 });
 
 //[Route definition: /sentiment/searchString]

@@ -1,7 +1,6 @@
 ﻿//[Naive Bayes Classifier System]
 var fs = require('fs');
 var math = require('mathjs');
-var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
 (function () {
     
@@ -15,6 +14,7 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
         var trainData = {};
         var testData = {};
+        var bestFeatures = {};
         var functionThreshold = -1;
         
         var classesProbabilities = {};
@@ -250,33 +250,26 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         }
 
         //[Public Methods]
-        this.Start = function (allDataOnProcessedTexts, setupData) {
-            dataProcessor = setupData;
-            
+        this.Start = function (data, best, setup) {
+            dataProcessor = setup;
+            bestFeatures = best;
+
             console.log("\n  -Naive Bayes System Starting...");
             //Check if there is a system already trained...
             var systemAlreadyTrained = readNaiveBayesSystemData();
             
-            var separator = new Separator();
-            //select data from the [beginning], from the [middle] or from the [end] of the array and percentage for training and test
-            var trainingDataPercentage = 70;
-            var fromList = ["beginning", "middle"];
-            
             if (systemAlreadyTrained != true) {
                 console.log("  -System not trained... Train it...");
+                
+                //[Separate data from training and validation]
+                trainData = data["train"];
+                testData = data["test"];
 
-                fromList.forEach(function(from) {
-                    var data = separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
+                //All data ready... train it... save it... and test it...
+                trainSystem();
+                //saveData();
+                testSystem();
 
-                    //[Separate data from training and validation]
-                    trainData = data["train"];
-                    testData = data["test"];
-
-                    //All data ready... train it... save it... and test it...
-                    trainSystem();
-                    //saveData();
-                    testSystem();
-                });
             } else {
                 console.log("  -System trained...");
                 

@@ -81,14 +81,14 @@
             trainingDataPercentage = percentage;
 
             separateTrainingAndValidationData(data);
-
-            //Object.keys(trainData).forEach(function (key) {
-            //    console.log("  -Train Data[ " + key + " ]: " + trainData[key].length);
-            //});
-            //Object.keys(testData).forEach(function (key) {
-            //    console.log("  -Test Data[ " + key + " ]: " + testData[key].length);
-            //});
             
+            console.log("\n -Data Separation:");
+            Object.keys(trainData).forEach(function (key) {
+                console.log("  -"+key+": Train[" + trainData[key].length + "], Test[" + testData[key].length + "]");
+            });
+        }
+
+        this.GetTextDataArrays = function() {
             var separatedData = getTextDataArraysOnly();
             return separatedData;
         }

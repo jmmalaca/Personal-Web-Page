@@ -1,7 +1,6 @@
 ﻿//[Neural Network (Perceptron) System]
 var fs = require('fs');
 var Math = require('mathjs');
-var Separator = require('../SentimentAnalysis/DataSeparation.js');
 
 (function() {
 
@@ -145,47 +144,20 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
             });
         }
         
-        function train(allDataOnProcessedTexts, startWeights) {
-            var separator = new Separator();
-            //select data from the [beginning], from the [middle] or from the [end] of the array and percentage for training and test
-            var trainingDataPercentage = 70;
-            var fromList = ["beginning","middle"];
+        function trainSystem(data) {
+            //Subjectivity Problem
+            var keys = ["subjective", "objective"];
+            setupWeights("subjectivity");
+            keys.forEach(trainKey);
             
-            fromList.forEach(function (from) {
-                var data = separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
-                //[Separate data from training and validation]
-                trainData = data["train"];
-                testData = data["test"];
-                
-                //Subjectivity Problem
-                var keys = ["subjective", "objective"];
-                if (startWeights == 0) {
-                    setupWeights("subjectivity");
-                }
-                keys.forEach(trainKey);
-                
-                //Polarity Problem
-                keys = ["positive", "negative"];
-                if (startWeights == 0) {
-                    setupWeights("polarity");
-                }
-                keys.forEach(trainKey);
-                
-                console.log("  -Perceptron system trained.");
-            });
-        }
-
-        function trainSystem(allDataOnProcessedTexts) {
-            var numEpocas = 10;
-            for (var i = 0; i < numEpocas; i++) {
-                train(allDataOnProcessedTexts, i);
-                var accuracy = testSystem(false);
-
-                console.log("Epoch[" + i + "]: " + accuracy);
-                if (accuracy > 0.6) {
-                    break;
-                }
-            }
+            //Polarity Problem
+            keys = ["positive", "negative"];
+            setupWeights("polarity");
+            keys.forEach(trainKey);
+            
+            var accuracy = testSystem(false);
+            console.log("Accuracy: " + accuracy);
+            console.log("  -Perceptron system trained.");
         }
         
         function testSystem(printResults) {
@@ -253,18 +225,23 @@ var Separator = require('../SentimentAnalysis/DataSeparation.js');
         }
         
         //[Public Methods]
-        this.Start = function (allDataOnProcessedTexts, setupData) {
+        this.Start = function (data, setupData) {
             dataProcessor = setupData;
-            
+
             console.log("\n  -Neural Network (Perceptron) System Starting...");
             //Check if there is a system already trained...
             var systemAlreadyTrained = readNeuralNetworkSystemData();
             
             if (systemAlreadyTrained != true) {
                 console.log("  -System not trained... Train it...");
+                //[Separate data from training and validation]
+                trainData = data["train"];
+                testData = data["test"];
+
                 //All data ready... train it... save it... and test it...
                 trainSystem(allDataOnProcessedTexts);
                 //saveData();
+
             } else {
                 console.log("  -System trained...");
             }
