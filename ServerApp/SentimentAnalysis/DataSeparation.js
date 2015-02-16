@@ -51,25 +51,63 @@
             Array.prototype.push.apply(testData["subjective"], testData["negative"]);
         }
         
-        function getTextDataArraysOnly() {
+        function getTextDataArraysOnly(featuresPositions) {
             var separatedData = {};
             //Just retreive the Text Arrays Data
             var trainArrays = {};
             var testArrays = {};
-            Object.keys(trainData).forEach(function (key) {
-                trainArrays[key] = [];
-                trainData[key].forEach(function (textData) {
-                    if (textData.textDataArray != null) {
-                        trainArrays[key].push(textData.textDataArray);
-                    }
+            if (featuresPositions.length === 0) {
+                Object.keys(trainData).forEach(function(key) {
+                    trainArrays[key] = [];
+                    trainData[key].forEach(function(textData) {
+                        if (textData.textDataArray != null) {
+                            trainArrays[key].push(textData.textDataArray);
+                        }
+                    });
+                    testArrays[key] = [];
+                    testData[key].forEach(function(textData) {
+                        if (textData.textDataArray != null) {
+                            testArrays[key].push(textData.textDataArray);
+                        }
+                    });
                 });
-                testArrays[key] = [];
-                testData[key].forEach(function (textData) {
-                    if (textData.textDataArray != null) {
-                        testArrays[key].push(textData.textDataArray);
-                    }
-                }); 
-            });
+            } else {
+                //retrive the values just in the given positions
+                Object.keys(trainData).forEach(function (key) {
+                    trainArrays[key] = [];
+                    trainData[key].forEach(function (textData) {
+                        if (textData.textDataArray != null) {
+                            var newDataArray = [];
+                            var positions = [];
+                            if (key === "positive" || key === "negative") {
+                                positions = featuresPositions["polarity"];
+                            } else {
+                                positions = featuresPositions["subjectivity"];
+                            }
+                            positions.forEach(function(position) {
+                                newDataArray.push(textData.textDataArray[position]);
+                            });
+                            trainArrays[key].push(newDataArray);
+                        }
+                    });
+                    testArrays[key] = [];
+                    testData[key].forEach(function (textData) {
+                        if (textData.textDataArray != null) {
+                            var newDataArray = [];
+                            var positions = [];
+                            if (key === "positive" || key === "negative") {
+                                positions = featuresPositions["polarity"];
+                            } else {
+                                positions = featuresPositions["subjectivity"];
+                            }
+                            positions.forEach(function (position) {
+                                newDataArray.push(textData.textDataArray[position]);
+                            });
+                            testArrays[key].push(newDataArray);
+                        }
+                    });
+                });
+            }
             separatedData["train"] = trainArrays;
             separatedData["test"] = testArrays;
             return separatedData;
@@ -88,8 +126,8 @@
             });
         }
 
-        this.GetTextDataArrays = function() {
-            var separatedData = getTextDataArraysOnly();
+        this.GetTextDataArrays = function(featuresPositions) {
+            var separatedData = getTextDataArraysOnly(featuresPositions);
             return separatedData;
         }
     }

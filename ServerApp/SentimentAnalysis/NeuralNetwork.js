@@ -144,7 +144,7 @@ var Math = require('mathjs');
             });
         }
         
-        function trainSystem(data) {
+        function trainSystem() {
             //Subjectivity Problem
             var keys = ["subjective", "objective"];
             setupWeights("subjectivity");
@@ -156,7 +156,7 @@ var Math = require('mathjs');
             keys.forEach(trainKey);
             
             var accuracy = testSystem(false);
-            console.log("Accuracy: " + accuracy);
+            console.log("  -Accuracy: " + accuracy);
             console.log("  -Perceptron system trained.");
         }
         
@@ -239,7 +239,7 @@ var Math = require('mathjs');
                 testData = data["test"];
 
                 //All data ready... train it... save it... and test it...
-                trainSystem(allDataOnProcessedTexts);
+                trainSystem();
                 //saveData();
 
             } else {

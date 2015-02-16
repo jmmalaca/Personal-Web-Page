@@ -14,7 +14,6 @@ var math = require('mathjs');
 
         var trainData = {};
         var testData = {};
-        var bestFeatures = {};
         var functionThreshold = -1;
         
         var classesProbabilities = {};
@@ -250,9 +249,8 @@ var math = require('mathjs');
         }
 
         //[Public Methods]
-        this.Start = function (data, best, setup) {
+        this.Start = function (data, setup) {
             dataProcessor = setup;
-            bestFeatures = best;
 
             console.log("\n  -Naive Bayes System Starting...");
             //Check if there is a system already trained...
