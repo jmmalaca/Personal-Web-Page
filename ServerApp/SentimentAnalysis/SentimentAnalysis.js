@@ -43,17 +43,14 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             //[Features Selection]
             selection = new FeaturesSelection();
             
-            //[Features with Array Bits]
-            var dataBits = separator.GetTextBitsDataArrays([]);       
-            var bestFeaturesBitsFreq = selection.ByFrequencyArray(dataBits);
-            var bestFeaturesBits = selection.ByMutualInformationArray(dataBits);
-            dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
+            //[Features: all features detected in processing method]
+            var bestFeaturesBitsFreq = selection.ByFrequencyArray(separator.GetTextBitsDataArrays([]));
+            var bestFeaturesBits = selection.ByMutualInformationArray(separator.GetTextBitsDataArrays([]));
+            var dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
             
-            //[Features with Words]
-            var dataWords = separator.GetTextData();
-            var vocabulary = processor.GetVocabulary();
-            var bestFeaturesWordsFreq = selection.ByFrequencyWords(vocabulary);
-            var bestFeaturesWords = selection.ByMutualInformationWords(vocabulary);
+            //[Features: all words detected in processing method]
+            var bestFeaturesWordsFreq = selection.ByFrequencyWords(processor.GetVocabulary());
+            var bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary());
             var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]

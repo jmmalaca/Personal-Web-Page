@@ -175,13 +175,6 @@
                 console.log("  -"+key+": Train[" + trainData[key].length + "], Test[" + testData[key].length + "]");
             });
         }
-        
-        this.GetTextData = function() {
-            var data = {};
-            data["train"] = trainData;
-            data["test"] = testData;
-            return data;
-        }
 
         this.GetTextBitsDataArrays = function(featuresPositions) {
             var separatedData = getTextDataArraysOnly(featuresPositions);

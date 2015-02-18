@@ -24,9 +24,36 @@ var NLP = require('../ProcessingData/NLP.js');
         var posTagsResults = {};
         
         var vocabularyDataFilePath = "./ProcessingData/VocabularyInfo.json";
-        var vocabulary = [];
+        var vocabulary = {};
 
         //[Private Methods]
+        function addWordsToVocabulary(text, textPolarity){
+            if (textPolarity === "positive" || textPolarity === "negative") {
+                if (Object.keys(vocabulary).indexOf("subjective") < 0) {
+                    vocabulary["subjective"] = {};
+                }
+            }
+            if (Object.keys(vocabulary).indexOf(textPolarity) < 0) {
+                vocabulary[textPolarity] = {};
+            }
+            var data = vocabulary[textPolarity];
+            var data2 = vocabulary["subjective"];
+            text.split(" ").forEach(function (word) {
+                if (textPolarity === "positive" || textPolarity === "negative") {
+                    if (Object.keys(data2).indexOf(textPolarity) < 0) {
+                        data2[word] = 1;
+                    } else {
+                        data2[word] = data2[word] + 1;
+                    }
+                }
+                if (Object.keys(data).indexOf(textPolarity) < 0) {
+                    data[word] = 1;
+                } else {
+                    data[word] = data[word] + 1;
+                }
+            });
+        }
+
         function regexProcessor(text, textPolarity, processedTextData) {
             //javascript regex... rule: "/"{regex string}"/"{modifier code, ie "g": global modifier or "i": insensitive to lower/upper cases}
             //validate your regex: www.regex101.com ;)
@@ -260,12 +287,7 @@ var NLP = require('../ProcessingData/NLP.js');
             
             nlp.ProcessText(processedTextData);
 
-            var words = processedTextData.processedText.split(" ");
-            words.forEach(function(word) {
-                if (vocabulary.indexOf(word) < 0) {
-                    vocabulary.push(word);
-                }
-            });
+            addWordsToVocabulary(processedTextData.processedText, textPolarity);
 
             return processedTextData.processedText;
         }
