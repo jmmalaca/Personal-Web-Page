@@ -483,6 +483,7 @@
     <Content Include="ProcessingData\TexasU\positive-words.txt" />
     <Content Include="ProcessingData\TexasU\README" />
     <Content Include="ProcessingData\TexasU\stopwords.txt" />
+    <Content Include="ProcessingData\VocabularyInfo.json" />
     <Content Include="ProcessingData\WebConfs\Stopwords.txt" />
     <Content Include="ProcessingData\WilsonWords\subjclueslen1-HLTEMNLP05.README" />
     <Content Include="ProcessingData\WilsonWords\subjclueslen1-HLTEMNLP05.tff" />

@@ -1,6 +1,6 @@
 ﻿//[Sentiment Analysis System]
 var DataReader = require('../ProcessingData/DataReader.js');
-var SetupData = require('../ProcessingData/TextsProcessor.js');
+var TextsProcessor = require('../ProcessingData/TextsProcessor.js');
 var Separator = require('../SentimentAnalysis/DataSeparation.js');
 var FeaturesSelection = require('../SentimentAnalysis/FeaturesSelection.js');
 var NaiveBayes = require('../SentimentAnalysis/NaiveBayesClassifier.js');
@@ -15,7 +15,7 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         
         //[Private data]
         var dataFromFiles;
-        var setupData;
+        var processor;
         //select data from the [beginning], from the [middle] or from the [end] of the array, and percentage for training and test
         var trainingDataPercentage = 70;
         var from = "middle";
@@ -33,27 +33,36 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             dataFromFiles.ReadInitialData();
             
             //[Process Texts]
-            setupData = new SetupData();
-            var allDataOnProcessedTexts = setupData.Preprocessor(dataFromFiles);
+            processor = new TextsProcessor();
+            var allDataOnProcessedTexts = processor.Preprocessor(dataFromFiles);
             
             //[Training and Validation Data]
             separator = new Separator();
             separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
-            var data = separator.GetTextDataArrays([]);
             
             //[Features Selection]
             selection = new FeaturesSelection();
-            //var bestFeatures = selection.ByFrequency(data);
-            var bestFeatures = selection.ByMutualInformation(data);
-            data = separator.GetTextDataArrays(bestFeatures);
+            
+            //[Features with Array Bits]
+            var dataBits = separator.GetTextBitsDataArrays([]);       
+            var bestFeaturesBitsFreq = selection.ByFrequencyArray(dataBits);
+            var bestFeaturesBits = selection.ByMutualInformationArray(dataBits);
+            dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
+            
+            //[Features with Words]
+            var dataWords = separator.GetTextData();
+            var vocabulary = processor.GetVocabulary();
+            var bestFeaturesWordsFreq = selection.ByFrequencyWords(vocabulary);
+            var bestFeaturesWords = selection.ByMutualInformationWords(vocabulary);
+            var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]
             bayes = new NaiveBayes();
-            bayes.Start(data, setupData);
+            //bayes.Start(data, processor);
 
             //[Classifier: Simple Neural Network (Perceptron)]
-            perceptron = new NeuralNetwork();
-            perceptron.Start(data, setupData);
+            //perceptron = new NeuralNetwork();
+            //perceptron.Start(data, Processor);
         }
 
         this.GetDataInfo = function() {
@@ -61,7 +70,7 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         }
         
         this.GetProcessingResults = function() {
-            return setupData.GetProcessDataResults();
+            return processor.GetProcessDataResults();
         }
     }
     

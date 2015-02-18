@@ -113,6 +113,56 @@
             return separatedData;
         }
 
+        function getTextDataWordsOnly(featuresWords) {
+            //keys = polarity, subjectivity, -> list[words]
+            var separatedData = {};
+            var trainArrays = {};
+            var testArrays = {};
+            Object.keys(trainData).forEach(function (key) {
+                trainArrays[key] = [];
+                trainData[key].forEach(function (textData) {
+                    var textCoded = textData.processedText;
+                    var newDataArray = [];
+                    var words = [];
+                    if (key === "positive" || key === "negative") {
+                        words = featuresWords["polarity"];
+                    } else {
+                        words = featuresWords["subjectivity"];
+                    }
+                    words.forEach(function (word) {
+                        if (textCoded.indexOf(word) < 0) {
+                            newDataArray.push(0);
+                        } else {
+                            newDataArray.push(1);
+                        }
+                    });
+                    trainArrays[key].push(newDataArray);
+                });
+                testArrays[key] = [];
+                testData[key].forEach(function (textData) {
+                    var textCoded = textData.processedText;
+                    var newDataArray = [];
+                    var words = [];
+                    if (key === "positive" || key === "negative") {
+                        words = featuresWords["polarity"];
+                    } else {
+                        words = featuresWords["subjectivity"];
+                    }
+                    words.forEach(function (word) {
+                        if (textCoded.indexOf(word) < 0) {
+                            newDataArray.push(0);
+                        } else {
+                            newDataArray.push(1);
+                        }
+                    });
+                    testArrays[key].push(newDataArray);
+                });
+            });
+            separatedData["train"] = trainArrays;
+            separatedData["test"] = testArrays;
+            return separatedData;
+        }
+
         //[Public Methods]
         this.Start = function (data, fromWhere, percentage) {
             selectDataFrom = fromWhere;
@@ -125,9 +175,21 @@
                 console.log("  -"+key+": Train[" + trainData[key].length + "], Test[" + testData[key].length + "]");
             });
         }
+        
+        this.GetTextData = function() {
+            var data = {};
+            data["train"] = trainData;
+            data["test"] = testData;
+            return data;
+        }
 
-        this.GetTextDataArrays = function(featuresPositions) {
+        this.GetTextBitsDataArrays = function(featuresPositions) {
             var separatedData = getTextDataArraysOnly(featuresPositions);
+            return separatedData;
+        }
+
+        this.GetTextWordsDataArrays = function (featuresWords) {
+            var separatedData = getTextDataWordsOnly(featuresWords);
             return separatedData;
         }
     }

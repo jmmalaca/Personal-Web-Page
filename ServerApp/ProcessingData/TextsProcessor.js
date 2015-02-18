@@ -22,6 +22,9 @@ var NLP = require('../ProcessingData/NLP.js');
         var allDataReceivedFromFiles = {};
         var allDataOnProcessedTexts = {};
         var posTagsResults = {};
+        
+        var vocabularyDataFilePath = "./ProcessingData/VocabularyInfo.json";
+        var vocabulary = [];
 
         //[Private Methods]
         function regexProcessor(text, textPolarity, processedTextData) {
@@ -257,6 +260,13 @@ var NLP = require('../ProcessingData/NLP.js');
             
             nlp.ProcessText(processedTextData);
 
+            var words = processedTextData.processedText.split(" ");
+            words.forEach(function(word) {
+                if (vocabulary.indexOf(word) < 0) {
+                    vocabulary.push(word);
+                }
+            });
+
             return processedTextData.processedText;
         }
 
@@ -475,9 +485,15 @@ var NLP = require('../ProcessingData/NLP.js');
                 data = fs.readFileSync(processedDataFilePath);
                 allDataOnProcessedTexts = JSON.parse(data);
                 
-                dataAlreadyProcessed = true;
-                console.log("  -System Processed Data Loaded.");
+                try {
+                    data = fs.readFileSync(vocabularyDataFilePath);
+                    vocabulary = JSON.parse(data);
 
+                    dataAlreadyProcessed = true;
+                    console.log("  -System Processed Data Loaded.");
+                } catch (e) {
+                    console.log("\n -ERROR: reading vocabulary data.");
+                }
             } catch (e) {
                 console.log("\n -ERROR: reading processed data.");
                 //console.log(e);
@@ -488,6 +504,8 @@ var NLP = require('../ProcessingData/NLP.js');
         function saveSystemProcessedData() {
             var jsonString = JSON.stringify(allDataOnProcessedTexts);
             fs.writeFileSync(processedDataFilePath, jsonString);
+            jsonString = JSON.stringify(vocabulary);
+            fs.writeFileSync(vocabularyDataFilePath, jsonString);
         }
         
         function posTagsCounts(data, results) {
@@ -573,6 +591,10 @@ var NLP = require('../ProcessingData/NLP.js');
 
         this.GetProcessDataResults = function () {
             return addTextFeaturesData();
+        }
+
+        this.GetVocabulary = function() {
+            return vocabulary;
         }
     }
     

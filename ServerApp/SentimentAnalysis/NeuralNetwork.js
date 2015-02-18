@@ -225,8 +225,8 @@ var Math = require('mathjs');
         }
         
         //[Public Methods]
-        this.Start = function (data, setupData) {
-            dataProcessor = setupData;
+        this.Start = function (data, Processor) {
+            dataProcessor = Processor;
 
             console.log("\n  -Neural Network (Perceptron) System Starting...");
             //Check if there is a system already trained...

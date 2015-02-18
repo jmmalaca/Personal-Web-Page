@@ -12,6 +12,7 @@ var Math = require('mathjs');
         var trainData = {};
         var frequencyMinValue = 0.3;
         var mutualInfTopSize = 5;
+        var topWordsForEachClass = 6;
 
         //[Private Methods]
         function countClassesData() {
@@ -92,6 +93,26 @@ var Math = require('mathjs');
             return result;
         }
         
+        function mutualInformationCalculation(totalFeatures, f1C1, f1C0, f0C1, f0C0) {
+            var x = ((totalFeatures * f1C1) / ((f1C1 + f1C0) * (f1C1 + f0C1)));
+            var log = Math.log(x, 2);
+            var firstValue = (f1C1 / totalFeatures) * log;
+            
+            x = ((totalFeatures * f1C0) / ((f1C0 + f1C1) * (f1C0 + f0C0)));
+            log = Math.log(x, 2);
+            var secondValue = (f1C0 / totalFeatures) * log;
+            
+            x = ((totalFeatures * f0C1) / ((f0C1 + f0C0) * (f1C1 + f0C1)));
+            log = Math.log(x, 2);
+            var thirdValue = (f0C1 / totalFeatures) * log;
+            
+            x = ((totalFeatures * f0C0) / ((f0C0 + f0C1) * (f1C0 + f0C0)));
+            log = Math.log(x, 2);
+            var fourthValue = (f0C0 / totalFeatures) * log;
+            
+            return (firstValue + secondValue + thirdValue + fourthValue);
+        }
+
         function calcMutualInf(classAData, classBData) {
             var mutInf = [];
             for (var feature = 0; feature < classAData.length; feature++) {
@@ -103,27 +124,49 @@ var Math = require('mathjs');
                 //just for DEBUG: totalFeatures must be equal total, True ;)
                 //var total = countTotalFeaturesOnData(classAData, classBData);
                 mutInf.push(0);
-                var x = ((totalFeatures * f1C1) / ((f1C1 + f1C0) * (f1C1 + f0C1)));
-                var log = Math.log(x, 2);
-                var firstValue = (f1C1 / totalFeatures) * log;
-
-                x = ((totalFeatures * f1C0) / ((f1C0 + f1C1) * (f1C0 + f0C0)));
-                log = Math.log(x, 2);
-                var secondValue = (f1C0 / totalFeatures) * log;
-
-                x = ((totalFeatures * f0C1) / ((f0C1 + f0C0) * (f1C1 + f0C1)));
-                log = Math.log(x, 2);
-                var thirdValue = (f0C1 / totalFeatures) * log;
-
-                x = ((totalFeatures * f0C0) / ((f0C0 + f0C1) * (f1C0 + f0C0)));
-                log = Math.log(x, 2);
-                var fourthValue = (f0C0 / totalFeatures) * log;
-
-                mutInf[feature] = firstValue + secondValue + thirdValue + fourthValue;
+                mutInf[feature] = mutualInformationCalculation(totalFeatures, f1C1, f1C0, f0C1, f0C0);
                 if (isNaN(mutInf[feature])) {
                     mutInf[feature] = 0;
                 }
             }
+            return mutInf;
+        }
+        
+        function calcNotWordOnClass(word, classData) {
+            var result = 0;
+            Object.keys(classData).forEach(function(key) {
+                if (key != word) {
+                    result = result + classData[key];
+                }
+            });
+            return result;
+        }
+        
+        function countTotalOfWords(data) {
+            var count = 0;
+            Object.keys(data).forEach(function(key) {
+                count = count + data[key];
+            });
+            return count;
+        }
+
+        function calcWordsMutualInf(classAData, classBData) {
+            var mutInf = {};
+            Object.keys(classAData).forEach(function(word) {
+                var f1C1 = classAData[word];//feature = true, class = true
+                var f1C0 = classBData[word];//feature = true, class = false
+                var f0C1 = calcNotWordOnClass(word, classAData);//feature = false, class = true
+                var f0C0 = calcNotWordOnClass(word, classBData);//feature = false, class = false
+                var totalFeatures = f1C1 + f1C0 + f0C1 + f0C0;
+                //just for DEBUG: totalFeatures must be equal total, True ;)
+                //var countA = countTotalOfWords(classAData),
+                //    countB = countTotalOfWords(classBData),
+                //    total = countA + countB;
+                mutInf[word] = mutualInformationCalculation(totalFeatures, f1C1, f1C0, f0C1, f0C0);
+                if (isNaN(mutInf[word])) {
+                    mutInf[word] = 0;
+                }
+            });
             return mutInf;
         }
 
@@ -131,6 +174,13 @@ var Math = require('mathjs');
             var results = {};
             results[nameClassA] = calcMutualInf(totalCounts[nameClassA], totalCounts[nameClassB]);
             results[nameClassB] = calcMutualInf(totalCounts[nameClassB], totalCounts[nameClassA]);
+            return results;
+        }
+        
+        function mutualWordsInfCalcs(totalCounts, nameClassA, nameClassB) {
+            var results = {};
+            results[nameClassA] = calcWordsMutualInf(totalCounts[nameClassA], totalCounts[nameClassB]);
+            results[nameClassB] = calcWordsMutualInf(totalCounts[nameClassB], totalCounts[nameClassA]);
             return results;
         }
         
@@ -150,10 +200,69 @@ var Math = require('mathjs');
             });
             return best;
         }
+        
+        function selectTheWordsBiggest(miResults) {
+            var best = [];
+            topWordsForEachClass = 6;
+            Object.keys(miResults).forEach(function (key) {
+                var data = miResults[key];
+                var sortedValues = arrayToDic(sortDictionary(data).slice(0, topWordsForEachClass));
+                Object.keys(sortedValues).forEach(function(word) {
+                    if (best.indexOf(word) < 0) {
+                        best.push(word);
+                    }
+                });
+            });
+            return best;
+        }
+        
+        function sortDictionary(dictionary) {
+            var sorted = [];
+            Object.keys(dictionary).forEach(function (word) {
+                sorted.push([word, dictionary[word]]);
+            });
+            sorted.sort(function (a, b)
+            { return b[1] - a[1]; });//descending order...
+            return sorted;
+        }
+        
+        function arrayToDic(array) {
+            var dic = {};
+            array.forEach(function(value) {
+                dic[value[0]] = value[1];
+            });
+            return dic;
+        }
+
+        function selectTheBestWords(data, problem) {
+            var topValues = [];
+            if (problem === "subjectivity") {
+                var top = arrayToDic(sortDictionary(data["neutral"]).slice(0, topWordsForEachClass));
+                Object.keys(top).forEach(function(key) {
+                    if (topValues.indexOf(key) < 0) {
+                        topValues.push(key);
+                    }
+                });
+                topWordsForEachClass = topWordsForEachClass / 2;
+            }
+            top = arrayToDic(sortDictionary(data["positive"]).slice(0, topWordsForEachClass));
+            Object.keys(top).forEach(function (key) {
+                if (topValues.indexOf(key) < 0) {
+                    topValues.push(key);
+                }
+            });
+            top = arrayToDic(sortDictionary(data["negative"]).slice(0, topWordsForEachClass));
+            Object.keys(top).forEach(function (key) {
+                if (topValues.indexOf(key) < 0) {
+                    topValues.push(key);
+                }
+            });
+            return topValues;
+        }
 
         //[Public Methods]
         
-        this.ByFrequency = function (data) {
+        this.ByFrequencyArray = function (data) {
             /*
              * frequency-based feature selection: selecting the features that are most common in the class C
              */
@@ -174,8 +283,17 @@ var Math = require('mathjs');
             bestFeatures["subjectivity"] = selectTheBest(frequencyResults["subjectivity"]);
             return bestFeatures;
         }
+        
+        this.ByFrequencyWords = function (data) {
+            console.log("\n -Feature Selection: By Frequency");
 
-        this.ByMutualInformation = function (data) {
+            var bestFeatures = {};
+            bestFeatures["polarity"] = selectTheBestWords(data, "polarity");
+            bestFeatures["subjectivity"] = selectTheBestWords(data, "subjectivity");
+            return bestFeatures;
+        }
+
+        this.ByMutualInformationArray = function (data) {
             /*
              * MI measures how much information the presence/absence of a feature f contributes to making the correct classification decision on class C
              */
@@ -193,6 +311,20 @@ var Math = require('mathjs');
             var bestFeatures = {};
             bestFeatures["polarity"] = selectTheBiggest(miResults["polarity"]);
             bestFeatures["subjectivity"] = selectTheBiggest(miResults["subjectivity"]);
+            return bestFeatures;
+        }
+
+        this.ByMutualInformationWords = function(data) {
+            console.log("\n -Feature Selection: By Mutual Information");
+
+            var miResults = {};
+            miResults["polarity"] = mutualWordsInfCalcs(data, "positive", "negative");
+            miResults["subjectivity"] = mutualWordsInfCalcs(data, "subjective", "neutral");
+            console.log("");
+
+            var bestFeatures = {};
+            bestFeatures["polarity"] = selectTheWordsBiggest(miResults["polarity"]);
+            bestFeatures["subjectivity"] = selectTheWordsBiggest(miResults["subjectivity"]);
             return bestFeatures;
         }
     }
