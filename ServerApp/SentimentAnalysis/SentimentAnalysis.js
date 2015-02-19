@@ -14,15 +14,15 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
     function SentimentAnalysis() {
         
         //[Private data]
-        var dataFromFiles;
-        var processor;
+        var dataFromFiles,
+            processor,
         //select data from the [beginning], from the [middle] or from the [end] of the array, and percentage for training and test
-        var trainingDataPercentage = 70;
-        var from = "middle";
-        var separator;
-        var selection;
-        var bayes;
-        var perceptron;
+            trainingDataPercentage = 70,
+            from = "middle",
+            separator,
+            selection,
+            bayes,
+            perceptron;
 
         //[Private Methods]
 
@@ -44,22 +44,22 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             selection = new FeaturesSelection();
             
             //[Features: all features detected in processing method]
-            var bestFeaturesBitsFreq = selection.ByFrequencyArray(separator.GetTextBitsDataArrays([]));
-            var bestFeaturesBits = selection.ByMutualInformationArray(separator.GetTextBitsDataArrays([]));
-            var dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
+            //var bestFeaturesBitsFreq = selection.ByFrequencyArray(separator.GetTextBitsDataArrays([]));
+            //var bestFeaturesBits = selection.ByMutualInformationArray(separator.GetTextBitsDataArrays([]));
+            //var dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
             
             //[Features: all words detected in processing method]
-            var bestFeaturesWordsFreq = selection.ByFrequencyWords(processor.GetVocabulary());
+            //var bestFeaturesWordsFreq = selection.ByFrequencyWords(processor.GetVocabulary());
             var bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary());
             var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]
             bayes = new NaiveBayes();
-            //bayes.Start(data, processor);
+            bayes.Start(dataWordsBits, processor);
 
             //[Classifier: Simple Neural Network (Perceptron)]
-            //perceptron = new NeuralNetwork();
-            //perceptron.Start(data, Processor);
+            perceptron = new NeuralNetwork();
+            perceptron.Start(dataWordsBits, processor);
         }
 
         this.GetDataInfo = function() {

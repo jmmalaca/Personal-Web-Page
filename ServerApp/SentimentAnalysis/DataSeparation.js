@@ -112,50 +112,39 @@
             separatedData["test"] = testArrays;
             return separatedData;
         }
+        
+        function generateTextDataWords(textData, featuresWords, polarity) {
+            var textCoded = textData.processedText;
+            var newDataArray = [];
+            var words = featuresWords["subjectivity"];
+            if (polarity === "positive" || polarity === "negative") {
+                words = featuresWords["polarity"];
+            }
+            if (typeof textCoded !== 'undefined') {
+                words.forEach(function (word) {
+                    if (textCoded.indexOf(word) < 0) {
+                        newDataArray.push(0);
+                    } else {
+                        newDataArray.push(1);
+                    }
+                });
+            }
+            return newDataArray;
+        }
 
         function getTextDataWordsOnly(featuresWords) {
             //keys = polarity, subjectivity, -> list[words]
             var separatedData = {};
             var trainArrays = {};
             var testArrays = {};
-            Object.keys(trainData).forEach(function (key) {
+            Object.keys(trainData).forEach(function(key) {
                 trainArrays[key] = [];
-                trainData[key].forEach(function (textData) {
-                    var textCoded = textData.processedText;
-                    var newDataArray = [];
-                    var words = [];
-                    if (key === "positive" || key === "negative") {
-                        words = featuresWords["polarity"];
-                    } else {
-                        words = featuresWords["subjectivity"];
-                    }
-                    words.forEach(function (word) {
-                        if (textCoded.indexOf(word) < 0) {
-                            newDataArray.push(0);
-                        } else {
-                            newDataArray.push(1);
-                        }
-                    });
-                    trainArrays[key].push(newDataArray);
+                trainData[key].forEach(function(textData) {
+                    trainArrays[key].push(generateTextDataWords(textData, featuresWords, key));
                 });
                 testArrays[key] = [];
-                testData[key].forEach(function (textData) {
-                    var textCoded = textData.processedText;
-                    var newDataArray = [];
-                    var words = [];
-                    if (key === "positive" || key === "negative") {
-                        words = featuresWords["polarity"];
-                    } else {
-                        words = featuresWords["subjectivity"];
-                    }
-                    words.forEach(function (word) {
-                        if (textCoded.indexOf(word) < 0) {
-                            newDataArray.push(0);
-                        } else {
-                            newDataArray.push(1);
-                        }
-                    });
-                    testArrays[key].push(newDataArray);
+                testData[key].forEach(function(textData) {
+                    testArrays[key].push(generateTextDataWords(textData, featuresWords, key));
                 });
             });
             separatedData["train"] = trainArrays;
@@ -177,13 +166,11 @@
         }
 
         this.GetTextBitsDataArrays = function(featuresPositions) {
-            var separatedData = getTextDataArraysOnly(featuresPositions);
-            return separatedData;
+            return getTextDataArraysOnly(featuresPositions);
         }
 
         this.GetTextWordsDataArrays = function (featuresWords) {
-            var separatedData = getTextDataWordsOnly(featuresWords);
-            return separatedData;
+            return getTextDataWordsOnly(featuresWords);
         }
     }
     

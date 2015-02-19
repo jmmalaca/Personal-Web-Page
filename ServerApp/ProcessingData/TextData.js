@@ -45,7 +45,7 @@
 
         //[originalText]
         this.SetOriginalText = function(text) {
-            this.originalText = text;
+            this.originalText += text;
         }
         
         this.GetOriginalText = function () {
@@ -53,9 +53,9 @@
         }
         //[processedText]
         this.SetProcessedText = function (text) {
-            this.processedText = text;
+            this.processedText += text;
         }
-    
+        
         this.GetProcessedText = function () {
             return this.processedText;
         }
@@ -265,7 +265,7 @@
         }
         //[Polarity]
         this.SetPriorPolarity = function (polarity) {
-            this.PriorPolarity = polarity;
+            this.PriorPolarity += polarity;
         }
     
         this.GetPriorPolarity = function () {

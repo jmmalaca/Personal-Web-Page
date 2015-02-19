@@ -286,7 +286,7 @@ var NLP = require('../ProcessingData/NLP.js');
             allDataOnProcessedTexts[textPolarity].push(processedTextData);
             
             nlp.ProcessText(processedTextData);
-
+            
             addWordsToVocabulary(processedTextData.processedText, textPolarity);
 
             return processedTextData.processedText;

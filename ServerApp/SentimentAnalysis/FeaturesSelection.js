@@ -1,5 +1,6 @@
 ﻿//[Features Selection System]
 var Math = require('mathjs');
+var ProcessMonitor = require('../ProcessingMonitor/ProcessMonitor.js');
 
 (function () {
     
@@ -316,6 +317,8 @@ var Math = require('mathjs');
 
         this.ByMutualInformationWords = function(data) {
             console.log("\n -Feature Selection: By Mutual Information");
+            var measures = new ProcessMonitor();
+            measures.StartTime();
 
             var miResults = {};
             miResults["polarity"] = mutualWordsInfCalcs(data, "positive", "negative");
@@ -325,6 +328,9 @@ var Math = require('mathjs');
             var bestFeatures = {};
             bestFeatures["polarity"] = selectTheWordsBiggest(miResults["polarity"]);
             bestFeatures["subjectivity"] = selectTheWordsBiggest(miResults["subjectivity"]);
+            
+            measures.ShowTimeCount("nothing to show", "Mutual Info calculated.");
+
             return bestFeatures;
         }
     }
