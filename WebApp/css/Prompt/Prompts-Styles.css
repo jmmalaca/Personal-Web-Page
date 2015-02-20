@@ -6,21 +6,21 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    width: 36%;
+    width: 40%;
     height: 77%;
     position: absolute;
-    top: 21%;
-    left: 8%;
+    top: 19%;
+    left: 5%;
 }
 
 #Console-Box {
     background-color: black;
     opacity: 0.7;
-    width: 69%;
-    height: 76%;
+    width: 61%;
+    height: 71%;
     position: absolute;
-    top: 9%;
-    left: 14%;
+    top: 11.5%;
+    left: 18%;
     border: 2px solid;
     border-color: black;
     -ms-border-radius: 5px;

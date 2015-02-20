@@ -12,7 +12,7 @@ function AddPresentationData() {
 
     $(".Presentation-Box").append(images[rand - 1]);
 
-    $(".Presentation-Box").append("<p class=\"Resume BlockSelection\"> Born and educated in the city that hosts one of the oldest universities of the world, <b>Coimbra</b> (Portugal). Finished in 2014 his <b>Masters</b> at University of Coimbra, Informatics Engineering, with focus on Sentiment Analysis on Microblogging. A <b>Full Stack Engineer</b> ready for new challenges, always learning, growing, and enjoying his life. </p>");
+    $(".Presentation-Box").append("<p class=\"Resume BlockSelection\">Born and educated in the city that hosts one of the oldest universities of the world, <b>Coimbra</b> (Portugal). Finished in 2014 his <b>Masters</b> at University of Coimbra, <b>Informatics Engineering</b>, with focus on Sentiment Analysis on Microblogging. A <b>Full Stack Engineer</b> ready for new challenges, always learning, growing, and enjoying his life.</p>");
 
     //Add data for Map Box
     $("#Presentation-Page").append("<div class=\"Location_Map animated bounceInLeft\"></div>");

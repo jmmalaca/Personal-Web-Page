@@ -39,17 +39,21 @@ var NLP = require('../ProcessingData/NLP.js');
             var data = vocabulary[textPolarity];
             var data2 = vocabulary["subjective"];
             text.split(" ").forEach(function (word) {
-                if (textPolarity === "positive" || textPolarity === "negative") {
-                    if (Object.keys(data2).indexOf(textPolarity) < 0) {
-                        data2[word] = 1;
-                    } else {
-                        data2[word] = data2[word] + 1;
+                if (word !== "stopword") {
+                    if (word.length > 1) {
+                        if (textPolarity === "positive" || textPolarity === "negative") {
+                            if (Object.keys(data2).indexOf(textPolarity) < 0) {
+                                data2[word] = 1;
+                            } else {
+                                data2[word] = data2[word] + 1;
+                            }
+                        }
+                        if (Object.keys(data).indexOf(textPolarity) < 0) {
+                            data[word] = 1;
+                        } else {
+                            data[word] = data[word] + 1;
+                        }
                     }
-                }
-                if (Object.keys(data).indexOf(textPolarity) < 0) {
-                    data[word] = 1;
-                } else {
-                    data[word] = data[word] + 1;
                 }
             });
         }
@@ -615,7 +619,7 @@ var NLP = require('../ProcessingData/NLP.js');
             return addTextFeaturesData();
         }
 
-        this.GetVocabulary = function() {
+        this.GetVocabulary = function () {
             return vocabulary;
         }
     }

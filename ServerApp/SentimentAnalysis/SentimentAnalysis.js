@@ -17,11 +17,13 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         var dataFromFiles,
             processor,
         //select data from the [beginning], from the [middle] or from the [end] of the array, and percentage for training and test
-            trainingDataPercentage = 70,
+            trainingDataPercentage = 10,
             from = "middle",
             separator,
             selection,
             bayes,
+            topWordsForEachClass = 15,
+            bestFeaturesWords,
             perceptron;
 
         //[Private Methods]
@@ -50,7 +52,7 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             
             //[Features: all words detected in processing method]
             //var bestFeaturesWordsFreq = selection.ByFrequencyWords(processor.GetVocabulary());
-            var bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary());
+            bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary(), topWordsForEachClass);
             var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]
@@ -68,6 +70,10 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         
         this.GetProcessingResults = function() {
             return processor.GetProcessDataResults();
+        }
+
+        this.GetTopFeatures = function () {
+            return bestFeaturesWords;
         }
     }
     

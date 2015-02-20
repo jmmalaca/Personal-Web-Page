@@ -45,10 +45,11 @@
             takeElements(data, "negative", "negative");
             takeElements(data, "neutral", "objective");
 
-            trainData["subjective"] = trainData["positive"].slice(0);
-            Array.prototype.push.apply(trainData["subjective"], trainData["negative"]);
-            testData["subjective"] = testData["positive"].slice(0);
-            Array.prototype.push.apply(testData["subjective"], testData["negative"]);
+            var count = trainData["positive"].length / 2;
+            trainData["subjective"] = trainData["positive"].slice(0, count);
+            Array.prototype.push.apply(trainData["subjective"], trainData["negative"].slice(0, count));
+            testData["subjective"] = testData["positive"].slice(0, count);
+            Array.prototype.push.apply(testData["subjective"], testData["negative"].slice(0, count));
         }
         
         function getTextDataArraysOnly(featuresPositions) {
@@ -131,6 +132,14 @@
             }
             return newDataArray;
         }
+        
+        function printDataExamples(type, dataArrays) {
+            console.log("   -" + type + ": ");
+            Object.keys(dataArrays).forEach(function (key) {
+                var data = dataArrays[key];
+                console.log("    -" + key + ", size: " + data.length + ": " + data[0]);
+            });
+        }
 
         function getTextDataWordsOnly(featuresWords) {
             //keys = polarity, subjectivity, -> list[words]
@@ -147,6 +156,9 @@
                     testArrays[key].push(generateTextDataWords(textData, featuresWords, key));
                 });
             });
+            console.log("  -Words(features) Text Data examples:");
+            printDataExamples("Train", trainArrays);
+            printDataExamples("Test", testArrays);
             separatedData["train"] = trainArrays;
             separatedData["test"] = testArrays;
             return separatedData;

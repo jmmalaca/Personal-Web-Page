@@ -312,10 +312,27 @@ function CallServer_RequestFeaturesInfo() {
     });
 }
 
+function CallServer_RequestTop10FeaturesInfo() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/bestWordsFeatures',
+        contentType: "application/json",
+        success: function (response) {
+            Object.keys(response).forEach(function(key) {
+                console.log(" -" + key + ": " + response[key]);
+            });
+        },
+        error: function (err) {
+            console.log("ERROR: bestWordsFeatures");
+        }
+    });
+}
+
 //document ready event ----------
 $(document).ready(function () {
 
     AddStatsBox();
     CallServer_RequestDataInfo();
     CallServer_RequestFeaturesInfo();
+    CallServer_RequestTop10FeaturesInfo();
 });

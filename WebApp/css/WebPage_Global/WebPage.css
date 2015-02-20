@@ -13,6 +13,22 @@
     top: 0;
 }
 
+#Presentation-Page {
+    background-color: gold;
+}
+
+#WorkSection {
+    background-color: orange;
+}
+
+#SocialSection {
+    background-color: orangered;
+}
+
+#ProjectsSection {
+    background-color: firebrick;
+}
+
 /* Width and Heigth... just put it on the screen... :) */
 .WindowSize {
     position: fixed;

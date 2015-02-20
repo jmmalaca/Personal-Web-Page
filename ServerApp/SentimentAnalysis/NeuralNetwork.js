@@ -155,8 +155,8 @@ var Math = require('mathjs');
             setupWeights("polarity");
             keys.forEach(trainKey);
             
-            var accuracy = testSystem(false);
-            console.log("  -Accuracy: " + accuracy);
+            var accuracy = testSystem(true);
+            console.log("  -Global Accuracy: " + accuracy);
             console.log("  -Perceptron system trained.");
         }
         
@@ -234,7 +234,7 @@ var Math = require('mathjs');
             
             if (systemAlreadyTrained != true) {
                 console.log("  -System not trained... Train it...");
-                //[Separate data from training and validation]
+                
                 trainData = data["train"];
                 testData = data["test"];
 
