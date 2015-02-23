@@ -56,8 +56,9 @@ var pos = require('retext-pos');
                                 processedTextData.AddAdverb(partOfSpeechTag);
                             }
 
-                            var reg = new RegExp("(^|[^a-z])"+word+"[^a-z]");
-                            processedTextData.processedText = processedTextData.processedText.replace(reg, " " + word + "_" + partOfSpeechTag + " ");
+                            var reg = new RegExp("(^|[^a-z])" + word + "[^a-z]");
+                            //processedTextData.processedText = processedTextData.processedText.replace(reg, " " + word + "_" + partOfSpeechTag + " ");
+                            processedTextData.processedText = processedTextData.processedText.replace(reg, " " + partOfSpeechTag + " ");
                             processedTextData.processedText = processedTextData.processedText.trim();
                         }
                     });

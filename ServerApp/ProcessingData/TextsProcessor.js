@@ -452,6 +452,12 @@ var NLP = require('../ProcessingData/NLP.js');
             for (var i = 0; i < (positiveResults.length - 4); i++) {
                 var data = {};
                 switch (i) {
+                    case 0:
+                        data["name"] = "Acronyms";
+                        break;
+                    case 1:
+                        data["name"] = "Stopwords";
+                        break;
                     case 2:
                         data["name"] = "Retweets";
                         break;

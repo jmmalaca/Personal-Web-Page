@@ -1,13 +1,53 @@
 ﻿//Show Box ---------
-function AddStatsBox() {
-    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
-    $("#SentiBox").append("<div id=\"PiesBox\">Bags of Words</div>");
-    $("#PiesBox").append("<table> <tr> " +
+function AddStatsBoxes() {
+    $("#SentiBox").append("<div id=\"PiesBox\"><p>Data Available</p></div>");
+    $("#PiesBox").append("<table>" +
+        "<tr>" +
+        "<td id=\"SubjectivityWordsPie\"> </td>" +
+        "<td id=\"PolarityWordsPie\"></td>" +
+        "<td id=\"OtherWords\"></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td id=\"TweetsPie\"> </td>" +
         "<td id=\"EmoticonsPie\"> </td>" +
-        "<td id=\"SubjectivityWordsPie\"> </td> </tr>" +
-        "<tr> <td id=\"PolarityWordsPie\"> </td>" +
-        " <td id=\"OtherWords\"> </td> </tr> </table>");
+        "</tr>" +
+        "</table>");
+
     $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
+}
+
+function AddButton(title) {
+    $("#VerticalMenu").append("<div id=\"" + title + "Button\" class=\"VerticalMenuButton\">" +
+        "<div class=\"ButtonPart\">" + title + "</div>" +
+        "<div class=\"ButtonPart\" id=\"StackDot\">" +
+        "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
+        "</div>" +
+        "</div>");
+
+    $("#" + title + "Button").mouseenter(function() {
+        $("#" + title + "Button").css("left", "10%");
+        $("#" + title + "Circle").css("background", "#ff6a00");
+    }).mouseleave(function() {
+        $("#" + title + "Button").css("left", "0");
+        $("#" + title + "Circle").css("background", "#ffffff");
+    }).click(function () {
+        $("#PiesBox").css("visibility", "hidden");
+        $("#GroupedBarBox").css("visibility", "hidden");
+        if (title === "Data") {
+            $("#PiesBox").css("visibility", "visible");
+        } else if (title === "Words") {
+            $("#GroupedBarBox").css("visibility", "visible");
+        } else if (title === "Tags") {
+
+        }
+    });
+}
+
+function AddMenuBox() {
+    $("#SentiBox").append("<div id=\"VerticalMenu\"></div>");
+    AddButton("Data");
+    AddButton("Words");
+    AddButton("Tags");
 }
 
 function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
@@ -44,8 +84,8 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
         "size": {
             "pieInnerRadius": "30%",
             "pieOuterRadius": "100%",
-            "canvasHeight": 135,
-            "canvasWidth": 135
+            "canvasHeight": 170,
+            "canvasWidth": 170
         },
         "data": {
             "sortOrder": "value-desc",
@@ -98,10 +138,15 @@ function AddDataInfo(data) {
         labels = ["Positive", "Neutral", "Negative"];
         EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
 
-        colors = ["#4D8BB5", "#FF6600", "#A347FF"];
+        colors = ["#FF6600", "#4D8BB5", "#A347FF"];
         values = [data["Acronyms"], data["Stopwords"], data["Badwords"]];
         labels = ["Acronyms", "Stopwords", "Badwords"];
         EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
+
+        colors = ["#248838", "#0070BA", "#830909"];
+        values = [data["Positive_Tweets"], data["Neutral_Tweets"], data["Negative_Tweets"]];
+        labels = ["Positive", "Neutral", "Negative"];
+        EmoticonsPieChart("TweetsPie", "Tweets", values, labels, colors, showLabels);
     }
 }
 
@@ -151,8 +196,8 @@ function AddFeaturesInfo(data, colors) {
     //console.log(data);
 
     var margin = { top: 30, right: 20, bottom: 80, left: 30 },
-     width = 550 - margin.left - margin.right,
-     height = 350 - margin.top - margin.bottom;
+     width = 700 - margin.left - margin.right,
+     height = 400 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
        .rangeRoundBands([0, width], .1);
@@ -236,7 +281,7 @@ function AddFeaturesInfo(data, colors) {
             .attr("y", (0 - (margin.top / 2)) + 35)
             .attr("text-anchor", "middle")
             .style("fill", "white")
-            .text("Features Detection");// chart title
+            .text("Words Detection");// chart title
 
     name.selectAll(".bar")
             .data(function(d) { return d.compare; })
@@ -287,9 +332,9 @@ function AddFeaturesInfoNull() {
         {"name":"Repetitions","positive":0,"neutral":0,"negative":0},
         {"name":"Numbers","positive":0,"neutral":0,"negative":0},
         {"name":"Html_Chars","positive":0,"neutral":0,"negative":0},
-        { "name": "URLs", "positive": 0, "neutral": 0, "negative": 0 },
-        { "name": "Badwords", "positive": 0, "neutral": 0, "negative": 0 },
-        { "name": "Uppercases", "positive": 0, "neutral": 0, "negative": 0 }
+        {"name": "URLs", "positive": 0, "neutral": 0, "negative": 0 },
+        {"name": "Badwords", "positive": 0, "neutral": 0, "negative": 0 },
+        {"name": "Uppercases", "positive": 0, "neutral": 0, "negative": 0 }
     ];
 
     var colors = ["#001429"];
@@ -331,7 +376,11 @@ function CallServer_RequestTop10FeaturesInfo() {
 //document ready event ----------
 $(document).ready(function () {
 
-    AddStatsBox();
+    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
+
+    AddStatsBoxes();
+    AddMenuBox();
+    
     CallServer_RequestDataInfo();
     CallServer_RequestFeaturesInfo();
     CallServer_RequestTop10FeaturesInfo();
