@@ -73,8 +73,16 @@
 
 #GroupedBarBox {
     position: absolute;
+    top: 9%;
+    left: 24%;
+    margin: 0;
+    visibility: hidden;
+}
+
+#GroupedBarTagsBox {
+    position: absolute;
     top: 13%;
-    left: 27%;
+    left: 23%;
     margin: 0;
     visibility: hidden;
 }
@@ -131,4 +139,10 @@
     color: #fff;
     top: 100%;
     left: 0;
+}
+
+#ErrorMsg {
+    position: absolute;
+    top: 40%;
+    left: 40%;
 }

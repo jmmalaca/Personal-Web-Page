@@ -71,6 +71,10 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         this.GetProcessingResults = function() {
             return processor.GetProcessDataResults();
         }
+        
+        this.GetProcessingTagsResults = function() {
+            return processor.GetProcessTagsDataResults();
+        }
 
         this.GetTopFeatures = function () {
             return bestFeaturesWords;

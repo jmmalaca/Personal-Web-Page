@@ -1,19 +1,24 @@
 ﻿//Show Box ---------
 function AddStatsBoxes() {
-    $("#SentiBox").append("<div id=\"PiesBox\"><p>Data Available</p></div>");
-    $("#PiesBox").append("<table>" +
-        "<tr>" +
-        "<td id=\"SubjectivityWordsPie\"> </td>" +
-        "<td id=\"PolarityWordsPie\"></td>" +
-        "<td id=\"OtherWords\"></td>" +
-        "</tr>" +
-        "<tr>" +
-        "<td id=\"TweetsPie\"> </td>" +
-        "<td id=\"EmoticonsPie\"> </td>" +
-        "</tr>" +
-        "</table>");
-
+    $("#SentiBox").append("<div id=\"PiesBox\"></div>");
     $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
+    $("#SentiBox").append("<div id=\"GroupedBarTagsBox\"></div>");
+    $("#SentiBox").append("<div id=\"ErrorMsg\"><p>Data NOT Available, sry...</p></div>");
+    $("#ErrorMsg").css("visibility", "hidden");
+}
+
+function ShowErrorMessage(divName) {
+    $("#" + divName).empty();
+    $("#ErrorMsg").css("visibility", "visible");
+}
+
+var buttonsDivsIds = [];
+function ClearOthersCircles(title) {
+    buttonsDivsIds.forEach(function(buttonName) {
+        if (buttonName != title) {
+            $("#" + title + "Button").css("left", "0");
+        }
+    });
 }
 
 function AddButton(title) {
@@ -23,7 +28,7 @@ function AddButton(title) {
         "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
         "</div>" +
         "</div>");
-
+    buttonsDivsIds.push(title);
     $("#" + title + "Button").mouseenter(function() {
         $("#" + title + "Button").css("left", "10%");
         $("#" + title + "Circle").css("background", "#ff6a00");
@@ -31,14 +36,21 @@ function AddButton(title) {
         $("#" + title + "Button").css("left", "0");
         $("#" + title + "Circle").css("background", "#ffffff");
     }).click(function () {
+        $("#" + title + "Button").css("left", "10%");
+        $("#" + title + "Circle").css("background", "#ff6a00");
+        ClearOthersCircles(title);
         $("#PiesBox").css("visibility", "hidden");
         $("#GroupedBarBox").css("visibility", "hidden");
+        $("#GroupedBarTagsBox").css("visibility", "hidden");
         if (title === "Data") {
+            CallServer_RequestDataInfo();
             $("#PiesBox").css("visibility", "visible");
         } else if (title === "Words") {
+            CallServer_RequestFeaturesInfo();
             $("#GroupedBarBox").css("visibility", "visible");
         } else if (title === "Tags") {
-
+            CallServer_RequestTagsInfo();
+            $("#GroupedBarTagsBox").css("visibility", "visible");
         }
     });
 }
@@ -118,6 +130,22 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
 }
 
 function AddDataInfo(data) {
+    $("#ErrorMsg").css("visibility", "hidden");
+
+    $("#PiesBox").empty();
+    $("#PiesBox").append("<p>Data Available</p>");
+    $("#PiesBox").append("<table>" +
+        "<tr>" +
+        "<td id=\"SubjectivityWordsPie\"> </td>" +
+        "<td id=\"PolarityWordsPie\"></td>" +
+        "<td id=\"OtherWords\"></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td id=\"TweetsPie\"> </td>" +
+        "<td id=\"EmoticonsPie\"> </td>" +
+        "</tr>" +
+        "</table>");
+
     //console.log(data);
     if (Object.keys(data).length > 0) {
 
@@ -150,17 +178,6 @@ function AddDataInfo(data) {
     }
 }
 
-function AddDataInfoNull() {
-    var values = [0];
-    var colors = ["#001429"];
-    var showLabels = false;
-    var labels = [];
-    EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors, showLabels);
-    EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors, showLabels);
-    EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
-    EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
-}
-
 function CallServer_RequestDataInfo() {
     $.ajax({
         // The 'type' property sets the HTTP method.
@@ -185,18 +202,18 @@ function CallServer_RequestDataInfo() {
             // this function will still fire, but there won't be any additional
             // information about the error.
             //console.log("ERROR CountsData");
-            AddDataInfoNull();
+            ShowErrorMessage("PiesBox");
             //console.log(err);
         }
     });
 }
 
-function AddFeaturesInfo(data, colors) {
-    
-    //console.log(data);
+function AddFeaturesInfo(divName, data, colors, title, widthValue) {
+    $("#ErrorMsg").css("visibility", "hidden");
+    $("#" + divName).empty();
 
     var margin = { top: 30, right: 20, bottom: 80, left: 30 },
-     width = 700 - margin.left - margin.right,
+     width = widthValue - margin.left - margin.right,
      height = 400 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
@@ -218,15 +235,18 @@ function AddFeaturesInfo(data, colors) {
         .scale(y)
         .orient("left");
 
-    var field_name = ['positive', 'neutral', 'negative'];
+    var fieldName = ['positive', 'neutral', 'negative'];
     data.forEach(function (d) {
-        d.compare = field_name.map(function (name) {
+        d.compare = fieldName.map(function (name) {
             return { name: name, value: +d[name] };
         });
     });
 
-    x0.domain(data.map(function (d) { console.log(d); return d.name; }));
-    x1.domain(field_name).rangeRoundBands([0, x0.rangeBand()]);
+    x0.domain(data.map(function(d) {
+        //console.log(d);
+        return d.name;
+    }));
+    x1.domain(fieldName).rangeRoundBands([0, x0.rangeBand()]);
     y.domain([0, d3.max(data, function (d) {
         return d3.max(d.compare, function (d) {
             return d.value + 10;
@@ -241,7 +261,7 @@ function AddFeaturesInfo(data, colors) {
         }
     );
 
-    var svg = d3.select("#GroupedBarBox").append("svg:svg")
+    var svg = d3.select("#" + divName).append("svg:svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
        .append("g")
@@ -281,7 +301,7 @@ function AddFeaturesInfo(data, colors) {
             .attr("y", (0 - (margin.top / 2)) + 35)
             .attr("text-anchor", "middle")
             .style("fill", "white")
-            .text("Words Detection");// chart title
+            .text(title);// chart title
 
     name.selectAll(".bar")
             .data(function(d) { return d.compare; })
@@ -317,31 +337,6 @@ function AddFeaturesInfo(data, colors) {
     //    .text(function (d) { return d; });
 }
 
-function AddFeaturesInfoNull() {
-    var emptyData = [
-        {"name":"Acronyms","positive":0,"neutral":0,"negative":0},
-        {"name":"Stopwords","positive":0,"neutral":0,"negative":0},
-        {"name":"Retweets","positive":0,"neutral":0,"negative":0},
-        {"name":"Usernames","positive":0,"neutral":0,"negative":0},
-        {"name":"Negations","positive":0,"neutral":0,"negative":0},
-        {"name":"Positive_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Neutral_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Negative_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Pontuations","positive":0,"neutral":0,"negative":0},
-        {"name":"Hashtags","positive":0,"neutral":0,"negative":0},
-        {"name":"Repetitions","positive":0,"neutral":0,"negative":0},
-        {"name":"Numbers","positive":0,"neutral":0,"negative":0},
-        {"name":"Html_Chars","positive":0,"neutral":0,"negative":0},
-        {"name": "URLs", "positive": 0, "neutral": 0, "negative": 0 },
-        {"name": "Badwords", "positive": 0, "neutral": 0, "negative": 0 },
-        {"name": "Uppercases", "positive": 0, "neutral": 0, "negative": 0 }
-    ];
-
-    var colors = ["#001429"];
-
-    AddFeaturesInfo(emptyData, colors);
-}
-
 function CallServer_RequestFeaturesInfo() {
     $.ajax({
         type: 'GET',
@@ -349,10 +344,25 @@ function CallServer_RequestFeaturesInfo() {
         contentType: "application/json",
         success: function (response) {
             var colors = ["#248838", "#0070BA", "#830909"];
-            AddFeaturesInfo(response, colors);
+            AddFeaturesInfo("GroupedBarBox", response, colors, "Words Detection", 800);
         },
         error: function (err) {
-            AddFeaturesInfoNull();
+            ShowErrorMessage("GroupedBarBox");
+        }
+    });
+}
+
+function CallServer_RequestTagsInfo() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/countsTagsfeatures',
+        contentType: "application/json",
+        success: function (response) {
+            var colors = ["#248838", "#0070BA", "#830909"];
+            AddFeaturesInfo("GroupedBarTagsBox", response, colors, "POS-Tags Detection", 800);
+        },
+        error: function (err) {
+            ShowErrorMessage("GroupedBarTagsBox");
         }
     });
 }
@@ -381,7 +391,5 @@ $(document).ready(function () {
     AddStatsBoxes();
     AddMenuBox();
     
-    CallServer_RequestDataInfo();
-    CallServer_RequestFeaturesInfo();
     CallServer_RequestTop10FeaturesInfo();
 });

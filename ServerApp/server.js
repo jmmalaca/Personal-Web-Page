@@ -51,6 +51,14 @@ serverApp.get('/countsfeatures', function (req, response, next) {
     response.send(sentiment.GetProcessingResults());
 });
 
+//[Route definition: /countsTagsfeatures]
+serverApp.get('/countsTagsfeatures', function (req, response, next) {
+    console.log(" -Features Counts Call...");
+    
+    response.type('application/json');
+    response.send(sentiment.GetProcessingTagsResults());
+});
+
 //[Route definition: /bestWordsFeatures]
 serverApp.get('/bestWordsFeatures', function (req, response, next) {
     console.log(" -Best [Top 10] Words Features Call...");

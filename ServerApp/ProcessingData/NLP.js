@@ -15,7 +15,7 @@ var pos = require('retext-pos');
             .use(visit)
             .use(inspect)
             .use(pos);
-
+        
         //[Private Methods]
         function checkWord(word) {
             var result = word != "htmlchar" && word != "uppercase" && word != "retweet" &&

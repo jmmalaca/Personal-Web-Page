@@ -485,11 +485,17 @@ var NLP = require('../ProcessingData/NLP.js');
                     case 10:
                         data["name"] = "Repetitions";
                         break;
+                    case 11:
+                        data["name"] = "Numbers";
+                        break;
                     case 12:
                         data["name"] = "Html_Chars";
                         break;
                     case 13:
                         data["name"] = "Urls";
+                        break;
+                    case 14:
+                        data["name"] = "Badwords";
                         break;
                     case 15:
                         data["name"] = "Uppercases";
@@ -551,12 +557,14 @@ var NLP = require('../ProcessingData/NLP.js');
                 });
             }
         }
-
-        function printPosTaggingResults() {
+        
+        function getPosTagsClassesData() {
             //Get the data...
-            Object.keys(allDataOnProcessedTexts).forEach(function(key) {
+            Object.keys(allDataOnProcessedTexts).forEach(function (key) {
                 var textsData = allDataOnProcessedTexts[key];
-                posTagsResults[key] = {};
+                if (Object.keys(posTagsResults).indexOf(key) < 0) {
+                    posTagsResults[key] = {};
+                }
                 textsData.forEach(function (textData) {
                     posTagsCounts(textData.adverbs, posTagsResults[key]);
                     posTagsCounts(textData.adjectives, posTagsResults[key]);
@@ -564,7 +572,11 @@ var NLP = require('../ProcessingData/NLP.js');
                     posTagsCounts(textData.verbs, posTagsResults[key]);
                 });
             });
+        }
+
+        function printPosTaggingResults() {
             //print it...
+            getPosTagsClassesData();
             console.log(" -Pos-Tags detected: ");
             Object.keys(posTagsResults).forEach(function(key) {
                 console.log("  -" + key + ":");
@@ -573,6 +585,13 @@ var NLP = require('../ProcessingData/NLP.js');
                     console.log("   -" + posTag + " + " + data[posTag]);
                 });
             });
+        }
+        
+        function checkUndefinedValue(value) {
+            if (value === undefined) {
+                return 0;
+            }
+            return value;
         }
 
         //[Public Methods]
@@ -623,6 +642,44 @@ var NLP = require('../ProcessingData/NLP.js');
 
         this.GetProcessDataResults = function () {
             return addTextFeaturesData();
+        }
+        
+        this.GetProcessTagsDataResults = function() {
+            /*Data to send example:
+             * var info = [
+                {"name":"Tag1","positive":0,"neutral":0,"negative":0},
+                {"name":"Tag2","positive":0,"neutral":0,"negative":0},
+                {"name":"Tag3","positive":0,"neutral":0,"negative":0},
+                {"name":"Tag4","positive":0,"neutral":0,"negative":0},
+                ......
+             */
+            getPosTagsClassesData();
+
+            var info = [];
+            var posTagsOut = [];
+            Object.keys(posTagsResults).forEach(function (key) {
+                var data = posTagsResults[key];
+                Object.keys(data).forEach(function (posTag) {
+                    if (posTagsOut.indexOf(posTag) < 0) {
+                        var posData = posTagsResults["positive"];
+                        var neuData = posTagsResults["neutral"];
+                        var negData = posTagsResults["negative"];
+                        
+                        var posValue = checkUndefinedValue(posData[posTag]);
+                        var neuValue = checkUndefinedValue(neuData[posTag]);
+                        var negValue = checkUndefinedValue(negData[posTag]);
+
+                        var total = posValue + neuValue + negValue;
+                        posValue = (posValue * 100) / total;
+                        neuValue = (neuValue * 100) / total;
+                        negValue = (negValue * 100) / total;
+
+                        info.push({ "name": posTag, "positive": posValue, "neutral": neuValue, "negative": negValue });
+                        posTagsOut.push(posTag);
+                    }
+                });
+            });
+            return info;
         }
 
         this.GetVocabulary = function () {
