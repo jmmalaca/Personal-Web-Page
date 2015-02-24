@@ -1,24 +1,17 @@
-﻿//Show Box ---------
-function AddStatsBoxes() {
-    $("#SentiBox").append("<div id=\"PiesBox\"></div>");
-    $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
-    $("#SentiBox").append("<div id=\"GroupedBarTagsBox\"></div>");
-    $("#SentiBox").append("<div id=\"ErrorMsg\"><p>Data NOT Available, sry...</p></div>");
-    $("#ErrorMsg").css("visibility", "hidden");
-}
-
-function ShowErrorMessage(divName) {
-    $("#" + divName).empty();
+﻿function LoadingData(text) {
+    $("#PiesBox").css("visibility", "hidden");
+    $("#GroupedBarBox").css("visibility", "hidden");
+    $("#GroupedBarTagsBox").css("visibility", "hidden");
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<img id=\"LoadPac\" src=\"../../images/Gifs/ajaxLoader.gif\" style=\"width:13px;height:13px\">Waiting for " + text + "...</img>");
     $("#ErrorMsg").css("visibility", "visible");
 }
 
-var buttonsDivsIds = [];
-function ClearOthersCircles(title) {
-    buttonsDivsIds.forEach(function(buttonName) {
-        if (buttonName != title) {
-            $("#" + title + "Button").css("left", "0");
-        }
-    });
+function ShowErrorMessage(divName) {
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<p>Data NOT Available, sry...</p>");
+    $("#" + divName).empty();
+    $("#ErrorMsg").css("visibility", "visible");
 }
 
 function AddButton(title) {
@@ -28,17 +21,15 @@ function AddButton(title) {
         "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
         "</div>" +
         "</div>");
-    buttonsDivsIds.push(title);
     $("#" + title + "Button").mouseenter(function() {
         $("#" + title + "Button").css("left", "10%");
         $("#" + title + "Circle").css("background", "#ff6a00");
-    }).mouseleave(function() {
+    }).mouseleave(function () {
         $("#" + title + "Button").css("left", "0");
         $("#" + title + "Circle").css("background", "#ffffff");
     }).click(function () {
         $("#" + title + "Button").css("left", "10%");
         $("#" + title + "Circle").css("background", "#ff6a00");
-        ClearOthersCircles(title);
         $("#PiesBox").css("visibility", "hidden");
         $("#GroupedBarBox").css("visibility", "hidden");
         $("#GroupedBarTagsBox").css("visibility", "hidden");
@@ -51,15 +42,20 @@ function AddButton(title) {
         } else if (title === "Tags") {
             CallServer_RequestTagsInfo();
             $("#GroupedBarTagsBox").css("visibility", "visible");
+        } else if (title === "Best") {
+            CallServer_RequestTop10FeaturesInfo();
+            //show data...
         }
     });
 }
 
 function AddMenuBox() {
     $("#SentiBox").append("<div id=\"VerticalMenu\"></div>");
+    $("#VerticalMenu").append("<div id=\"VerticalMenuTop\"></div>");
     AddButton("Data");
     AddButton("Words");
     AddButton("Tags");
+    AddButton("Best");
 }
 
 function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
@@ -131,7 +127,6 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
 
 function AddDataInfo(data) {
     $("#ErrorMsg").css("visibility", "hidden");
-
     $("#PiesBox").empty();
     $("#PiesBox").append("<p>Data Available</p>");
     $("#PiesBox").append("<table>" +
@@ -190,7 +185,9 @@ function CallServer_RequestDataInfo() {
 
         //Asynchronous... or not
         //async: false,
-
+        beforeSend: function() {
+            LoadingData("Prior Data");
+        },
         success: function (response) {
             // Here's where you handle a successful response.
             //console.log(data);
@@ -342,6 +339,9 @@ function CallServer_RequestFeaturesInfo() {
         type: 'GET',
         url: 'http://localhost:8080/countsfeatures',
         contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("Words Data");
+        },
         success: function (response) {
             var colors = ["#248838", "#0070BA", "#830909"];
             AddFeaturesInfo("GroupedBarBox", response, colors, "Words Detection", 800);
@@ -357,6 +357,9 @@ function CallServer_RequestTagsInfo() {
         type: 'GET',
         url: 'http://localhost:8080/countsTagsfeatures',
         contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("POS-Tag Data");
+        },
         success: function (response) {
             var colors = ["#248838", "#0070BA", "#830909"];
             AddFeaturesInfo("GroupedBarTagsBox", response, colors, "POS-Tags Detection", 800);
@@ -372,13 +375,16 @@ function CallServer_RequestTop10FeaturesInfo() {
         type: 'GET',
         url: 'http://localhost:8080/bestWordsFeatures',
         contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("Best Features Data");
+        },
         success: function (response) {
             Object.keys(response).forEach(function(key) {
                 console.log(" -" + key + ": " + response[key]);
             });
         },
         error: function (err) {
-            console.log("ERROR: bestWordsFeatures");
+            ShowErrorMessage("");
         }
     });
 }
@@ -387,9 +393,10 @@ function CallServer_RequestTop10FeaturesInfo() {
 $(document).ready(function () {
 
     $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
-
-    AddStatsBoxes();
-    AddMenuBox();
+    $("#SentiBox").append("<div id=\"PiesBox\"></div>");
+    $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
+    $("#SentiBox").append("<div id=\"GroupedBarTagsBox\"></div>");
+    $("#SentiBox").append("<div id=\"ErrorMsg\"></div>");
     
-    CallServer_RequestTop10FeaturesInfo();
+    AddMenuBox();
 });

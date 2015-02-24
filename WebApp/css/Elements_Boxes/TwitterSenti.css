@@ -44,6 +44,20 @@
     left: 0;
 }
 
+#VerticalMenuTop {
+    background-image: url("../../images/Projects/stackTop.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    opacity: 0.7;
+    position: relative;
+    left: 0;
+    height: 34px;
+}
+
 .ButtonPart {
     display: inline-block;
 }
@@ -145,4 +159,8 @@
     position: absolute;
     top: 40%;
     left: 40%;
+}
+
+#LoadPac {
+    float: left;
 }
