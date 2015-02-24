@@ -22,7 +22,6 @@
     position: fixed;
 }
 .terminal {
-    padding: 10px;
     position: relative;
     overflow: hidden;
 }

@@ -1,64 +1,4 @@
-﻿function LoadingData(text) {
-    $("#PiesBox").css("visibility", "hidden");
-    $("#GroupedBarBox").css("visibility", "hidden");
-    $("#GroupedBarTagsBox").css("visibility", "hidden");
-    $("#ErrorMsg").empty();
-    $("#ErrorMsg").append("<img id=\"LoadPac\" src=\"../../images/Gifs/ajaxLoader.gif\" style=\"width:13px;height:13px\">Waiting for " + text + "...</img>");
-    $("#ErrorMsg").css("visibility", "visible");
-}
-
-function ShowErrorMessage(divName) {
-    $("#ErrorMsg").empty();
-    $("#ErrorMsg").append("<p>Data NOT Available, sry...</p>");
-    $("#" + divName).empty();
-    $("#ErrorMsg").css("visibility", "visible");
-}
-
-function AddButton(title) {
-    $("#VerticalMenu").append("<div id=\"" + title + "Button\" class=\"VerticalMenuButton\">" +
-        "<div class=\"ButtonPart\">" + title + "</div>" +
-        "<div class=\"ButtonPart\" id=\"StackDot\">" +
-        "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
-        "</div>" +
-        "</div>");
-    $("#" + title + "Button").mouseenter(function() {
-        $("#" + title + "Button").css("left", "10%");
-        $("#" + title + "Circle").css("background", "#ff6a00");
-    }).mouseleave(function () {
-        $("#" + title + "Button").css("left", "0");
-        $("#" + title + "Circle").css("background", "#ffffff");
-    }).click(function () {
-        $("#" + title + "Button").css("left", "10%");
-        $("#" + title + "Circle").css("background", "#ff6a00");
-        $("#PiesBox").css("visibility", "hidden");
-        $("#GroupedBarBox").css("visibility", "hidden");
-        $("#GroupedBarTagsBox").css("visibility", "hidden");
-        if (title === "Data") {
-            CallServer_RequestDataInfo();
-            $("#PiesBox").css("visibility", "visible");
-        } else if (title === "Words") {
-            CallServer_RequestFeaturesInfo();
-            $("#GroupedBarBox").css("visibility", "visible");
-        } else if (title === "Tags") {
-            CallServer_RequestTagsInfo();
-            $("#GroupedBarTagsBox").css("visibility", "visible");
-        } else if (title === "Best") {
-            CallServer_RequestTop10FeaturesInfo();
-            //show data...
-        }
-    });
-}
-
-function AddMenuBox() {
-    $("#SentiBox").append("<div id=\"VerticalMenu\"></div>");
-    $("#VerticalMenu").append("<div id=\"VerticalMenuTop\"></div>");
-    AddButton("Data");
-    AddButton("Words");
-    AddButton("Tags");
-    AddButton("Best");
-}
-
-function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
+﻿function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
     var content = [];
     var count = 0;
     if (showLabels) {
@@ -170,6 +110,8 @@ function AddDataInfo(data) {
         values = [data["Positive_Tweets"], data["Neutral_Tweets"], data["Negative_Tweets"]];
         labels = ["Positive", "Neutral", "Negative"];
         EmoticonsPieChart("TweetsPie", "Tweets", values, labels, colors, showLabels);
+
+        $("#PiesBox").css("visibility", "visible");
     }
 }
 
@@ -332,6 +274,8 @@ function AddFeaturesInfo(divName, data, colors, title, widthValue) {
     //    .attr("dy", ".30em")
     //    .style("text-anchor", "end")
     //    .text(function (d) { return d; });
+
+    $("#" + divName).css("visibility", "visible");
 }
 
 function CallServer_RequestFeaturesInfo() {
@@ -370,7 +314,23 @@ function CallServer_RequestTagsInfo() {
     });
 }
 
-function CallServer_RequestTop10FeaturesInfo() {
+function ShowBestFeaturesData(data) {
+    $("#ErrorMsg").css("visibility", "hidden");
+    $("#BestFeaturesLists").empty();
+    $("#BestFeaturesLists").append("<p>Selected features by <b>Mutual Information</b> Calc:</p>");
+    Object.keys(data).forEach(function (key) {
+        $("#BestFeaturesLists").append("<p><br>About the <b>" + key + "</b> problem:</p>");
+        var dat = data[key];
+        var datStr = dat[0];
+        for (var i = 1; i < dat.length; i++) {
+            datStr = datStr + ", " + dat[i];
+        }
+        $("#BestFeaturesLists").append("<p>-" + datStr + ":</p>");
+    });
+    $("#BestFeaturesLists").css("visibility", "visible");
+}
+
+function CallServer_RequestTopFeaturesInfo() {
     $.ajax({
         type: 'GET',
         url: 'http://localhost:8080/bestWordsFeatures',
@@ -379,23 +339,80 @@ function CallServer_RequestTop10FeaturesInfo() {
             LoadingData("Best Features Data");
         },
         success: function (response) {
-            Object.keys(response).forEach(function(key) {
-                console.log(" -" + key + ": " + response[key]);
-            });
+            ShowBestFeaturesData(response);
         },
         error: function (err) {
-            ShowErrorMessage("");
+            ShowErrorMessage("BestFeaturesLists");
         }
     });
+}
+
+function LoadingData(text) {
+    $("#PiesBox").css("visibility", "hidden");
+    $("#GroupedBarBox").css("visibility", "hidden");
+    $("#GroupedBarTagsBox").css("visibility", "hidden");
+    $("#BestFeaturesLists").css("visibility", "hidden");
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<img id=\"LoadPac\" src=\"../../images/Gifs/ajaxLoader.gif\" style=\"width:13px;height:13px\">Waiting for " + text + "...</img>");
+    $("#ErrorMsg").css("visibility", "visible");
+}
+
+function ShowErrorMessage(divName) {
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<p>Data NOT Available, sry...</p>");
+    $("#" + divName).empty();
+    $("#ErrorMsg").css("visibility", "visible");
+}
+
+function AddButton(title) {
+    $("#VerticalMenu").append("<div id=\"" + title + "Button\" class=\"VerticalMenuButton\">" +
+        "<div class=\"ButtonPart\">" + title + "</div>" +
+        "<div class=\"ButtonPart\" id=\"StackDot\">" +
+        "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
+        "</div>" +
+        "</div>");
+    $("#" + title + "Button").mouseenter(function () {
+        $("#" + title + "Button").css("left", "10%");
+        $("#" + title + "Circle").css("background", "#ff6a00");
+    }).mouseleave(function () {
+        $("#" + title + "Button").css("left", "0");
+        $("#" + title + "Circle").css("background", "#ffffff");
+    }).click(function () {
+        $("#PresentProject").css("visibility", "hidden");
+        $("#PiesBox").css("visibility", "hidden");
+        $("#GroupedBarBox").css("visibility", "hidden");
+        $("#GroupedBarTagsBox").css("visibility", "hidden");
+        $("#BestFeaturesLists").css("visibility", "hidden");
+        if (title === "Data") {
+            CallServer_RequestDataInfo();
+        } else if (title === "Words") {
+            CallServer_RequestFeaturesInfo();
+        } else if (title === "Tags") {
+            CallServer_RequestTagsInfo();
+        } else if (title === "Best") {
+            CallServer_RequestTopFeaturesInfo();
+        }
+    });
+}
+
+function AddMenuBox() {
+    $("#SentiBox").append("<div id=\"VerticalMenu\"></div>");
+    $("#VerticalMenu").append("<div id=\"VerticalMenuTop\"></div>");
+    AddButton("Data");
+    AddButton("Words");
+    AddButton("Tags");
+    AddButton("Best");
 }
 
 //document ready event ----------
 $(document).ready(function () {
 
     $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
+    $("#SentiBox").append("<div id=\"PresentProject\"></div>");
     $("#SentiBox").append("<div id=\"PiesBox\"></div>");
     $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
     $("#SentiBox").append("<div id=\"GroupedBarTagsBox\"></div>");
+    $("#SentiBox").append("<div id=\"BestFeaturesLists\"></div>");
     $("#SentiBox").append("<div id=\"ErrorMsg\"></div>");
     
     AddMenuBox();

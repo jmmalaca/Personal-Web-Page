@@ -17,12 +17,12 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         var dataFromFiles,
             processor,
         //select data from the [beginning], from the [middle] or from the [end] of the array, and percentage for training and test
-            trainingDataPercentage = 30,
-            from = "end",
+            trainingDataPercentage = 10,
+            from = "middle",
             separator,
             selection,
             bayes,
-            topWordsForEachClass = 15,
+            topWordsForEachClass = 5,
             bestFeaturesWords,
             perceptron;
 
@@ -34,30 +34,22 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             dataFromFiles = new DataReader();
             dataFromFiles.ReadInitialData();
             
-            //[Process Texts]
+            //[Process Data]
             processor = new TextsProcessor();
             var allDataOnProcessedTexts = processor.Preprocessor(dataFromFiles);
             
-            //[Training and Validation Data]
+            //[Separate Training and Validation Data]
             separator = new Separator();
             separator.Start(allDataOnProcessedTexts, from, trainingDataPercentage);
             
             //[Features Selection]
             selection = new FeaturesSelection();
-            
-            //[Features: all features detected in processing method]
-            //var bestFeaturesBitsFreq = selection.ByFrequencyArray(separator.GetTextBitsDataArrays([]));
-            //var bestFeaturesBits = selection.ByMutualInformationArray(separator.GetTextBitsDataArrays([]));
-            //var dataBits = separator.GetTextBitsDataArrays(bestFeaturesBits);
-            
-            //[Features: all words detected in processing method]
-            var bestFeaturesWordsFreq = selection.ByFrequencyWords(processor.GetVocabulary());
             bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary(), topWordsForEachClass);
             var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]
-            //bayes = new NaiveBayes();
-            //bayes.Start(dataWordsBits, processor);
+            bayes = new NaiveBayes();
+            bayes.Start(dataWordsBits, processor);
 
             //[Classifier: Simple Neural Network (Perceptron)]
             perceptron = new NeuralNetwork();

@@ -23,6 +23,22 @@
     margin: 0;
 }
 
+#PresentProject {
+    background-image: url("../../images/Projects/LxMLS_tweet.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    height: 32%;
+    width: 50%;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
 #VerticalMenu {
     position: absolute;
     top: 14%;
@@ -34,7 +50,6 @@
 .VerticalMenuButton {
     border: 2px solid;
     border-color: white;
-    opacity: 0.7;
     -ms-border-radius: 5px;
     border-radius: 5px;
     text-align: center;
@@ -52,7 +67,6 @@
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    opacity: 0.7;
     position: relative;
     left: 0;
     height: 34px;
@@ -99,6 +113,17 @@
     left: 23%;
     margin: 0;
     visibility: hidden;
+}
+
+#BestFeaturesLists {
+    position: absolute;
+    top: 20%;
+    left: 33%;
+    margin: 0;
+    visibility: hidden;
+    width: 50%;
+    height: 50%;
+    overflow-wrap: break-word;
 }
 
 .axis path,
