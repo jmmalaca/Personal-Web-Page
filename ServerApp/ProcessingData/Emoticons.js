@@ -66,7 +66,7 @@
         function replaceEmoticons(text, textPolarity, patterns, keyword, processedTextData) {
             patterns.forEach(function(pattern) {
                 var count = text.match(pattern);
-                text = text.replace(pattern, keyword);
+                text = text.replace(pattern, " " + keyword + " ");
 
                 if (count != null && textPolarity != null) {
                     if (textPolarity.indexOf("positive") > -1) {

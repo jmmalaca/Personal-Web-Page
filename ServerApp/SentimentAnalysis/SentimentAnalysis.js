@@ -17,7 +17,7 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
         var dataFromFiles,
             processor,
         //select data from the [beginning], from the [middle] or from the [end] of the array, and percentage for training and test
-            trainingDataPercentage = 10,
+            trainingDataPercentage = 70,
             from = "middle",
             separator,
             selection,
@@ -44,7 +44,13 @@ var NeuralNetwork = require('../SentimentAnalysis/NeuralNetwork.js');
             
             //[Features Selection]
             selection = new FeaturesSelection();
-            bestFeaturesWords = selection.ByMutualInformationWords(processor.GetVocabulary(), topWordsForEachClass);
+            var vocabulary = processor.GetVocabulary();
+            bestFeaturesWords = selection.ByMutualInformationWords(vocabulary, topWordsForEachClass);
+            
+            //My choice for the Best Features...
+            bestFeaturesWords["subjectivity"] = ["retweet", "url", "hashtag"];
+            bestFeaturesWords["polarity"] = ["positive_emoticon", "positive_word"];
+
             var dataWordsBits = separator.GetTextWordsDataArrays(bestFeaturesWords);
 
             //[Classifier: Naive Bayes]

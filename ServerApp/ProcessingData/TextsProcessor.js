@@ -27,6 +27,14 @@ var NLP = require('../ProcessingData/NLP.js');
         var vocabulary = {};
 
         //[Private Methods]
+        function addToList(word, data) {
+            if (Object.keys(data).indexOf(word) < 0) {
+                data[word] = 1;
+            } else {
+                data[word]++;
+            }
+        }
+
         function addWordsToVocabulary(text, textPolarity){
             if (textPolarity === "positive" || textPolarity === "negative") {
                 if (Object.keys(vocabulary).indexOf("subjective") < 0) {
@@ -36,24 +44,13 @@ var NLP = require('../ProcessingData/NLP.js');
             if (Object.keys(vocabulary).indexOf(textPolarity) < 0) {
                 vocabulary[textPolarity] = {};
             }
-            var data = vocabulary[textPolarity];
-            var data2 = vocabulary["subjective"];
+
             text.split(" ").forEach(function (word) {
-                if (word !== "stopword") {
-                    if (word.length > 1) {
-                        if (textPolarity === "positive" || textPolarity === "negative") {
-                            if (Object.keys(data2).indexOf(textPolarity) < 0) {
-                                data2[word] = 1;
-                            } else {
-                                data2[word] = data2[word] + 1;
-                            }
-                        }
-                        if (Object.keys(data).indexOf(textPolarity) < 0) {
-                            data[word] = 1;
-                        } else {
-                            data[word] = data[word] + 1;
-                        }
+                if (word != "stopword" && word.length > 2) {
+                    if (textPolarity == "positive" || textPolarity == "negative") {
+                        addToList(word, vocabulary["subjective"]);
                     }
+                    addToList(word, vocabulary[textPolarity]);
                 }
             });
         }

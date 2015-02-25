@@ -140,7 +140,11 @@ var math = require('mathjs');
                 var conditionalProbA = classAData[i];
                 var conditionalProbB = classBData[i];
                 var countsAppear = dataToClassifiy[i];
-
+                
+                if (typeof conditionalProbA == "undefined" || typeof conditionalProbB == "undefined") {
+                    console.log();
+                }
+                
                 var powA = math.pow(conditionalProbA, countsAppear);
                 var powB = math.pow(conditionalProbB, countsAppear);
                 

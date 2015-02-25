@@ -325,7 +325,7 @@ function ShowBestFeaturesData(data) {
         for (var i = 1; i < dat.length; i++) {
             datStr = datStr + ", " + dat[i];
         }
-        $("#BestFeaturesLists").append("<p>-" + datStr + ":</p>");
+        $("#BestFeaturesLists").append("<p>> " + datStr + "</p>");
     });
     $("#BestFeaturesLists").css("visibility", "visible");
 }

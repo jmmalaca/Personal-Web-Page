@@ -114,6 +114,7 @@ var ProcessMonitor = require('../ProcessingMonitor/ProcessMonitor.js');
         
         this.ByMutualInformationWords = function(data, top) {
             console.log("\n -Feature Selection: By Mutual Information");
+            
             topWordsForEachClass = top;
 
             var measures = new ProcessMonitor();
