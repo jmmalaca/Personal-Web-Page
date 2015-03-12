@@ -1,0 +1,91 @@
+﻿#SentiBox {
+    background-color: black;
+    opacity: 0.7;
+    width: 40%;
+    height: 60%;
+    position: absolute;
+    top: 30%;
+    left: 55%;
+    border: 2px solid;
+    border-color: black;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 10px black;
+    -ms-box-shadow: 0 0 10px black;
+    box-shadow: 0 0 10px black;
+    font-family: Arial, cursive;
+    font-size: 18px;
+    word-spacing: 3px;
+    line-height: 130%;
+    color: whitesmoke;
+    text-align: justify;
+    margin: 0;
+}
+
+#PiesBox {
+    position: absolute;
+    top: 34%;
+    left: 2%;
+    margin: 0;
+}
+
+#GroupedBarBox {
+    position: absolute;
+    top: 29%;
+    left: 27%;
+    margin: 0;
+}
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #ffffff;
+	shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-family: Arial, cursive;
+    word-spacing: 3px;
+    color: #ffffff;
+	font-size: 10px;
+}
+
+.legend {
+    font-family: Arial, cursive;
+    font-size: 12px;
+    color: #ffffff;
+}
+
+.bar:hover {
+  fill: #ef750d;
+}
+
+.d3-tip {
+    color: rgba(0, 0, 0, 0.8);
+    line-height: 1;
+    font-weight: bold;
+    padding: 5px;
+    color: #fff;
+    border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+    box-sizing: border-box;
+    display: inline;
+    font-size: 8px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25BC";
+    position: absolute;
+    text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+    margin: -1px 0 0 0;
+    color: #fff;
+    top: 100%;
+    left: 0;
+}
