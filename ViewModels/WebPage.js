@@ -64,7 +64,7 @@ $(document).ready(function () {
     
     //Start... fullPage
     $("#fullPage").fullpage({
-        anchors: ['Presentation', 'Work', 'Social', 'Prompt'],
+        anchors: ['Presentation', 'Work', 'Social', 'Projects'],
         menu: '#Menu_Buttons',
         css3: true,
         easing: 'easeOutBack',
@@ -85,7 +85,7 @@ $(document).ready(function () {
             else if (anchorLink == 'Social') {
                 //Social_Button_Action();
             }
-            else if (anchorLink == 'Prompt') {
+            else if (anchorLink == 'Projects') {
                 //Prompt_Button_Action();
                 StartPrompt('#Console-Box');
             }

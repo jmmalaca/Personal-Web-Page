@@ -1,5 +1,6 @@
 ﻿#SentiBox {
     background-color: black;
+    -ms-opacity: 0.7;
     opacity: 0.7;
     width: 40%;
     height: 60%;
@@ -22,18 +23,107 @@
     margin: 0;
 }
 
+#PresentProject {
+    background-image: url("../../images/Projects/LxMLS_tweet.png");
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: absolute;
+    top: 30%;
+    left: 30%;
+    height: 32%;
+    width: 50%;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#VerticalMenu {
+    position: absolute;
+    top: 14%;
+    left: 5%;
+    width: 10%;
+    margin: 0;
+}
+
+.VerticalMenuButton {
+    border: 2px solid;
+    border-color: white;
+    -ms-border-radius: 5px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 5% 0 0 0;
+    cursor: pointer;
+    position: relative;
+    left: 0;
+}
+
+#VerticalMenuTop {
+    background-image: url("../../images/Projects/stackTop.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: relative;
+    left: 0;
+    height: 34px;
+}
+
+.ButtonPart {
+    display: inline-block;
+}
+
+#StackDot {
+    float: right;
+    margin-right: 10%;
+}
+
+.circle {
+    position: relative;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    -ms-border-radius: 50%;
+    border-radius: 50%;
+    background: white;
+}
+
 #PiesBox {
     position: absolute;
-    top: 34%;
-    left: 2%;
+    top: 13%;
+    left: 33%;
     margin: 0;
+    visibility: hidden;
 }
 
 #GroupedBarBox {
     position: absolute;
-    top: 29%;
-    left: 27%;
+    top: 9%;
+    left: 24%;
     margin: 0;
+    visibility: hidden;
+}
+
+#GroupedBarTagsBox {
+    position: absolute;
+    top: 13%;
+    left: 23%;
+    margin: 0;
+    visibility: hidden;
+}
+
+#BestFeaturesLists {
+    position: absolute;
+    top: 20%;
+    left: 33%;
+    margin: 0;
+    visibility: hidden;
+    width: 50%;
+    height: 50%;
+    overflow-wrap: break-word;
 }
 
 .axis path,
@@ -88,4 +178,14 @@
     color: #fff;
     top: 100%;
     left: 0;
+}
+
+#ErrorMsg {
+    position: absolute;
+    top: 40%;
+    left: 40%;
+}
+
+#LoadPac {
+    float: left;
 }

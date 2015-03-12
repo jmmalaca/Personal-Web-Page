@@ -1,16 +1,4 @@
-﻿//Show Box ---------
-function AddStatsBox() {
-    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
-    $("#SentiBox").append("<div id=\"PiesBox\">Bags of Words</div>");
-    $("#PiesBox").append("<table> <tr> " +
-        "<td id=\"EmoticonsPie\"> </td>" +
-        "<td id=\"SubjectivityWordsPie\"> </td> </tr>" +
-        "<tr> <td id=\"PolarityWordsPie\"> </td>" +
-        " <td id=\"OtherWords\"> </td> </tr> </table>");
-    $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
-}
-
-function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
+﻿function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels) {
     var content = [];
     var count = 0;
     if (showLabels) {
@@ -44,8 +32,8 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
         "size": {
             "pieInnerRadius": "30%",
             "pieOuterRadius": "100%",
-            "canvasHeight": 135,
-            "canvasWidth": 135
+            "canvasHeight": 170,
+            "canvasWidth": 170
         },
         "data": {
             "sortOrder": "value-desc",
@@ -78,6 +66,21 @@ function EmoticonsPieChart(divName, pieTitle, values, labels, colors, showLabels
 }
 
 function AddDataInfo(data) {
+    $("#ErrorMsg").css("visibility", "hidden");
+    $("#PiesBox").empty();
+    $("#PiesBox").append("<p>Data Available</p>");
+    $("#PiesBox").append("<table>" +
+        "<tr>" +
+        "<td id=\"SubjectivityWordsPie\"> </td>" +
+        "<td id=\"PolarityWordsPie\"></td>" +
+        "<td id=\"OtherWords\"></td>" +
+        "</tr>" +
+        "<tr>" +
+        "<td id=\"TweetsPie\"> </td>" +
+        "<td id=\"EmoticonsPie\"> </td>" +
+        "</tr>" +
+        "</table>");
+
     //console.log(data);
     if (Object.keys(data).length > 0) {
 
@@ -98,22 +101,18 @@ function AddDataInfo(data) {
         labels = ["Positive", "Neutral", "Negative"];
         EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
 
-        colors = ["#4D8BB5", "#FF6600", "#A347FF"];
+        colors = ["#FF6600", "#4D8BB5", "#A347FF"];
         values = [data["Acronyms"], data["Stopwords"], data["Badwords"]];
         labels = ["Acronyms", "Stopwords", "Badwords"];
         EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
-    }
-}
 
-function AddDataInfoNull() {
-    var values = [0];
-    var colors = ["#001429"];
-    var showLabels = false;
-    var labels = [];
-    EmoticonsPieChart("EmoticonsPie", "Emoticons", values, labels, colors, showLabels);
-    EmoticonsPieChart("SubjectivityWordsPie", "Subjectivity Words", values, labels, colors, showLabels);
-    EmoticonsPieChart("PolarityWordsPie", "Polarity Words", values, labels, colors, showLabels);
-    EmoticonsPieChart("OtherWords", "Other Words", values, labels, colors, showLabels);
+        colors = ["#248838", "#0070BA", "#830909"];
+        values = [data["Positive_Tweets"], data["Neutral_Tweets"], data["Negative_Tweets"]];
+        labels = ["Positive", "Neutral", "Negative"];
+        EmoticonsPieChart("TweetsPie", "Tweets", values, labels, colors, showLabels);
+
+        $("#PiesBox").css("visibility", "visible");
+    }
 }
 
 function CallServer_RequestDataInfo() {
@@ -128,7 +127,9 @@ function CallServer_RequestDataInfo() {
 
         //Asynchronous... or not
         //async: false,
-
+        beforeSend: function() {
+            LoadingData("Prior Data");
+        },
         success: function (response) {
             // Here's where you handle a successful response.
             //console.log(data);
@@ -140,19 +141,19 @@ function CallServer_RequestDataInfo() {
             // this function will still fire, but there won't be any additional
             // information about the error.
             //console.log("ERROR CountsData");
-            AddDataInfoNull();
+            ShowErrorMessage("PiesBox");
             //console.log(err);
         }
     });
 }
 
-function AddFeaturesInfo(data, colors) {
-    
-    //console.log(data);
+function AddFeaturesInfo(divName, data, colors, title, widthValue) {
+    $("#ErrorMsg").css("visibility", "hidden");
+    $("#" + divName).empty();
 
     var margin = { top: 30, right: 20, bottom: 80, left: 30 },
-     width = 550 - margin.left - margin.right,
-     height = 350 - margin.top - margin.bottom;
+     width = widthValue - margin.left - margin.right,
+     height = 400 - margin.top - margin.bottom;
 
     var x0 = d3.scale.ordinal()
        .rangeRoundBands([0, width], .1);
@@ -173,15 +174,18 @@ function AddFeaturesInfo(data, colors) {
         .scale(y)
         .orient("left");
 
-    var field_name = ['positive', 'neutral', 'negative'];
+    var fieldName = ['positive', 'neutral', 'negative'];
     data.forEach(function (d) {
-        d.compare = field_name.map(function (name) {
+        d.compare = fieldName.map(function (name) {
             return { name: name, value: +d[name] };
         });
     });
 
-    x0.domain(data.map(function (d) { console.log(d); return d.name; }));
-    x1.domain(field_name).rangeRoundBands([0, x0.rangeBand()]);
+    x0.domain(data.map(function(d) {
+        //console.log(d);
+        return d.name;
+    }));
+    x1.domain(fieldName).rangeRoundBands([0, x0.rangeBand()]);
     y.domain([0, d3.max(data, function (d) {
         return d3.max(d.compare, function (d) {
             return d.value + 10;
@@ -196,7 +200,7 @@ function AddFeaturesInfo(data, colors) {
         }
     );
 
-    var svg = d3.select("#GroupedBarBox").append("svg:svg")
+    var svg = d3.select("#" + divName).append("svg:svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
        .append("g")
@@ -236,7 +240,7 @@ function AddFeaturesInfo(data, colors) {
             .attr("y", (0 - (margin.top / 2)) + 35)
             .attr("text-anchor", "middle")
             .style("fill", "white")
-            .text("Features Detection");// chart title
+            .text(title);// chart title
 
     name.selectAll(".bar")
             .data(function(d) { return d.compare; })
@@ -270,31 +274,8 @@ function AddFeaturesInfo(data, colors) {
     //    .attr("dy", ".30em")
     //    .style("text-anchor", "end")
     //    .text(function (d) { return d; });
-}
 
-function AddFeaturesInfoNull() {
-    var emptyData = [
-        {"name":"Acronyms","positive":0,"neutral":0,"negative":0},
-        {"name":"Stopwords","positive":0,"neutral":0,"negative":0},
-        {"name":"Retweets","positive":0,"neutral":0,"negative":0},
-        {"name":"Usernames","positive":0,"neutral":0,"negative":0},
-        {"name":"Negations","positive":0,"neutral":0,"negative":0},
-        {"name":"Positive_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Neutral_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Negative_Words","positive":0,"neutral":0,"negative":0},
-        {"name":"Pontuations","positive":0,"neutral":0,"negative":0},
-        {"name":"Hashtags","positive":0,"neutral":0,"negative":0},
-        {"name":"Repetitions","positive":0,"neutral":0,"negative":0},
-        {"name":"Numbers","positive":0,"neutral":0,"negative":0},
-        {"name":"Html_Chars","positive":0,"neutral":0,"negative":0},
-        { "name": "URLs", "positive": 0, "neutral": 0, "negative": 0 },
-        { "name": "Badwords", "positive": 0, "neutral": 0, "negative": 0 },
-        { "name": "Uppercases", "positive": 0, "neutral": 0, "negative": 0 }
-    ];
-
-    var colors = ["#001429"];
-
-    AddFeaturesInfo(emptyData, colors);
+    $("#" + divName).css("visibility", "visible");
 }
 
 function CallServer_RequestFeaturesInfo() {
@@ -302,20 +283,137 @@ function CallServer_RequestFeaturesInfo() {
         type: 'GET',
         url: 'http://localhost:8080/countsfeatures',
         contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("Words Data");
+        },
         success: function (response) {
             var colors = ["#248838", "#0070BA", "#830909"];
-            AddFeaturesInfo(response, colors);
+            AddFeaturesInfo("GroupedBarBox", response, colors, "Words Detection", 800);
         },
         error: function (err) {
-            AddFeaturesInfoNull();
+            ShowErrorMessage("GroupedBarBox");
         }
     });
+}
+
+function CallServer_RequestTagsInfo() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/countsTagsfeatures',
+        contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("POS-Tag Data");
+        },
+        success: function (response) {
+            var colors = ["#248838", "#0070BA", "#830909"];
+            AddFeaturesInfo("GroupedBarTagsBox", response, colors, "POS-Tags Detection", 800);
+        },
+        error: function (err) {
+            ShowErrorMessage("GroupedBarTagsBox");
+        }
+    });
+}
+
+function ShowBestFeaturesData(data) {
+    $("#ErrorMsg").css("visibility", "hidden");
+    $("#BestFeaturesLists").empty();
+    $("#BestFeaturesLists").append("<p>Selected features by <b>Mutual Information</b> Calc:</p>");
+    Object.keys(data).forEach(function (key) {
+        $("#BestFeaturesLists").append("<p><br>About the <b>" + key + "</b> problem:</p>");
+        var dat = data[key];
+        var datStr = dat[0];
+        for (var i = 1; i < dat.length; i++) {
+            datStr = datStr + ", " + dat[i];
+        }
+        $("#BestFeaturesLists").append("<p>> " + datStr + "</p>");
+    });
+    $("#BestFeaturesLists").css("visibility", "visible");
+}
+
+function CallServer_RequestTopFeaturesInfo() {
+    $.ajax({
+        type: 'GET',
+        url: 'http://localhost:8080/bestWordsFeatures',
+        contentType: "application/json",
+        beforeSend: function () {
+            LoadingData("Best Features Data");
+        },
+        success: function (response) {
+            ShowBestFeaturesData(response);
+        },
+        error: function (err) {
+            ShowErrorMessage("BestFeaturesLists");
+        }
+    });
+}
+
+function LoadingData(text) {
+    $("#PiesBox").css("visibility", "hidden");
+    $("#GroupedBarBox").css("visibility", "hidden");
+    $("#GroupedBarTagsBox").css("visibility", "hidden");
+    $("#BestFeaturesLists").css("visibility", "hidden");
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<img id=\"LoadPac\" src=\"../../images/Gifs/ajaxLoader.gif\" style=\"width:13px;height:13px\">Waiting for " + text + "...</img>");
+    $("#ErrorMsg").css("visibility", "visible");
+}
+
+function ShowErrorMessage(divName) {
+    $("#ErrorMsg").empty();
+    $("#ErrorMsg").append("<p>Data NOT Available, sry...</p>");
+    $("#" + divName).empty();
+    $("#ErrorMsg").css("visibility", "visible");
+}
+
+function AddButton(title) {
+    $("#VerticalMenu").append("<div id=\"" + title + "Button\" class=\"VerticalMenuButton\">" +
+        "<div class=\"ButtonPart\">" + title + "</div>" +
+        "<div class=\"ButtonPart\" id=\"StackDot\">" +
+        "<div id=\"" + title + "Circle\" class=\"circle\"></div>" +
+        "</div>" +
+        "</div>");
+    $("#" + title + "Button").mouseenter(function () {
+        $("#" + title + "Button").css("left", "10%");
+        $("#" + title + "Circle").css("background", "#ff6a00");
+    }).mouseleave(function () {
+        $("#" + title + "Button").css("left", "0");
+        $("#" + title + "Circle").css("background", "#ffffff");
+    }).click(function () {
+        $("#PresentProject").css("visibility", "hidden");
+        $("#PiesBox").css("visibility", "hidden");
+        $("#GroupedBarBox").css("visibility", "hidden");
+        $("#GroupedBarTagsBox").css("visibility", "hidden");
+        $("#BestFeaturesLists").css("visibility", "hidden");
+        if (title === "Data") {
+            CallServer_RequestDataInfo();
+        } else if (title === "Words") {
+            CallServer_RequestFeaturesInfo();
+        } else if (title === "Tags") {
+            CallServer_RequestTagsInfo();
+        } else if (title === "Best") {
+            CallServer_RequestTopFeaturesInfo();
+        }
+    });
+}
+
+function AddMenuBox() {
+    $("#SentiBox").append("<div id=\"VerticalMenu\"></div>");
+    $("#VerticalMenu").append("<div id=\"VerticalMenuTop\"></div>");
+    AddButton("Data");
+    AddButton("Words");
+    AddButton("Tags");
+    AddButton("Best");
 }
 
 //document ready event ----------
 $(document).ready(function () {
 
-    AddStatsBox();
-    CallServer_RequestDataInfo();
-    CallServer_RequestFeaturesInfo();
+    $("#TwitterSentiment-Page").append("<div id=\"SentiBox\"></div>");
+    $("#SentiBox").append("<div id=\"PresentProject\"></div>");
+    $("#SentiBox").append("<div id=\"PiesBox\"></div>");
+    $("#SentiBox").append("<div id=\"GroupedBarBox\"></div>");
+    $("#SentiBox").append("<div id=\"GroupedBarTagsBox\"></div>");
+    $("#SentiBox").append("<div id=\"BestFeaturesLists\"></div>");
+    $("#SentiBox").append("<div id=\"ErrorMsg\"></div>");
+    
+    AddMenuBox();
 });

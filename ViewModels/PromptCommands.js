@@ -1,11 +1,26 @@
-﻿//Start, Prompt commands...
+﻿var links = [
+    "../CurriculumVitae/cv_JoseMMalaca.pdf",
+    "https://twitter.com/tOOnPT",
+    "https://www.facebook.com/cartOOnPT",
+    "http://instagram.com/josemiguelmalaca",
+    "https://github.com/tOOnPT",
+    "https://plus.google.com/u/0/108123132092292147984/posts",
+    "http://lnkd.in/D3YEs4",
+    "http://www.codecademy.com/pt/jose.miguel.malaca",
+    "https://coderbits.com/cartoon",
+    "http://tecknologicus.blogspot.pt",
+    "http://www.youtube.com/user/tOOnPT",
+    "https://codebits.eu/cartOOn",
+    "http://lxmls.it.pt/2014/",
+    "http://rawopendata.ipn.pt"
+];
+
+//Start, Prompt commands...
 function firstCommands(terminal, command) {
     if (command.match("^who$")) {
-        terminal.echo("> [[b;#ffffff;#000000]José Miguel] was born in [[b;#ffffff;#000000]Coimbra], Portugal, and since younger age has the [[b;#ffffff;#000000]passion] about [[b;#ffffff;#000000]informatics].");
-        terminal.echo("> His academic path on informatics started with a enormous [[b;#ffffff;#000000]curiosity] to discover and play with some little robots in the primary school.");
-        terminal.echo("> Later, in the univerisity, his academic path found a end with a project on Sentiment Analysis in Microblogging.");
-        terminal.echo("> The academic year 2013/14 was the last in the [[b;#ffffff;#000000]Faculty of Sciences and Technology], University of Coimbra, so now, he's a [[b;#ffffff;#000000]proud] member of MSc in Informatics Engineering family.");
-        terminal.echo("> A [[b;#ffffff;#000000]Full-Stack Software Engineer] enjoying his work and his life.");
+        terminal.echo("> José Miguel was born and educated in the city that hosts one of the oldest universities of the world, [[b;#ffffff;#000000]Coimbra] (Portugal).");
+        terminal.echo("> Finished in 2014 his [[b;#ffffff;#000000]Masters] at University of Coimbra, [[b;#ffffff;#000000]Informatics Engineering], with focus on Sentiment Analysis on Microblogging.");
+        terminal.echo("> A [[b;#ffffff;#000000]Full Stack Engineer] ready for new challenges, always learning, growing, and enjoying his life.");
 
     } else if (command.match("^education$")) {
         terminal.echo(">Faculty of Science and Technology, University of Coimbra, Portugal");
@@ -15,26 +30,27 @@ function firstCommands(terminal, command) {
         terminal.echo(" [[b;#009900;#000000]☑] Informatics [[b;#ffffff;#000000]Technician] (Técnico Informático)");
 
     } else if (command.match("^carrer$")) {
+        terminal.echo(">[[b;#ffffff;#000000]Software Engineer] @ BroadScope.Lda, Coimbra, Portugal, 2014/...");
         terminal.echo(">[[b;#ffffff;#000000]Software Engineer Trainee] @ BroadScope.Lda, Coimbra, Portugal, 2013/14");
         terminal.echo(" [[b;#009900;#000000]ϟ] Trainee: Research and develop solutions, analyze results and present reports. Turn raw data into useful data, was the project presented to me by the BroadScope involving");
         terminal.echo("  three major areas: \"Social/Text Mining\", \"Natural Language Processing\" and \"Machine Learning\".");
 
     } else if (command.match("^social$")) {
-        terminal.echo(" [[b;#009900;#000000]ϟ] Twitter, href=\"https://twitter.com/tOOnPT\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] Facebook, href=\"https://www.facebook.com/cartOOnPT\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] Instagram, href=\"http://instagram.com/josemiguelmalaca\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] GitHub, href=\"https://github.com/tOOnPT\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] GooglePlus, href=\"https://plus.google.com/u/0/108123132092292147984/posts\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] LinkedIn, href=\"http://lnkd.in/D3YEs4\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] Codeacademy, href=\"http://www.codecademy.com/pt/jose.miguel.malaca\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] CoderBits, href=\"https://coderbits.com/cartoon\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] Blogger, href=\"http://tecknologicus.blogspot.pt/\"");
-        terminal.echo(" [[b;#009900;#000000]ϟ] YouTube, href=\"http://www.youtube.com/user/tOOnPT\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] Twitter, href=\""+ links[1] +"\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] Facebook, href=\"" + links[2] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] Instagram, href=\"" + links[3] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] GitHub, href=\"" + links[4] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] GooglePlus, href=\"" + links[5] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] LinkedIn, href=\"" + links[6] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] Codeacademy, href=\"" + links[7] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] CoderBits, href=\"" + links[8] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] Blogger, href=\"" + links[9] + "\"");
+        terminal.echo(" [[b;#009900;#000000]ϟ] YouTube, href=\"" + links[10] + "\"");
 
     } else if (command.match("^events$")) {
-        terminal.echo("> [[b;#009900;#000000]☑] SAPO <Codebits> 2014, href=\"https://codebits.eu/cartOOn\"");
-        terminal.echo("> [[b;#009900;#000000]☑] Lisbon Machine Learning School <LxMLS> 2014, href=\"http://lxmls.it.pt/2014/\"");
-        terminal.echo("> [[b;#009900;#000000]☑] Raising Awareness <RAW> Of Open Data 2014, href=\"http://rawopendata.ipn.pt/\"");
+        terminal.echo("> [[b;#009900;#000000]☑] SAPO <Codebits> 2014, href=\"" + links[11] + "\"");
+        terminal.echo("> [[b;#009900;#000000]☑] Lisbon Machine Learning School <LxMLS> 2014, href=\"" + links[12] + "\"");
+        terminal.echo("> [[b;#009900;#000000]☑] Raising Awareness <RAW> Of Open Data 2014, href=\"" + links[13] + "\"");
 
     } else if (command.match("^mail$")) {
         terminal.echo("mail me < mailto:jose.miguel.malaca@me.com >");
@@ -175,46 +191,46 @@ function openWhat(terminal, command) {
     //terminal.echo(">OPEN: " + what);
     var link = "";
     if (what.match("curriculum$")) {
-        link = "../CurriculumVitae/cv_JoseMMalaca.pdf";
+        link = links[0];
     }
     else if (what.match("twitter$")) {
-        link = "https://twitter.com/tOOnPT";
+        link = links[1];
     }
     else if (what.match("facebook$")) {
-        link = "https://www.facebook.com/cartOOnPT";
+        link = links[2];
     }
     else if (what.match("instagram$")) {
-        link = "http://instagram.com/josemiguelmalaca";
+        link = links[3];
     }
     else if (what.match("github$")) {
-        link = "https://github.com/tOOnPT";
+        link = links[4];
     }
     else if (what.match("googleplus$")) {
-        link = "https://plus.google.com/u/0/108123132092292147984/posts";
+        link = links[5];
     }
     else if (what.match("linkedin$")) {
-        link = "http://lnkd.in/D3YEs4";
+        link = links[6];
     }
     else if (what.match("codeacademy$")) {
-        link = "http://www.codecademy.com/pt/jose.miguel.malaca";
+        link = links[7];
     }
     else if (what.match("coderbits$")) {
-        link = "https://coderbits.com/cartoon";
+        link = links[8];
     }
     else if (what.match("blogger$")) {
-        link = "http://tecknologicus.blogspot.pt";
+        link = links[9];
     }
     else if (what.match("youtube$")) {
-        link = "http://www.youtube.com/user/tOOnPT";
+        link = links[10];
     }
     else if (what.match("sapo$")) {
-        link = "https://codebits.eu/cartOOn";
+        link = links[11];
     }
     else if (what.match("lxmls$")) {
-        link = "http://lxmls.it.pt/2014/";
+        link = links[12];
     }
     else if (what.match("raw$")) {
-        link = "http://rawopendata.ipn.pt";
+        link = links[13];
     }
     else {
         terminal.error(">Unknown command or some sintax error \"" + command + "\"" +
